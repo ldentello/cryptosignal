@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoSignal — Tokenomics</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#06080f;--s1:#0c0f1a;--s2:#111824;--s3:#171e2e;--s4:#1e2640;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.16);
+  --t1:#e4e9f8;--t2:#6b7fa3;--t3:#2e3a52;
+  --green:#00d97e;--green2:rgba(0,217,126,0.1);--greenb:rgba(0,217,126,0.22);
+  --red:#ff4d6d;--red2:rgba(255,77,109,0.1);--redb:rgba(255,77,109,0.22);
+  --amber:#f5a623;--amber2:rgba(245,166,35,0.1);--amberb:rgba(245,166,35,0.22);
+  --blue:#4f6ef7;--blue2:rgba(79,110,247,0.12);--blueb:rgba(79,110,247,0.25);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,0.1);--purpleb:rgba(167,139,250,0.22);
+  --mono:'JetBrains Mono',monospace;--ui:'Outfit',sans-serif;
+}
+body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh;}
+.topbar{background:var(--s1);border-bottom:1px solid var(--b2);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.brand-ico{width:30px;height:30px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;}
+.brand-name{font-size:14px;font-weight:800;color:var(--t1);}
+.brand-name span{color:#4f6ef7;}
+.back-btn{font-size:12px;color:var(--t2);text-decoration:none;padding:6px 12px;border:1px solid var(--b2);border-radius:7px;background:var(--s2);}
+.module-badge{font-size:10px;font-family:var(--mono);padding:3px 10px;border-radius:10px;background:var(--purple2);color:var(--purple);border:1px solid var(--purpleb);}
+
+.search-bar{padding:.875rem 1.5rem;background:var(--s1);border-bottom:1px solid var(--b1);display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;}
+.search-wrap{position:relative;flex:1;max-width:440px;}
+.search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:14px;}
+.search-inp{width:100%;background:var(--s2);border:1.5px solid var(--b2);border-radius:9px;padding:9px 12px 9px 36px;color:var(--t1);font-family:var(--ui);font-size:13px;outline:none;transition:border-color .2s;}
+.search-inp:focus{border-color:var(--purple);}
+.search-inp::placeholder{color:var(--t3);}
+.search-btn{padding:9px 18px;background:var(--purple);border:none;border-radius:9px;color:#fff;font-family:var(--ui);font-size:13px;font-weight:600;cursor:pointer;}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;}
+.chip{font-size:11px;padding:4px 11px;border-radius:20px;border:1px solid var(--b2);background:var(--s2);color:var(--t2);cursor:pointer;transition:all .15s;font-family:var(--mono);}
+.chip:hover{border-color:var(--purple);color:var(--t1);}
+
+.body{padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:1.25rem;max-width:1000px;margin:0 auto;}
+
+.empty{text-align:center;padding:4rem 1rem;color:var(--t2);}
+.empty-ico{font-size:42px;margin-bottom:.875rem;}
+
+/* VERDICT */
+.verdict-banner{border-radius:14px;border:1.5px solid;padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1.25rem;}
+.verdict-banner.danger{background:var(--red2);border-color:var(--redb);}
+.verdict-banner.warning{background:var(--amber2);border-color:var(--amberb);}
+.verdict-banner.safe{background:var(--green2);border-color:var(--greenb);}
+.verdict-ico{width:56px;height:56px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.verdict-banner.danger .verdict-ico{background:rgba(255,77,109,.15);}
+.verdict-banner.warning .verdict-ico{background:rgba(245,166,35,.15);}
+.verdict-banner.safe .verdict-ico{background:rgba(0,217,126,.15);}
+.verdict-tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:3px;}
+.verdict-banner.danger .verdict-tag{color:var(--red);}
+.verdict-banner.warning .verdict-tag{color:var(--amber);}
+.verdict-banner.safe .verdict-tag{color:var(--green);}
+.verdict-title{font-size:20px;font-weight:800;letter-spacing:-.02em;}
+.verdict-banner.danger .verdict-title{color:var(--red);}
+.verdict-banner.warning .verdict-title{color:var(--amber);}
+.verdict-banner.safe .verdict-title{color:var(--green);}
+.verdict-desc{font-size:12px;color:var(--t2);margin-top:5px;line-height:1.6;}
+.verdict-score{margin-left:auto;text-align:center;flex-shrink:0;}
+.score-big{font-family:var(--mono);font-size:42px;font-weight:700;line-height:1;}
+.score-lbl{font-size:10px;color:var(--t2);margin-top:3px;}
+
+/* GRID */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;}
+.card{background:var(--s1);border:1px solid var(--b2);border-radius:13px;padding:1.1rem 1.25rem;}
+.card-title{font-size:11px;color:var(--t2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem;display:flex;align-items:center;justify-content:space-between;}
+.card-tag{font-size:10px;padding:2px 8px;border-radius:10px;letter-spacing:0;text-transform:none;}
+.tag-red{background:var(--red2);color:var(--red);border:1px solid var(--redb);}
+.tag-amber{background:var(--amber2);color:var(--amber);border:1px solid var(--amberb);}
+.tag-green{background:var(--green2);color:var(--green);border:1px solid var(--greenb);}
+
+/* DISTRIBUTION */
+.dist-wrap{display:flex;gap:1.25rem;align-items:center;}
+.donut-box{position:relative;width:130px;height:130px;flex-shrink:0;}
+.donut-svg{transform:rotate(-90deg);}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.donut-main{font-family:var(--mono);font-size:20px;font-weight:700;line-height:1;}
+.donut-sub{font-size:9px;color:var(--t2);margin-top:1px;}
+.dist-legend{display:flex;flex-direction:column;gap:.5rem;flex:1;}
+.dist-item{display:flex;align-items:center;justify-content:space-between;font-size:12px;}
+.dist-left{display:flex;align-items:center;gap:8px;}
+.dist-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.dist-pct{font-family:var(--mono);font-weight:600;}
+
+/* TIMELINE */
+.tl-item{display:grid;grid-template-columns:80px 1fr auto;gap:.75rem;align-items:center;padding:.6rem .75rem;border-radius:8px;margin-bottom:.5rem;background:var(--s2);border:1px solid var(--b1);}
+.tl-item.danger{border-color:rgba(255,77,109,.2);background:rgba(255,77,109,.05);}
+.tl-item.warning{border-color:rgba(245,166,35,.2);background:rgba(245,166,35,.04);}
+.tl-date{font-family:var(--mono);font-size:11px;color:var(--t2);}
+.tl-bar-label{font-size:11px;margin-bottom:3px;}
+.tl-bar-bg{height:4px;background:var(--s3);border-radius:2px;}
+.tl-bar-fill{height:100%;border-radius:2px;}
+.tl-amount{font-family:var(--mono);font-size:12px;font-weight:600;text-align:right;white-space:nowrap;}
+.tl-impact{font-size:10px;text-align:right;margin-top:2px;}
+
+/* INFLATION */
+.inf-metric{display:flex;align-items:center;justify-content:space-between;padding:.75rem;background:var(--s2);border-radius:8px;margin-bottom:.5rem;border:1px solid var(--b1);}
+.inf-label{font-size:12px;color:var(--t2);}
+.inf-val{font-family:var(--mono);font-size:14px;font-weight:600;}
+.inf-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;}
+
+/* UTILITY */
+.utility-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.util-item{padding:.625rem .75rem;border-radius:8px;border:1px solid;display:flex;align-items:center;gap:.625rem;font-size:12px;}
+.util-item.has{background:var(--green2);border-color:var(--greenb);color:var(--green);}
+.util-item.no{background:var(--s2);border-color:var(--b1);color:var(--t2);}
+.util-ico{font-size:14px;flex-shrink:0;}
+
+/* INSIDER */
+.insider-section{background:var(--s1);border:1.5px solid var(--redb);border-radius:13px;padding:1.25rem;}
+.insider-title{display:flex;align-items:center;gap:.625rem;font-size:13px;font-weight:700;color:var(--red);margin-bottom:1rem;}
+.insider-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;}
+.insider-card{background:var(--s2);border-radius:9px;padding:.875rem;border:1px solid var(--b2);}
+.insider-ico{font-size:20px;margin-bottom:.5rem;}
+.insider-name{font-size:12px;font-weight:600;margin-bottom:3px;}
+.insider-desc{font-size:11px;color:var(--t2);line-height:1.5;}
+.insider-signal{display:inline-block;margin-top:.5rem;font-size:10px;font-family:var(--mono);font-weight:700;padding:2px 8px;border-radius:10px;}
+.sig-danger{background:var(--red2);color:var(--red);border:1px solid var(--redb);}
+.sig-warn{background:var(--amber2);color:var(--amber);border:1px solid var(--amberb);}
+.sig-safe{background:var(--green2);color:var(--green);border:1px solid var(--greenb);}
+
+/* AI */
+.ai-box{background:var(--purple2);border:1px solid var(--purpleb);border-radius:12px;padding:1.1rem 1.25rem;}
+.ai-hd{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;}
+.ai-dot{width:28px;height:28px;border-radius:7px;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;flex-shrink:0;}
+.ai-title{font-size:13px;font-weight:600;}
+.ai-text{font-size:13px;line-height:1.75;color:var(--t1);}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--b3);border-top-color:var(--purple);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.note-box{padding:.625rem .875rem;border-radius:8px;font-size:11px;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="dashboard.html" class="brand">
+    <div class="brand-ico">◈</div>
+    <div class="brand-name">Crypto<span>Signal</span></div>
+  </a>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span class="module-badge">◎ Tokenomics</span>
+    <a href="dashboard.html" class="back-btn">← Dashboard</a>
+  </div>
+</div>
+
+<div class="search-bar">
+  <div class="search-wrap">
+    <span class="search-ico">⌕</span>
+    <input class="search-inp" id="search-inp" type="text" placeholder="Digite o projeto... ex: Arbitrum, Aptos, Sui" onkeydown="if(event.key==='Enter')analyze()">
+  </div>
+  <button class="search-btn" onclick="analyze()">Analisar →</button>
+  <div class="chips">
+    <span class="chip" onclick="loadPreset('arbitrum')">ARB</span>
+    <span class="chip" onclick="loadPreset('aptos')">APT</span>
+    <span class="chip" onclick="loadPreset('sui')">SUI</span>
+    <span class="chip" onclick="loadPreset('optimism')">OP</span>
+    <span class="chip" onclick="loadPreset('bitcoin')">BTC</span>
+    <span class="chip" onclick="loadPreset('ethereum')">ETH</span>
+  </div>
+</div>
+
+<div class="body" id="body">
+  <div class="empty">
+    <div class="empty-ico">◎</div>
+    <div style="font-size:16px;font-weight:700;color:var(--t1);margin-bottom:.5rem;">Analise os tokenomics de qualquer projeto</div>
+    <div style="font-size:13px;line-height:1.7;">Descubra se você está prestes a ser a exit liquidity dos insiders.<br>Digite o nome do projeto acima ou escolha um dos atalhos.</div>
+  </div>
+</div>
+
+<script>
+const PRESETS = {
+  arbitrum:{name:'Arbitrum',ticker:'ARB',distribution:[{name:'Equipe & Advisors',pct:26.94,color:'#ff4d6d',insider:true},{name:'Investidores (VCs)',pct:17.53,color:'#f5a623',insider:true},{name:'Comunidade & DAO',pct:42.78,color:'#00d97e',insider:false},{name:'Ecossistema',pct:12.75,color:'#4f6ef7',insider:false}],unlocks:[{date:'Mar 2024',tokens:1130,total:10000,type:'danger',label:'Cliff equipe + VCs',impact:'Alto'},{date:'Mar 2025',tokens:94,total:10000,type:'warning',label:'Vesting mensal equipe',impact:'Médio'},{date:'Mar 2026',tokens:94,total:10000,type:'warning',label:'Vesting mensal equipe',impact:'Médio'}],supplyNow:3970,supplyFull:10000,inflation:{rate:2.0,type:'inflation',burnMechanism:false,stakingReward:true},utility:{fees:false,staking:true,governance:true,speculation:true,defi:false},riskScore:68},
+  aptos:{name:'Aptos',ticker:'APT',distribution:[{name:'Equipe & Fundadores',pct:19.0,color:'#ff4d6d',insider:true},{name:'Investidores (VCs)',pct:16.5,color:'#f5a623',insider:true},{name:'Fundação',pct:16.5,color:'#4f6ef7',insider:false},{name:'Comunidade',pct:51.02,color:'#00d97e',insider:false}],unlocks:[{date:'Out 2024',tokens:45,total:1000,type:'warning',label:'Vesting mensal',impact:'Médio'},{date:'2025-2026',tokens:540,total:1000,type:'danger',label:'Saldo vesting equipe/VCs',impact:'Alto'}],supplyNow:520,supplyFull:1000,inflation:{rate:7.0,type:'inflation',burnMechanism:false,stakingReward:true},utility:{fees:true,staking:true,governance:false,speculation:true,defi:true},riskScore:72},
+  sui:{name:'Sui',ticker:'SUI',distribution:[{name:'Equipe & Advisors',pct:20.0,color:'#ff4d6d',insider:true},{name:'Investidores (VCs)',pct:14.0,color:'#f5a623',insider:true},{name:'Reserva Fundação',pct:10.0,color:'#4f6ef7',insider:false},{name:'Comunidade',pct:56.0,color:'#00d97e',insider:false}],unlocks:[{date:'Mai 2025',tokens:400,total:10000,type:'danger',label:'Grande desbloqueio equipe',impact:'Alto'},{date:'2026',tokens:800,total:10000,type:'danger',label:'Cliff principal VCs',impact:'Muito Alto'}],supplyNow:2300,supplyFull:10000,inflation:{rate:5.0,type:'inflation',burnMechanism:true,stakingReward:true},utility:{fees:true,staking:true,governance:false,speculation:true,defi:true},riskScore:74},
+  optimism:{name:'Optimism',ticker:'OP',distribution:[{name:'Equipe & Fundadores',pct:19.0,color:'#ff4d6d',insider:true},{name:'Investidores',pct:17.0,color:'#f5a623',insider:true},{name:'Fundo Ecossistema',pct:25.0,color:'#4f6ef7',insider:false},{name:'Airdrop & Usuários',pct:39.0,color:'#00d97e',insider:false}],unlocks:[{date:'Mai 2024',tokens:386,total:4294,type:'danger',label:'Desbloqueio equipe (cliff)',impact:'Alto'},{date:'2025-2026',tokens:200,total:4294,type:'warning',label:'Vesting contínuo',impact:'Médio'}],supplyNow:1100,supplyFull:4294,inflation:{rate:2.5,type:'inflation',burnMechanism:false,stakingReward:false},utility:{fees:true,staking:false,governance:true,speculation:true,defi:false},riskScore:62},
+  bitcoin:{name:'Bitcoin',ticker:'BTC',distribution:[{name:'Mineradores (ganho)',pct:100.0,color:'#00d97e',insider:false}],unlocks:[{date:'Halving 2024',tokens:1.6,total:21,type:'warning',label:'Redução emissão 50%',impact:'Positivo'},{date:'~2140',tokens:0,total:21,type:'warning',label:'Supply máximo atingido',impact:'Positivo'}],supplyNow:19.7,supplyFull:21,inflation:{rate:0.85,type:'deflation',burnMechanism:false,stakingReward:false},utility:{fees:true,staking:false,governance:false,speculation:true,defi:false},riskScore:12},
+  ethereum:{name:'Ethereum',ticker:'ETH',distribution:[{name:'Venda pública ICO',pct:83.3,color:'#00d97e',insider:false},{name:'Fundação Ethereum',pct:9.9,color:'#4f6ef7',insider:false},{name:'Early contributors',pct:6.8,color:'#f5a623',insider:true}],unlocks:[{date:'Contínuo',tokens:0,total:120,type:'warning',label:'Emissão via staking (~0.6%/ano)',impact:'Baixo'},{date:'EIP-1559',tokens:-1,total:120,type:'warning',label:'Queima de taxas (deflacionário)',impact:'Positivo'}],supplyNow:120.3,supplyFull:120.3,inflation:{rate:-0.2,type:'deflation',burnMechanism:true,stakingReward:true},utility:{fees:true,staking:true,governance:false,speculation:true,defi:true},riskScore:18},
+};
+
+function loadPreset(id) {
+  document.getElementById('search-inp').value = PRESETS[id]?.name || id;
+  renderAnalysis(PRESETS[id]);
+}
+
+async function analyze() {
+  const q = document.getElementById('search-inp').value.trim().toLowerCase();
+  if (!q) return;
+  const key = Object.keys(PRESETS).find(k=>k.includes(q)||PRESETS[k].ticker.toLowerCase()===q||PRESETS[k].name.toLowerCase().includes(q));
+  if (key) { renderAnalysis(PRESETS[key]); return; }
+  document.getElementById('body').innerHTML = '<div class="empty"><span class="spin"></span><div style="margin-top:.75rem;font-size:13px">Analisando '+q+'...</div></div>';
+  try {
+    const r = await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:`Retorne APENAS um JSON com os tokenomics do projeto de crypto "${q}". Formato: {"name":"Nome","ticker":"TICK","distribution":[{"name":"Equipe","pct":20,"color":"#ff4d6d","insider":true},{"name":"Comunidade","pct":80,"color":"#00d97e","insider":false}],"unlocks":[{"date":"2025","tokens":100,"total":1000,"type":"danger","label":"Cliff equipe","impact":"Alto"}],"supplyNow":500,"supplyFull":1000,"inflation":{"rate":5.0,"type":"inflation","burnMechanism":false,"stakingReward":true},"utility":{"fees":true,"staking":true,"governance":false,"speculation":true,"defi":false},"riskScore":65}. Só o JSON, sem texto.`}]})});
+    const d = await r.json();
+    const txt = d.content?.map(b=>b.text||'').join('')||'';
+    const parsed = JSON.parse(txt.replace(/```json|```/g,'').trim());
+    renderAnalysis(parsed);
+  } catch(e) {
+    document.getElementById('body').innerHTML = '<div class="empty"><div class="empty-ico">⚠</div><div style="font-size:15px;font-weight:600;color:var(--t1)">Projeto não encontrado</div><div style="font-size:13px;margin-top:.5rem">Tente um dos atalhos acima ou verifique o nome.</div></div>';
+  }
+}
+
+function renderAnalysis(data) {
+  const insiderPct = data.distribution.filter(d=>d.insider).reduce((s,d)=>s+d.pct,0);
+  const supplyMult = data.supplyFull/data.supplyNow;
+  const risk = data.riskScore;
+
+  let vCls,vIco,vTag,vTitle,vDesc;
+  if (risk>=65){vCls='danger';vIco='☠';vTag='RISCO ALTO — EXIT LIQUIDITY ALERT';vTitle='CUIDADO MÁXIMO';vDesc=`${insiderPct.toFixed(0)}% do supply com insiders. Com ${supplyMult.toFixed(1)}× mais tokens para desbloquear, a pressão vendedora estrutural é severa.`;}
+  else if(risk>=40){vCls='warning';vIco='⚠';vTag='RISCO MODERADO — ACOMPANHE DE PERTO';vTitle='ATENÇÃO NECESSÁRIA';vDesc=`Insiders controlam ${insiderPct.toFixed(0)}% do supply. Monitore o cronograma de desbloqueios antes de alocar.`;}
+  else{vCls='safe';vIco='✓';vTag='TOKENOMICS SAUDÁVEL';vTitle='ESTRUTURA FAVORÁVEL';vDesc='Distribuição descentralizada e sem pressão vendedora estrutural severa.';}
+
+  const cx=65,cy=65,r=52,stroke=16,circ=2*Math.PI*r;
+  let offset=0,paths='';
+  data.distribution.forEach(d=>{
+    if(d.pct===0)return;
+    const dash=(d.pct/100)*circ,gap=circ-dash;
+    paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${d.color}" stroke-width="${stroke}" stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" />`;
+    offset+=dash;
+  });
+
+  const maxTokens=Math.max(...data.unlocks.map(u=>u.tokens),1);
+  const utilItems=[{key:'fees',label:'Pagamento de taxas',ico:'⛽'},{key:'staking',label:'Staking / Yield',ico:'🔒'},{key:'governance',label:'Governança',ico:'🗳'},{key:'defi',label:'Uso em DeFi',ico:'◎'},{key:'speculation',label:'Especulação pura',ico:'🎲'}];
+  const utilCount=Object.entries(data.utility).filter(([k,v])=>v&&k!=='speculation').length;
+
+  document.getElementById('body').innerHTML=`
+  <div class="verdict-banner ${vCls}">
+    <div class="verdict-ico">${vIco}</div>
+    <div>
+      <div class="verdict-tag">${vTag}</div>
+      <div class="verdict-title">${vTitle}</div>
+      <div class="verdict-desc">${vDesc}</div>
+    </div>
+    <div class="verdict-score">
+      <div class="score-big" style="color:${risk>=65?'var(--red)':risk>=40?'var(--amber)':'var(--green)'}">${risk}</div>
+      <div class="score-lbl">risco/100</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Distribuição de Supply <span class="card-tag ${insiderPct>50?'tag-red':insiderPct>35?'tag-amber':'tag-green'}">${insiderPct.toFixed(0)}% insiders</span></div>
+      <div class="dist-wrap">
+        <div class="donut-box">
+          <svg class="donut-svg" width="130" height="130">${paths}</svg>
+          <div class="donut-center">
+            <div class="donut-main" style="color:${insiderPct>50?'var(--red)':insiderPct>35?'var(--amber)':'var(--green)'}">${insiderPct.toFixed(0)}%</div>
+            <div class="donut-sub">insiders</div>
+          </div>
+        </div>
+        <div class="dist-legend">
+          ${data.distribution.filter(d=>d.pct>0).map(d=>`<div class="dist-item"><div class="dist-left"><div class="dist-dot" style="background:${d.color}"></div><span style="color:var(--t2);font-size:12px">${d.name}</span></div><span class="dist-pct" style="color:${d.color}">${d.pct.toFixed(1)}%</span></div>`).join('')}
+        </div>
+      </div>
+      <div class="note-box" style="margin-top:.875rem;background:${insiderPct>50?'var(--red2)':insiderPct>35?'var(--amber2)':'var(--green2)'};border:1px solid ${insiderPct>50?'var(--redb)':insiderPct>35?'var(--amberb)':'var(--greenb)'};">
+        ${insiderPct>50?`☠ <strong style="color:var(--red)">Perigo:</strong> Mais de 50% com insiders. Risco estrutural alto.`:insiderPct>35?`⚠ <strong style="color:var(--amber)">Atenção:</strong> Concentração moderada. Monitore wallets de insiders.`:`✓ <strong style="color:var(--green)">Saudável:</strong> Distribuição descentralizada.`}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Cronograma de Desbloqueio <span class="card-tag ${supplyMult>3?'tag-red':supplyMult>1.5?'tag-amber':'tag-green'}">${supplyMult.toFixed(1)}× supply futuro</span></div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.875rem;padding:.75rem;background:var(--s2);border-radius:8px;border:1px solid var(--b1);">
+        <div style="flex:1"><div style="font-size:10px;color:var(--t2);margin-bottom:3px">Circulante hoje</div><div style="font-family:var(--mono);font-size:16px;font-weight:700">${data.supplyNow.toLocaleString()}M</div></div>
+        <div style="color:var(--t3);font-size:18px">→</div>
+        <div style="flex:1"><div style="font-size:10px;color:var(--t2);margin-bottom:3px">Supply máximo</div><div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${supplyMult>3?'var(--red)':supplyMult>1.5?'var(--amber)':'var(--green)'}">${data.supplyFull.toLocaleString()}M</div></div>
+        <div style="text-align:right"><div style="font-size:10px;color:var(--t2);margin-bottom:3px">Diluição</div><div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${supplyMult>3?'var(--red)':'var(--amber)'}">${((1-data.supplyNow/data.supplyFull)*100).toFixed(0)}%</div></div>
+      </div>
+      ${data.unlocks.map(u=>{
+        const barPct=Math.min((u.tokens/maxTokens)*100,100);
+        const col=u.type==='danger'?'var(--red)':u.type==='warning'?'var(--amber)':'var(--green)';
+        return `<div class="tl-item ${u.type}">
+          <div class="tl-date">${u.date}</div>
+          <div><div class="tl-bar-label" style="color:${col}">${u.label}</div><div class="tl-bar-bg"><div class="tl-bar-fill" style="width:${barPct}%;background:${col}"></div></div></div>
+          <div><div class="tl-amount" style="color:${col}">${u.tokens}M</div><div class="tl-impact" style="color:${col}">impacto ${u.impact}</div></div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Inflação vs Deflação <span class="card-tag ${data.inflation.type==='deflation'?'tag-green':'tag-red'}">${data.inflation.type==='deflation'?'Deflacionário':'Inflacionário'}</span></div>
+      <div class="inf-metric"><span class="inf-label">Taxa de emissão anual</span><span class="inf-val" style="color:${data.inflation.rate<0?'var(--green)':data.inflation.rate>5?'var(--red)':'var(--amber)'}">${data.inflation.rate>0?'+':''}${data.inflation.rate}%/ano</span></div>
+      <div class="inf-metric"><span class="inf-label">Mecanismo de queima (burn)</span><span class="inf-val" style="color:${data.inflation.burnMechanism?'var(--green)':'var(--red)'}">${data.inflation.burnMechanism?'✓ Sim — supply reduz':'✗ Não — sem queima'}</span></div>
+      <div class="inf-metric" style="border:none;margin:0"><span class="inf-label">Recompensa de staking</span><span class="inf-val" style="color:${data.inflation.stakingReward?'var(--amber)':'var(--green)'}">${data.inflation.stakingReward?'⚠ Sim — cria emissão':'✓ Não — sem emissão extra'}</span></div>
+      <div class="note-box" style="margin-top:.875rem;background:var(--s2);border:1px solid var(--b1);color:var(--t2);">
+        ${data.inflation.type==='deflation'?'✓ Supply diminui ao longo do tempo. Escassez crescente favorece o preço.':data.inflation.rate>5?'☠ Alta inflação constante = pressão vendedora estrutural. Holders diluídos todo ano.':'⚠ Inflação moderada. Avalie se a adoção cresce mais rápido que o supply novo.'}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Utilidade do Token <span class="card-tag ${utilCount>=3?'tag-green':utilCount>=2?'tag-amber':'tag-red'}">${utilCount} uso${utilCount!==1?'s':''} real${utilCount!==1?'s':''}</span></div>
+      <div class="utility-grid">
+        ${utilItems.map(u=>`<div class="util-item ${data.utility[u.key]?'has':'no'}"><span class="util-ico">${u.ico}</span><span>${u.label}</span></div>`).join('')}
+      </div>
+      <div class="note-box" style="margin-top:.875rem;background:var(--s2);border:1px solid var(--b1);color:var(--t2);">
+        ${utilCount>=3?`✓ Token com múltiplas utilidades reais (${utilCount}). Demanda orgânica sustentável.`:utilCount>=2?`⚠ Utilidade moderada. Ainda depende de adoção crescente.`:`☠ Sem utilidade real. Demanda 100% especulativa — hype acaba.`}
+      </div>
+    </div>
+  </div>
+
+  <div class="insider-section">
+    <div class="insider-title">⚠ Como não ser a exit liquidity dos insiders</div>
+    <div class="insider-grid">
+      <div class="insider-card"><div class="insider-ico">📅</div><div class="insider-name">Verifique o vesting cliff</div><div class="insider-desc">O maior risco é o cliff — insiders ficam 1 ano sem vender e depois desbloqueiam tudo. Fuja de tokens próximos ao cliff.</div><span class="insider-signal sig-danger">Sinal vermelho</span></div>
+      <div class="insider-card"><div class="insider-ico">🔍</div><div class="insider-name">Monitore wallets de insiders</div><div class="insider-desc">Use Nansen, Arkham ou Etherscan. Se estão movendo tokens para exchanges, venda iminente.</div><span class="insider-signal sig-warn">Atenção contínua</span></div>
+      <div class="insider-card"><div class="insider-ico">⏰</div><div class="insider-name">Entre depois do cliff</div><div class="insider-desc">Aguarde o grande desbloqueio acontecer, o preço cair com a pressão vendedora e então considere entrar.</div><span class="insider-signal sig-safe">Estratégia segura</span></div>
+      <div class="insider-card"><div class="insider-ico">📊</div><div class="insider-name">Analise o sell pressure</div><div class="insider-desc">Se o supply vai multiplicar 3× nos próximos 12 meses, a demanda precisa triplicar só para manter o preço.</div><span class="insider-signal sig-danger">Evite posições grandes</span></div>
+      <div class="insider-card"><div class="insider-ico">💧</div><div class="insider-name">Cheque a liquidez</div><div class="insider-desc">Tokens com baixo volume e alta concentração de insiders são os mais perigosos. Varejo fica preso.</div><span class="insider-signal sig-warn">Verifique o volume</span></div>
+      <div class="insider-card"><div class="insider-ico">📝</div><div class="insider-name">Use TokenUnlocks.app</div><div class="insider-desc">Fonte mais confiável para ver o cronograma completo de vesting de qualquer projeto antes de investir.</div><span class="insider-signal sig-safe">tokenunlocks.app</span></div>
+    </div>
+  </div>
+
+  <div class="ai-box">
+    <div class="ai-hd"><div class="ai-dot">◈</div><div><div class="ai-title">Análise Tokenomics — Consultor IA</div><div style="font-size:11px;color:var(--t2)">Avaliação completa baseada nos dados acima</div></div></div>
+    <div class="ai-text" id="ai-text"><span class="spin"></span> Analisando tokenomics do ${data.name}...</div>
+  </div>`;
+
+  setTimeout(() => runAI(data, insiderPct, supplyMult, utilCount), 300);
+}
+
+async function runAI(data, insiderPct, supplyMult, utilCount) {
+  try {
+    const prompt = `Analise os tokenomics do ${data.name} (${data.ticker}) em português, máximo 5 linhas diretas.\n\nDados:\n- Insiders: ${insiderPct.toFixed(0)}%\n- Supply atual: ${data.supplyNow}M → Total: ${data.supplyFull}M (${supplyMult.toFixed(1)}× diluição futura)\n- Inflação: ${data.inflation.rate}%/ano | Burn: ${data.inflation.burnMechanism?'Sim':'Não'}\n- Utilidades reais: ${utilCount}/5\n- Score de risco: ${data.riskScore}/100\n\nDê: (1) veredicto direto sobre o risco de ser exit liquidity, (2) maior red flag ou green flag, (3) recomendação objetiva. Sem disclaimers.`;
+    const r = await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:prompt}]})});
+    const d = await r.json();
+    const txt = d.content?.map(b=>b.text||'').join('')||'Sem resposta.';
+    const el = document.getElementById('ai-text');
+    if(el) el.innerHTML = txt.replace(/\n/g,'<br>');
+  } catch(e) {
+    const el = document.getElementById('ai-text');
+    if(el) el.innerHTML = '<span style="color:var(--red)">Erro ao conectar com IA.</span>';
+  }
+}
+</script>
+</body>
+</html>

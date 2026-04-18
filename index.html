@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoSignal — Saiba quando comprar ou vender crypto</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#06080f;--s1:#0c0f1a;--s2:#111824;--s3:#171e2e;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.16);
+  --t1:#e4e9f8;--t2:#6b7fa3;--t3:#2e3a52;
+  --green:#00d97e;--green2:rgba(0,217,126,0.1);--greenb:rgba(0,217,126,0.22);
+  --red:#ff4d6d;--red2:rgba(255,77,109,0.1);--redb:rgba(255,77,109,0.22);
+  --amber:#f5a623;--amber2:rgba(245,166,35,0.1);--amberb:rgba(245,166,35,0.22);
+  --blue:#4f6ef7;--blue2:rgba(79,110,247,0.12);--blueb:rgba(79,110,247,0.25);
+  --gold:#f0c040;--gold2:rgba(240,192,64,0.09);--goldb:rgba(240,192,64,0.22);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,0.1);--purpleb:rgba(167,139,250,0.22);
+  --mono:'JetBrains Mono',monospace;--ui:'Outfit',sans-serif;
+}
+body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh;}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 2rem;border-bottom:1px solid var(--b1);background:rgba(6,8,15,0.95);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-ico{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),#7c3aed);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;}
+.nav-name{font-size:16px;font-weight:800;color:var(--t1);}
+.nav-name span{color:var(--blue);}
+.nav-right{display:flex;align-items:center;gap:.75rem;}
+.btn-ghost{padding:7px 18px;background:transparent;border:1px solid var(--b3);border-radius:8px;color:var(--t1);font-family:var(--ui);font-size:13px;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-block;}
+.btn-ghost:hover{background:var(--s2);}
+.btn-primary{padding:7px 18px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--ui);font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s;text-decoration:none;display:inline-block;}
+.btn-primary:hover{opacity:.85;}
+
+/* HERO */
+.hero{text-align:center;padding:5rem 2rem 3.5rem;max-width:780px;margin:0 auto;}
+.hero-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--blue);background:var(--blue2);padding:5px 14px;border-radius:20px;border:1px solid var(--blueb);margin-bottom:1.5rem;}
+.hero-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:p 1.5s infinite;}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.25}}
+.hero h1{font-size:52px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:1.25rem;}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--blue),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:17px;color:var(--t2);line-height:1.7;max-width:540px;margin:0 auto 2rem;}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:.75rem;flex-wrap:wrap;}
+.cta-main{padding:13px 28px;background:var(--blue);border:none;border-radius:10px;color:#fff;font-family:var(--ui);font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-block;}
+.cta-main:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(79,110,247,.35);}
+.cta-sec{padding:13px 22px;background:transparent;border:1px solid var(--b3);border-radius:10px;color:var(--t1);font-family:var(--ui);font-size:15px;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-block;}
+.cta-sec:hover{background:var(--s2);}
+
+/* FEATURES STRIP */
+.strip{display:flex;justify-content:center;gap:2rem;padding:1.5rem 2rem;border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);background:var(--s1);flex-wrap:wrap;}
+.strip-item{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--t2);}
+.strip-check{color:var(--green);font-size:13px;}
+
+/* CRITERIOS */
+.section{padding:3rem 2rem;max-width:920px;margin:0 auto;}
+.eyebrow{font-size:11px;font-family:var(--mono);color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem;}
+.section-title{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:.75rem;}
+.section-sub{font-size:14px;color:var(--t2);margin-bottom:2rem;line-height:1.6;}
+.criterios-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;}
+.criterio-card{background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:1.1rem;position:relative;overflow:hidden;}
+.criterio-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.criterio-card.buy::before{background:var(--green);}
+.criterio-card.sell::before{background:var(--red);}
+.criterio-ico{font-size:22px;margin-bottom:.625rem;}
+.criterio-name{font-size:13px;font-weight:600;margin-bottom:3px;}
+.criterio-desc{font-size:11px;color:var(--t2);line-height:1.5;}
+.criterio-badge{display:inline-flex;margin-top:.625rem;font-size:10px;font-family:var(--mono);font-weight:700;padding:3px 10px;border-radius:20px;}
+.badge-buy{background:var(--green2);color:var(--green);border:1px solid var(--greenb);}
+.badge-sell{background:var(--red2);color:var(--red);border:1px solid var(--redb);}
+
+/* TOKENOMICS SECTION */
+.token-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.875rem;}
+.token-card{background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:1.1rem;}
+.token-ico{font-size:22px;margin-bottom:.625rem;}
+.token-name{font-size:13px;font-weight:600;margin-bottom:.375rem;}
+.token-desc{font-size:12px;color:var(--t2);line-height:1.6;}
+.token-alert{display:inline-flex;align-items:center;gap:5px;margin-top:.625rem;font-size:10px;font-family:var(--mono);padding:3px 10px;border-radius:20px;}
+.alert-red{background:var(--red2);color:var(--red);border:1px solid var(--redb);}
+.alert-amber{background:var(--amber2);color:var(--amber);border:1px solid var(--amberb);}
+
+/* SOCIAL PROOF */
+.proof{padding:2rem;border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);background:var(--s1);}
+.proof-inner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.proof-stat{text-align:center;}
+.proof-num{font-family:var(--mono);font-size:32px;font-weight:700;color:var(--blue);}
+.proof-label{font-size:12px;color:var(--t2);margin-top:3px;}
+
+/* PRICING */
+.pricing{padding:3rem 2rem;max-width:920px;margin:0 auto;}
+.plans-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;align-items:start;}
+.plan{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:1.75rem 1.5rem;position:relative;transition:transform .2s;}
+.plan:hover{transform:translateY(-2px);}
+.plan.featured{border-color:var(--goldb);box-shadow:0 0 0 1px var(--goldb),0 24px 48px rgba(240,192,64,0.08);}
+.plan.featured::before{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(ellipse at top,rgba(240,192,64,0.06),transparent 55%);pointer-events:none;}
+.plan-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-size:10px;font-family:var(--mono);font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap;}
+.badge-gold{background:var(--gold);color:#07090f;}
+.badge-purple{background:var(--purple);color:#07090f;}
+.plan-ico{font-size:26px;margin-bottom:.875rem;}
+.plan-name{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:.25rem;}
+.plan-name.mensal{color:var(--blue);}
+.plan-name.anual{color:var(--gold);}
+.plan-name.vitalicio{color:var(--purple);}
+.plan-tagline{font-size:12px;color:var(--t2);margin-bottom:1.25rem;line-height:1.5;}
+.price-block{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--b1);}
+.price-row{display:flex;align-items:baseline;gap:5px;}
+.price-currency{font-size:17px;font-weight:700;color:var(--t2);}
+.price-amount{font-family:var(--mono);font-size:44px;font-weight:700;line-height:1;}
+.plan.featured .price-amount,.plan.featured .price-currency{color:var(--gold);}
+.plan:not(.featured):first-child .price-amount{color:var(--blue);}
+.plan:last-child .price-amount{color:var(--purple);}
+.price-period{font-size:13px;color:var(--t2);align-self:flex-end;padding-bottom:4px;}
+.price-note{font-size:11px;color:var(--t2);margin-top:5px;}
+.price-strike{text-decoration:line-through;color:var(--t3);}
+.price-save{color:var(--green);font-weight:600;}
+.plan-features{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;}
+.plan-feat{display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.5;}
+.feat-ck{flex-shrink:0;margin-top:1px;}
+.feat-ck.green{color:var(--green);}
+.feat-ck.gold{color:var(--gold);}
+.feat-ck.purple{color:var(--purple);}
+.plan-cta{width:100%;padding:11px;border:none;border-radius:10px;font-family:var(--ui);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;text-decoration:none;display:block;text-align:center;}
+.cta-mensal{background:var(--blue2);color:var(--blue);border:1px solid var(--blueb);}
+.cta-mensal:hover{background:var(--blue);color:#fff;}
+.cta-anual{background:var(--gold);color:#07090f;}
+.cta-anual:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(240,192,64,.3);}
+.cta-vitalicio{background:var(--purple2);color:var(--purple);border:1px solid var(--purpleb);}
+.cta-vitalicio:hover{background:var(--purple);color:#fff;}
+.urgency{display:flex;align-items:center;gap:5px;margin-top:.75rem;font-size:11px;color:var(--t2);justify-content:center;}
+.urgency-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:p 1.5s infinite;}
+.vagas-bar{margin-top:.875rem;}
+.vagas-label{display:flex;justify-content:space-between;font-size:10px;color:var(--t2);margin-bottom:5px;}
+.vagas-track{height:4px;background:var(--s3);border-radius:2px;}
+.vagas-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--purple),#ec4899);width:73%;}
+
+/* GUARANTEE */
+.guarantee{margin:0 2rem 2rem;max-width:880px;margin-left:auto;margin-right:auto;display:flex;align-items:center;gap:.875rem;padding:1rem 1.5rem;background:var(--s1);border:1px solid var(--b2);border-radius:12px;}
+.guarantee-ico{font-size:28px;flex-shrink:0;}
+.guarantee-text{font-size:13px;color:var(--t2);line-height:1.6;}
+.guarantee-text strong{color:var(--t1);display:block;margin-bottom:2px;}
+
+/* FOOTER */
+.footer{text-align:center;padding:1.5rem;font-size:12px;color:var(--t3);border-top:1px solid var(--b1);}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-ico">◈</div>
+    <div class="nav-name">Crypto<span>Signal</span></div>
+  </a>
+  <div class="nav-right">
+    <a href="login.html" class="btn-ghost">Entrar</a>
+    <a href="signup.html" class="btn-primary">Assinar agora →</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-chip"><div class="hero-dot"></div>Motor de sinais em tempo real</div>
+  <h1>Saiba exatamente quando <em>comprar ou vender</em> crypto</h1>
+  <p class="hero-sub">10 critérios profissionais analisados em tempo real para qualquer ativo. Fear & Greed, RSI, LTH, Funding Rates, Tokenomics e mais — tudo num painel.</p>
+  <div class="hero-btns">
+    <a href="signup.html" class="cta-main">Começar por R$97/mês →</a>
+    <a href="#pricing" class="cta-sec">Ver planos</a>
+  </div>
+</div>
+
+<div class="strip">
+  <div class="strip-item"><span class="strip-check">✓</span> 10 critérios profissionais</div>
+  <div class="strip-item"><span class="strip-check">✓</span> Qualquer criptomoeda</div>
+  <div class="strip-item"><span class="strip-check">✓</span> Análise IA personalizada</div>
+  <div class="strip-item"><span class="strip-check">✓</span> Carteira com score de risco</div>
+  <div class="strip-item"><span class="strip-check">✓</span> Tokenomics completo</div>
+  <div class="strip-item"><span class="strip-check">✓</span> Dados ao vivo 24/7</div>
+</div>
+
+<!-- SINAIS DE MERCADO -->
+<div class="section">
+  <div class="eyebrow">sinais de mercado</div>
+  <div class="section-title">6 critérios que os profissionais usam</div>
+  <div class="section-sub">Cada análise combina os indicadores mais confiáveis e te entrega uma recomendação direta: comprar, vender ou aguardar.</div>
+  <div class="criterios-grid">
+    <div class="criterio-card buy">
+      <div class="criterio-ico">😨</div>
+      <div class="criterio-name">Fear & Greed Index</div>
+      <div class="criterio-desc">Pânico extremo no mercado = oportunidade de compra. Euforia = hora de realizar lucro.</div>
+      <div class="criterio-badge badge-buy">COMPRA se ≤ 25</div>
+    </div>
+    <div class="criterio-card sell">
+      <div class="criterio-ico">📉</div>
+      <div class="criterio-name">RSI</div>
+      <div class="criterio-desc">Sobrevendido abaixo de 30 sinaliza compra. Acima de 70, mercado sobrecomprado.</div>
+      <div class="criterio-badge badge-sell">VENDA se &gt; 70</div>
+    </div>
+    <div class="criterio-card buy">
+      <div class="criterio-ico">🐋</div>
+      <div class="criterio-name">Long Term Holders</div>
+      <div class="criterio-desc">Quando os LTH acumulam com preço caindo, é o sinal mais bullish que existe.</div>
+      <div class="criterio-badge badge-buy">COMPRA se acumulando</div>
+    </div>
+    <div class="criterio-card sell">
+      <div class="criterio-ico">💰</div>
+      <div class="criterio-name">Supply in Profit</div>
+      <div class="criterio-desc">Quando quase todo mundo está no lucro, a demanda esgota. Topo próximo.</div>
+      <div class="criterio-badge badge-sell">VENDA se ≥ 90%</div>
+    </div>
+    <div class="criterio-card buy">
+      <div class="criterio-ico">⛏</div>
+      <div class="criterio-name">Custo de Mineração</div>
+      <div class="criterio-desc">BTC abaixo do custo de produção é suporte histórico — mineradores capitulam.</div>
+      <div class="criterio-badge badge-buy">COMPRA se abaixo</div>
+    </div>
+    <div class="criterio-card sell">
+      <div class="criterio-ico">📈</div>
+      <div class="criterio-name">Funding Rates</div>
+      <div class="criterio-desc">Funding extremamente positivo indica longs excessivos — correção iminente.</div>
+      <div class="criterio-badge badge-sell">VENDA se &gt; 0.05%</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOKENOMICS -->
+<div class="section" style="background:var(--s1);max-width:100%;padding:3rem 2rem;">
+  <div style="max-width:920px;margin:0 auto;">
+    <div class="eyebrow">tokenomics</div>
+    <div class="section-title">Como não ser a exit liquidity dos insiders</div>
+    <div class="section-sub">Analisamos os 4 fatores que fazem investidores de varejo perderem dinheiro para insiders e VCs.</div>
+    <div class="token-grid">
+      <div class="token-card">
+        <div class="token-ico">👥</div>
+        <div class="token-name">Concentração de Insiders</div>
+        <div class="token-desc">Mais de 50% do supply com equipe e VCs? Eles podem vender coordenadamente a qualquer momento. Você vira a saída deles.</div>
+        <div class="token-alert alert-red">⚠ Perigo se &gt; 50%</div>
+      </div>
+      <div class="token-card">
+        <div class="token-ico">📦</div>
+        <div class="token-name">Cronograma de Desbloqueio</div>
+        <div class="token-desc">500M tokens hoje, 2B travados para liberar em 12 meses. O supply multiplica por 4 — o preço despenca.</div>
+        <div class="token-alert alert-red">⚠ Fuja de alto unlock</div>
+      </div>
+      <div class="token-card">
+        <div class="token-ico">🔄</div>
+        <div class="token-name">Inflação vs Deflação</div>
+        <div class="token-desc">Token que emite novos tokens todo ano dilui você constantemente. Tokens com burn mechanism ficam mais escassos.</div>
+        <div class="token-alert alert-amber">↗ Prefira deflacionários</div>
+      </div>
+      <div class="token-card">
+        <div class="token-ico">⚙</div>
+        <div class="token-name">Utilidade Real do Token</div>
+        <div class="token-desc">Sem uso real em fees, staking ou DeFi, a demanda é 100% especulativa. Hype acaba — utilidade real não.</div>
+        <div class="token-alert alert-amber">↗ Exija utilidade real</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROVA SOCIAL -->
+<div class="proof">
+  <div class="proof-inner">
+    <div class="proof-stat"><div class="proof-num">10</div><div class="proof-label">critérios profissionais</div></div>
+    <div class="proof-stat"><div class="proof-num">+500</div><div class="proof-label">ativos analisáveis</div></div>
+    <div class="proof-stat"><div class="proof-num">24/7</div><div class="proof-label">dados em tempo real</div></div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="pricing" id="pricing">
+  <div style="text-align:center;margin-bottom:2rem;">
+    <div class="eyebrow" style="justify-content:center;">planos</div>
+    <div class="section-title">Acesso completo, sem limites</div>
+  </div>
+  <div class="plans-grid">
+
+    <!-- MENSAL -->
+    <div class="plan">
+      <div class="plan-ico">◎</div>
+      <div class="plan-name mensal">Mensal</div>
+      <div class="plan-tagline">Flexibilidade total. Cancele quando quiser.</div>
+      <div class="price-block">
+        <div class="price-row">
+          <span class="price-currency">R$</span>
+          <span class="price-amount" style="color:var(--blue)">97</span>
+          <span class="price-period">/mês</span>
+        </div>
+        <div class="price-note">Cobrado mensalmente via Stripe</div>
+      </div>
+      <div class="plan-features">
+        <div class="plan-feat"><span class="feat-ck green">✓</span><span>10 critérios de sinal</span></div>
+        <div class="plan-feat"><span class="feat-ck green">✓</span><span>Analisador para qualquer crypto</span></div>
+        <div class="plan-feat"><span class="feat-ck green">✓</span><span>Carteira com P&L e score de risco</span></div>
+        <div class="plan-feat"><span class="feat-ck green">✓</span><span>Consultor IA personalizado</span></div>
+        <div class="plan-feat"><span class="feat-ck green">✓</span><span>Análise de tokenomics completa</span></div>
+        <div class="plan-feat"><span class="feat-ck green">✓</span><span>Suporte via chat 24/7</span></div>
+      </div>
+      <a href="signup.html?plan=mensal" class="plan-cta cta-mensal">Assinar mensal →</a>
+    </div>
+
+    <!-- ANUAL -->
+    <div class="plan featured">
+      <div class="plan-badge badge-gold">✦ MAIS POPULAR</div>
+      <div class="plan-ico">◈</div>
+      <div class="plan-name anual">Anual</div>
+      <div class="plan-tagline">O melhor custo-benefício. 2 meses grátis.</div>
+      <div class="price-block">
+        <div class="price-row">
+          <span class="price-currency">R$</span>
+          <span class="price-amount">66</span>
+          <span class="price-period">/mês</span>
+        </div>
+        <div class="price-note">
+          Total: <strong style="color:var(--t1)">R$797/ano</strong> ·
+          <span class="price-strike">R$1.164</span>
+          <span class="price-save"> Economize R$367</span>
+        </div>
+      </div>
+      <div class="plan-features">
+        <div class="plan-feat"><span class="feat-ck gold">✓</span><span><strong>Tudo do plano mensal</strong>, mais:</span></div>
+        <div class="plan-feat"><span class="feat-ck gold">✓</span><span>2 meses grátis vs mensal</span></div>
+        <div class="plan-feat"><span class="feat-ck gold">✓</span><span>Alertas configuráveis por ativo</span></div>
+        <div class="plan-feat"><span class="feat-ck gold">✓</span><span>Acesso antecipado a novos módulos</span></div>
+        <div class="plan-feat"><span class="feat-ck gold">✓</span><span>Relatório mensal de ciclo</span></div>
+        <div class="plan-feat"><span class="feat-ck gold">✓</span><span>Suporte prioritário</span></div>
+      </div>
+      <a href="signup.html?plan=anual" class="plan-cta cta-anual">Assinar por R$797/ano →</a>
+      <div class="urgency"><div class="urgency-dot"></div><strong>147 assinantes</strong>&nbsp;ativos este mês</div>
+    </div>
+
+    <!-- VITALÍCIO -->
+    <div class="plan">
+      <div class="plan-badge badge-purple">⚡ LIMITADO</div>
+      <div class="plan-ico">♾</div>
+      <div class="plan-name vitalicio">Vitalício</div>
+      <div class="plan-tagline">Pague uma vez. Use para sempre.</div>
+      <div class="price-block">
+        <div class="price-row">
+          <span class="price-currency">R$</span>
+          <span class="price-amount" style="color:var(--purple)">1.997</span>
+          <span class="price-period" style="font-size:11px;padding-bottom:6px">único</span>
+        </div>
+        <div class="price-note">
+          <span class="price-strike">R$3.492 em 3 anos</span> ·
+          <span class="price-save">Economize R$1.495</span>
+        </div>
+      </div>
+      <div class="plan-features">
+        <div class="plan-feat"><span class="feat-ck purple">✓</span><span><strong>Tudo do plano anual</strong>, para sempre</span></div>
+        <div class="plan-feat"><span class="feat-ck purple">✓</span><span>Todos os módulos futuros sem custo</span></div>
+        <div class="plan-feat"><span class="feat-ck purple">✓</span><span>Grupo VIP de sinais no Telegram</span></div>
+        <div class="plan-feat"><span class="feat-ck purple">✓</span><span>1 sessão de consultoria 1h</span></div>
+        <div class="plan-feat"><span class="feat-ck purple">✓</span><span>Badge de Fundador exclusivo</span></div>
+        <div class="plan-feat"><span class="feat-ck purple">✓</span><span>Influência direta em novas features</span></div>
+      </div>
+      <a href="signup.html?plan=vitalicio" class="plan-cta cta-vitalicio">Garantir acesso vitalício →</a>
+      <div class="vagas-bar">
+        <div class="vagas-label"><span style="color:var(--purple);font-weight:600">73 de 100 vagas</span><span>restam 27</span></div>
+        <div class="vagas-track"><div class="vagas-fill"></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="guarantee">
+  <div class="guarantee-ico">🛡</div>
+  <div class="guarantee-text">
+    <strong>Garantia de 7 dias — sem perguntas</strong>
+    Se nos primeiros 7 dias você não ficar satisfeito, devolvemos 100% do seu dinheiro. Sem burocracia, sem questionamentos.
+  </div>
+</div>
+
+<div class="footer">
+  © 2025 CryptoSignal · Não é consultoria financeira. Faça sempre sua própria análise. ·
+  <a href="login.html" style="color:var(--t2);text-decoration:none;">Entrar</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoSignal — Entrar</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#06080f;--s1:#0c0f1a;--s2:#111824;--s3:#171e2e;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.16);
+  --t1:#e4e9f8;--t2:#6b7fa3;--t3:#2e3a52;
+  --green:#00d97e;--green2:rgba(0,217,126,0.1);--greenb:rgba(0,217,126,0.22);
+  --red:#ff4d6d;--red2:rgba(255,77,109,0.1);--redb:rgba(255,77,109,0.22);
+  --blue:#4f6ef7;--blue2:rgba(79,110,247,0.12);--blueb:rgba(79,110,247,0.25);
+  --mono:'JetBrains Mono',monospace;--ui:'Outfit',sans-serif;
+}
+body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.card{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:2rem;width:100%;max-width:400px;}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:1.75rem;text-decoration:none;}
+.logo-ico{width:36px;height:36px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;}
+.logo-name{font-size:18px;font-weight:800;color:var(--t1);}
+.logo-name span{color:#4f6ef7;}
+.title{font-size:20px;font-weight:700;margin-bottom:.375rem;}
+.subtitle{font-size:13px;color:var(--t2);margin-bottom:1.5rem;line-height:1.5;}
+.error{background:var(--red2);border:1px solid var(--redb);border-radius:7px;padding:.625rem .875rem;font-size:12px;color:var(--red);margin-bottom:.875rem;display:none;}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:.875rem;}
+.field label{font-size:12px;color:var(--t2);}
+.field input{background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px 12px;color:var(--t1);font-family:var(--ui);font-size:14px;outline:none;transition:border-color .2s;width:100%;}
+.field input:focus{border-color:#4f6ef7;}
+.btn{width:100%;padding:11px;background:#4f6ef7;border:none;border-radius:9px;color:#fff;font-family:var(--ui);font-size:14px;font-weight:700;cursor:pointer;margin-top:.25rem;transition:opacity .15s;}
+.btn:hover{opacity:.88;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.divider{text-align:center;font-size:12px;color:var(--t2);margin:1rem 0;}
+.toggle{text-align:center;font-size:13px;color:var(--t2);margin-top:1.25rem;}
+.toggle a{color:#4f6ef7;text-decoration:none;}
+.toggle a:hover{text-decoration:underline;}
+.back{text-align:center;margin-top:.75rem;}
+.back a{font-size:12px;color:var(--t2);text-decoration:none;}
+.back a:hover{color:var(--t1);}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="card">
+  <a href="index.html" class="logo">
+    <div class="logo-ico">◈</div>
+    <div class="logo-name">Crypto<span>Signal</span></div>
+  </a>
+  <div class="title">Bem-vindo de volta</div>
+  <div class="subtitle">Acesse sua conta para ver os sinais do mercado.</div>
+  <div class="error" id="error-msg">E-mail ou senha incorretos. Tente novamente.</div>
+  <div class="field">
+    <label>E-mail</label>
+    <input type="email" id="email" placeholder="seu@email.com" autocomplete="email">
+  </div>
+  <div class="field">
+    <label>Senha</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+  </div>
+  <button class="btn" id="btn-login" onclick="doLogin()">Entrar na conta →</button>
+  <div class="divider">— ou —</div>
+  <div class="toggle">Não tem conta? <a href="signup.html">Assinar por R$97/mês</a></div>
+  <div class="back"><a href="index.html">← Voltar para o início</a></div>
+</div>
+
+<script type="module">
+  // ── SUPABASE AUTH ──
+  // Substitua os valores abaixo pelos do seu projeto Supabase
+  // Settings → API → Project URL e anon public key
+  const SUPABASE_URL  = 'COLE_SUA_SUPABASE_URL_AQUI'
+  const SUPABASE_KEY  = 'COLE_SUA_SUPABASE_ANON_KEY_AQUI'
+
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+  window.doLogin = async function() {
+    const email    = document.getElementById('email').value.trim()
+    const password = document.getElementById('password').value
+    const btn      = document.getElementById('btn-login')
+    const errEl    = document.getElementById('error-msg')
+
+    if (!email || !password) {
+      errEl.textContent = 'Preencha e-mail e senha.'
+      errEl.style.display = 'block'
+      return
+    }
+
+    btn.disabled = true
+    btn.innerHTML = '<span class="spin"></span> Entrando...'
+    errEl.style.display = 'none'
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (error) {
+      errEl.textContent = 'E-mail ou senha incorretos. Tente novamente.'
+      errEl.style.display = 'block'
+      btn.disabled = false
+      btn.innerHTML = 'Entrar na conta →'
+      return
+    }
+
+    // Verificar se o plano está ativo
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('active, plan')
+      .eq('id', data.user.id)
+      .single()
+
+    if (profile?.active) {
+      window.location.href = 'dashboard.html'
+    } else {
+      errEl.textContent = 'Sua assinatura não está ativa. Verifique seu pagamento.'
+      errEl.style.display = 'block'
+      btn.disabled = false
+      btn.innerHTML = 'Entrar na conta →'
+    }
+  }
+</script>
+</body>
+</html>

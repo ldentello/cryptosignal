@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoSignal — Motor de Sinais</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#06080f;--s1:#0c0f1a;--s2:#111824;--s3:#171e2e;--s4:#1e2640;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.16);
+  --t1:#e4e9f8;--t2:#6b7fa3;--t3:#2e3a52;
+  --green:#00d97e;--green2:rgba(0,217,126,0.1);--greenb:rgba(0,217,126,0.22);
+  --red:#ff4d6d;--red2:rgba(255,77,109,0.1);--redb:rgba(255,77,109,0.22);
+  --amber:#f5a623;--amber2:rgba(245,166,35,0.1);--amberb:rgba(245,166,35,0.22);
+  --blue:#4f6ef7;--blue2:rgba(79,110,247,0.12);--blueb:rgba(79,110,247,0.25);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,0.1);--purpleb:rgba(167,139,250,0.22);
+  --mono:'JetBrains Mono',monospace;--ui:'Outfit',sans-serif;
+}
+body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--s1);border-bottom:1px solid var(--b2);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.brand-ico{width:30px;height:30px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;}
+.brand-name{font-size:14px;font-weight:800;color:var(--t1);}
+.brand-name span{color:#4f6ef7;}
+.top-right{display:flex;align-items:center;gap:10px;}
+.live-pill{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:var(--green);background:var(--green2);padding:3px 10px;border-radius:20px;border:1px solid var(--greenb);}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:p 1.5s infinite;}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
+#clock{font-size:11px;font-family:var(--mono);color:var(--t2);}
+
+/* SEARCH */
+.search-section{background:var(--s1);border-bottom:1px solid var(--b1);padding:.875rem 1.5rem;display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;max-width:400px;}
+.search-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:14px;}
+.search-inp{width:100%;background:var(--s2);border:1.5px solid var(--b2);border-radius:9px;padding:9px 12px 9px 36px;color:var(--t1);font-family:var(--ui);font-size:13px;outline:none;transition:border-color .2s;}
+.search-inp:focus{border-color:var(--blue);}
+.search-inp::placeholder{color:var(--t3);}
+.search-btn{padding:9px 18px;background:var(--blue);border:none;border-radius:9px;color:#fff;font-family:var(--ui);font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s;}
+.search-btn:hover{opacity:.85;}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;}
+.chip{font-size:11px;padding:4px 11px;border-radius:20px;border:1px solid var(--b2);background:var(--s2);color:var(--t2);cursor:pointer;transition:all .15s;font-family:var(--mono);}
+.chip:hover{border-color:var(--blue);color:var(--t1);}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:1fr 340px;min-height:calc(100vh - 110px);}
+.main{padding:1.25rem;display:flex;flex-direction:column;gap:1rem;border-right:1px solid var(--b1);}
+.right{padding:1.25rem;display:flex;flex-direction:column;gap:1rem;background:var(--s1);}
+
+/* VERDICT */
+.verdict{border-radius:14px;border:1.5px solid;padding:1.1rem 1.25rem;display:flex;align-items:center;gap:1rem;transition:all .4s;}
+.verdict.buy{background:var(--green2);border-color:var(--greenb);}
+.verdict.sell{background:var(--red2);border-color:var(--redb);}
+.verdict.hold{background:var(--amber2);border-color:var(--amberb);}
+.v-sig{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.verdict.buy .v-sig{background:rgba(0,217,126,.15);}
+.verdict.sell .v-sig{background:rgba(255,77,109,.15);}
+.verdict.hold .v-sig{background:rgba(245,166,35,.15);}
+.v-tag{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:2px;}
+.verdict.buy .v-tag{color:var(--green);}
+.verdict.sell .v-tag{color:var(--red);}
+.verdict.hold .v-tag{color:var(--amber);}
+.v-word{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;}
+.verdict.buy .v-word{color:var(--green);}
+.verdict.sell .v-word{color:var(--red);}
+.verdict.hold .v-word{color:var(--amber);}
+.v-desc{font-size:11px;color:var(--t2);margin-top:4px;line-height:1.5;}
+.v-scores{margin-left:auto;display:flex;flex-direction:column;gap:5px;min-width:130px;}
+.vs-row{display:flex;align-items:center;gap:7px;font-size:10px;}
+.vs-lbl{color:var(--t2);width:42px;text-align:right;}
+.vs-bar{flex:1;height:4px;background:var(--s4);border-radius:2px;}
+.vs-fill{height:100%;border-radius:2px;}
+.vs-num{font-family:var(--mono);font-size:10px;width:26px;}
+
+/* GROUP */
+.group-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);display:flex;align-items:center;gap:8px;}
+.group-label::after{content:'';flex:1;height:1px;background:var(--b2);}
+.group-tag{font-size:9px;padding:2px 8px;border-radius:10px;background:var(--s3);color:var(--t3);letter-spacing:0;text-transform:none;}
+
+/* CRITERIA */
+.crit-list{display:flex;flex-direction:column;gap:.5rem;}
+.crit{border-radius:10px;border:1px solid var(--b2);background:var(--s1);overflow:hidden;transition:border-color .25s;}
+.crit.c-buy{border-color:var(--greenb);}
+.crit.c-sell{border-color:var(--redb);}
+.crit-head{display:flex;align-items:center;gap:9px;padding:.65rem .9rem;cursor:pointer;}
+.crit-n{font-family:var(--mono);font-size:10px;color:var(--t3);width:16px;flex-shrink:0;}
+.crit-ico{font-size:15px;width:22px;text-align:center;flex-shrink:0;}
+.crit-info{flex:1;min-width:0;}
+.crit-name{font-size:12px;font-weight:600;}
+.crit-sub{font-size:10px;color:var(--t2);margin-top:1px;}
+.crit-val{font-family:var(--mono);font-size:11px;color:var(--t2);margin-right:6px;flex-shrink:0;}
+.cbadge{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;flex-shrink:0;}
+.cb-buy{background:var(--green2);color:var(--green);border:1px solid var(--greenb);}
+.cb-sell{background:var(--red2);color:var(--red);border:1px solid var(--redb);}
+.cb-neutral{background:var(--s3);color:var(--t2);border:1px solid var(--b2);}
+.crit-body{display:none;padding:.625rem .9rem .75rem;border-top:1px solid var(--b1);background:var(--s2);}
+.crit-body.open{display:block;}
+.detail-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;}
+.dr-label{color:var(--t2);}
+.dr-val{font-family:var(--mono);font-weight:500;}
+.logic{margin-top:.5rem;padding:.5rem .625rem;background:var(--s3);border-radius:6px;font-size:11px;color:var(--t2);line-height:1.6;border-left:2px solid var(--b3);}
+.weight-badge{font-size:9px;font-family:var(--mono);padding:1px 6px;border-radius:8px;background:var(--s3);color:var(--t3);}
+
+/* RIGHT PANEL */
+.section-lbl{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--t2);}
+.card{background:var(--s1);border:1px solid var(--b2);border-radius:10px;padding:.875rem;}
+
+/* FEAR & GREED */
+.fg-big{font-family:var(--mono);font-size:44px;font-weight:700;text-align:center;line-height:1;}
+.fg-cls{font-size:11px;color:var(--t2);text-align:center;margin-top:3px;}
+.fg-track{width:100%;height:7px;border-radius:4px;background:linear-gradient(90deg,#ff4d6d,#f5a623,#00d97e);margin-top:12px;position:relative;}
+.fg-thumb{position:absolute;top:-4px;width:15px;height:15px;border-radius:50%;background:var(--t1);border:2px solid var(--bg);transform:translateX(-50%);transition:left .6s;}
+.fg-ticks{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:4px;}
+
+/* PRICES */
+.prices-grid{display:grid;grid-template-columns:1fr 1fr;gap:.625rem;}
+.price-card{background:var(--s2);border-radius:8px;padding:.625rem .75rem;border:1px solid var(--b1);}
+.price-ticker{font-size:10px;color:var(--t2);}
+.price-val{font-family:var(--mono);font-size:16px;font-weight:700;margin-top:1px;}
+.price-chg{font-size:11px;margin-top:1px;font-family:var(--mono);}
+
+/* INPUTS */
+.input-group{display:flex;flex-direction:column;gap:.5rem;}
+.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.inp-field{display:flex;flex-direction:column;gap:3px;}
+.inp-label{font-size:10px;color:var(--t2);}
+.inp{background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:6px 9px;color:var(--t1);font-family:var(--mono);font-size:12px;outline:none;width:100%;}
+.inp:focus{border-color:var(--blue);}
+.recalc-btn{width:100%;padding:8px;background:var(--blue2);border:1px solid var(--blueb);border-radius:8px;color:var(--blue);font-family:var(--ui);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.recalc-btn:hover{background:var(--blue);color:#fff;}
+
+/* AI */
+.ai-box{background:var(--blue2);border:1px solid var(--blueb);border-radius:10px;padding:.875rem;}
+.ai-hd{display:flex;align-items:center;gap:8px;margin-bottom:.625rem;}
+.ai-ico{width:24px;height:24px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0;}
+.ai-title{font-size:12px;font-weight:600;}
+.ai-text{font-size:12px;line-height:1.7;color:var(--t1);}
+.spin{display:inline-block;width:11px;height:11px;border:2px solid var(--b3);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* EMPTY */
+.empty{text-align:center;padding:3rem 1rem;color:var(--t2);}
+.empty-ico{font-size:36px;margin-bottom:.75rem;}
+
+/* MISC */
+.up{color:var(--green);}
+.dn{color:var(--red);}
+.divider{height:1px;background:var(--b1);}
+
+/* ASSET CARD */
+.asset-card{background:var(--s1);border:1px solid var(--b2);border-radius:10px;padding:.875rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.asset-left{display:flex;align-items:center;gap:10px;}
+.asset-avatar{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--mono);}
+.asset-name-block{}
+.asset-name{font-size:14px;font-weight:700;}
+.asset-meta{font-size:11px;color:var(--t2);margin-top:1px;}
+.asset-right{text-align:right;}
+.asset-price{font-family:var(--mono);font-size:20px;font-weight:700;}
+.asset-changes{font-size:11px;font-family:var(--mono);margin-top:2px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="dashboard.html" class="brand">
+    <div class="brand-ico">◈</div>
+    <div class="brand-name">Crypto<span>Signal</span></div>
+  </a>
+  <div class="top-right">
+    <div class="live-pill"><div class="dot"></div>LIVE</div>
+    <div id="clock"></div>
+  </div>
+</div>
+
+<div class="search-section">
+  <div class="search-wrap">
+    <span class="search-ico">⌕</span>
+    <input class="search-inp" id="search-inp" type="text" placeholder="Analisar ativo... ex: Solana, ARB, PEPE" onkeydown="if(event.key==='Enter')runAnalysis()">
+  </div>
+  <button class="search-btn" onclick="runAnalysis()">Analisar →</button>
+  <div class="chips">
+    <span class="chip" onclick="quickLoad('bitcoin')">BTC</span>
+    <span class="chip" onclick="quickLoad('ethereum')">ETH</span>
+    <span class="chip" onclick="quickLoad('solana')">SOL</span>
+    <span class="chip" onclick="quickLoad('arbitrum')">ARB</span>
+    <span class="chip" onclick="quickLoad('sui')">SUI</span>
+    <span class="chip" onclick="quickLoad('aptos')">APT</span>
+    <span class="chip" onclick="quickLoad('pepe')">PEPE</span>
+    <span class="chip" onclick="quickLoad('chainlink')">LINK</span>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="main" id="main">
+    <div class="empty">
+      <div class="empty-ico">◎</div>
+      <div style="font-size:15px;font-weight:600;color:var(--t1);margin-bottom:.5rem;">10 critérios. 1 sinal.</div>
+      <div style="font-size:13px;line-height:1.7;">Busque qualquer ativo para ver análise completa<br>combinando sinais de mercado + tokenomics.</div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="section-lbl">Fear & Greed</div>
+    <div class="card">
+      <div class="fg-big" id="fg-val" style="color:var(--amber)">—</div>
+      <div class="fg-cls" id="fg-cls">carregando...</div>
+      <div class="fg-track"><div class="fg-thumb" id="fg-thumb" style="left:50%"></div></div>
+      <div class="fg-ticks"><span>Pânico</span><span>Neutro</span><span>Euforia</span></div>
+    </div>
+
+    <div class="section-lbl">mercado ao vivo</div>
+    <div class="prices-grid">
+      <div class="price-card"><div class="price-ticker">BTC/USD</div><div class="price-val" id="p-btc">—</div><div class="price-chg" id="c-btc">—</div></div>
+      <div class="price-card"><div class="price-ticker">ETH/USD</div><div class="price-val" id="p-eth">—</div><div class="price-chg" id="c-eth">—</div></div>
+      <div class="price-card"><div class="price-ticker">DOMINÂNCIA</div><div class="price-val" id="p-dom">—</div><div class="price-chg" style="font-size:9px;color:var(--t2)">BTC</div></div>
+      <div class="price-card"><div class="price-ticker">MCAP TOTAL</div><div class="price-val" id="p-mcap">—</div><div class="price-chg" id="c-mcap">—</div></div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-lbl">dados manuais</div>
+    <div class="input-group">
+      <div class="inp-row">
+        <div class="inp-field"><div class="inp-label">RSI (14)</div><input class="inp" id="i-rsi" type="number" value="52" min="0" max="100"></div>
+        <div class="inp-field"><div class="inp-label">Funding Rate %</div><input class="inp" id="i-fund" type="number" value="0.02" step="0.01"></div>
+      </div>
+      <div class="inp-row">
+        <div class="inp-field"><div class="inp-label">Supply in Profit %</div><input class="inp" id="i-supply" type="number" value="75" min="0" max="100"></div>
+        <div class="inp-field"><div class="inp-label">Custo Mineração $</div><input class="inp" id="i-mining" type="number" value="82000"></div>
+      </div>
+      <div class="inp-field">
+        <div class="inp-label">LTH Comportamento</div>
+        <select class="inp" id="i-lth">
+          <option value="accumulating">Acumulando (preço caindo)</option>
+          <option value="neutral" selected>Neutro</option>
+          <option value="distributing">Distribuindo</option>
+        </select>
+      </div>
+      <div class="inp-row">
+        <div class="inp-field"><div class="inp-label">Insiders % supply</div><input class="inp" id="i-insiders" type="number" value="35" min="0" max="100"></div>
+        <div class="inp-field"><div class="inp-label">Supply futuro (×)</div><input class="inp" id="i-dilution" type="number" value="1.8" step="0.1"></div>
+      </div>
+      <div class="inp-row">
+        <div class="inp-field"><div class="inp-label">Inflação anual %</div><input class="inp" id="i-inflation" type="number" value="3.0" step="0.5"></div>
+        <div class="inp-field"><div class="inp-label">Utilidades reais</div><input class="inp" id="i-utility" type="number" value="2" min="0" max="5"></div>
+      </div>
+      <button class="recalc-btn" onclick="recalc()">↻ Recalcular todos os sinais</button>
+    </div>
+
+    <div class="divider"></div>
+    <div class="ai-box">
+      <div class="ai-hd">
+        <div class="ai-ico">◈</div>
+        <div class="ai-title">Consultor IA</div>
+      </div>
+      <div class="ai-text" id="ai-text" style="color:var(--t2);font-size:11px;">Busque um ativo para receber análise completa.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── TOKENOMICS PRESETS ──
+const TOKENOMICS = {
+  bitcoin:   {insiders:0,   dilution:1.06, inflation:-0.2, utility:2},
+  ethereum:  {insiders:7,   dilution:1.01, inflation:-0.2, utility:5},
+  solana:    {insiders:38,  dilution:1.35, inflation:5.5,  utility:4},
+  arbitrum:  {insiders:44,  dilution:2.5,  inflation:2.0,  utility:2},
+  sui:       {insiders:34,  dilution:4.3,  inflation:5.0,  utility:3},
+  aptos:     {insiders:35,  dilution:1.9,  inflation:7.0,  utility:2},
+  optimism:  {insiders:36,  dilution:3.9,  inflation:2.5,  utility:2},
+  pepe:      {insiders:10,  dilution:1.0,  inflation:0,    utility:0},
+  chainlink: {insiders:35,  dilution:1.4,  inflation:2.0,  utility:4},
+};
+
+// ── PESOS DOS CRITÉRIOS ──
+const W = {
+  fg:2.0, rsi:1.5, mining:1.5, funding:1.0, lth:2.0, supply_profit:1.5,
+  insiders:2.0, dilution:2.0, inflation:1.5, utility:1.5
+};
+const TOTAL_W = Object.values(W).reduce((s,v)=>s+v,0);
+
+let fg=null, btcPrice=null;
+let openCrit=null;
+let currentAsset=null;
+
+// ── LIVE DATA ──
+async function fetchLive() {
+  try {
+    const r = await fetch('https://api.alternative.me/fng/?limit=1');
+    const d = await r.json();
+    fg = parseInt(d.data[0].value);
+    const cls = d.data[0].value_classification;
+    const col = fg<=25?'var(--red)':fg>=75?'var(--green)':'var(--amber)';
+    document.getElementById('fg-val').textContent = fg;
+    document.getElementById('fg-val').style.color = col;
+    document.getElementById('fg-cls').textContent = cls;
+    document.getElementById('fg-thumb').style.left = fg+'%';
+  } catch(e) {}
+
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true');
+    const d = await r.json();
+    btcPrice = d.bitcoin?.usd;
+    if (btcPrice) {
+      document.getElementById('p-btc').textContent = '$'+btcPrice.toLocaleString('en-US',{maximumFractionDigits:0});
+      const c = d.bitcoin.usd_24h_change;
+      document.getElementById('c-btc').textContent = (c>=0?'▲':'▼')+Math.abs(c).toFixed(2)+'%';
+      document.getElementById('c-btc').style.color = c>=0?'var(--green)':'var(--red)';
+    }
+    const ethPrice = d.ethereum?.usd;
+    if (ethPrice) {
+      document.getElementById('p-eth').textContent = '$'+ethPrice.toLocaleString('en-US',{maximumFractionDigits:0});
+      const c = d.ethereum.usd_24h_change;
+      document.getElementById('c-eth').textContent = (c>=0?'▲':'▼')+Math.abs(c).toFixed(2)+'%';
+      document.getElementById('c-eth').style.color = c>=0?'var(--green)':'var(--red)';
+    }
+  } catch(e) {}
+
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/global');
+    const d = await r.json();
+    document.getElementById('p-dom').textContent = d.data.market_cap_percentage.btc.toFixed(1)+'%';
+    const mc = d.data.total_market_cap.usd;
+    document.getElementById('p-mcap').textContent = '$'+(mc/1e12).toFixed(2)+'T';
+    const mcc = d.data.market_cap_change_percentage_24h_usd;
+    document.getElementById('c-mcap').textContent = (mcc>=0?'▲':'▼')+Math.abs(mcc).toFixed(2)+'%';
+    document.getElementById('c-mcap').style.color = mcc>=0?'var(--green)':'var(--red)';
+  } catch(e) {}
+}
+
+// ── QUICK LOAD ──
+async function quickLoad(id) {
+  document.getElementById('search-inp').value = id;
+  const tk = TOKENOMICS[id];
+  if (tk) {
+    document.getElementById('i-insiders').value = tk.insiders;
+    document.getElementById('i-dilution').value = tk.dilution;
+    document.getElementById('i-inflation').value = tk.inflation;
+    document.getElementById('i-utility').value = tk.utility;
+  }
+  await runAnalysis(id);
+}
+
+async function runAnalysis(directId) {
+  const query = (directId || document.getElementById('search-inp').value.trim()).toLowerCase();
+  if (!query) return;
+
+  document.getElementById('main').innerHTML = '<div class="empty"><span class="spin"></span><div style="margin-top:.75rem;font-size:13px;">Buscando dados de '+query+'...</div></div>';
+  document.getElementById('ai-text').innerHTML = '<span class="spin"></span>';
+
+  let coinData = null;
+  try {
+    let coinId = query;
+    const knownIds = Object.keys(TOKENOMICS);
+    if (!knownIds.includes(query)) {
+      const sr = await fetch(`https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(query)}`);
+      const sd = await sr.json();
+      if (sd.coins && sd.coins.length > 0) coinId = sd.coins[0].id;
+    }
+    const r = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false`);
+    if (r.ok) coinData = await r.json();
+  } catch(e) {}
+
+  const tk = TOKENOMICS[query] || {
+    insiders: parseFloat(document.getElementById('i-insiders').value)||35,
+    dilution:  parseFloat(document.getElementById('i-dilution').value)||2,
+    inflation: parseFloat(document.getElementById('i-inflation').value)||3,
+    utility:   parseInt(document.getElementById('i-utility').value)||2,
+  };
+
+  document.getElementById('i-insiders').value = tk.insiders;
+  document.getElementById('i-dilution').value  = tk.dilution;
+  document.getElementById('i-inflation').value = tk.inflation;
+  document.getElementById('i-utility').value   = tk.utility;
+
+  currentAsset = {coinData, tk, query};
+  render(coinData, tk);
+}
+
+function recalc() {
+  if (!currentAsset) return;
+  currentAsset.tk = {
+    insiders:  parseFloat(document.getElementById('i-insiders').value)||35,
+    dilution:  parseFloat(document.getElementById('i-dilution').value)||2,
+    inflation: parseFloat(document.getElementById('i-inflation').value)||3,
+    utility:   parseInt(document.getElementById('i-utility').value)||2,
+  };
+  render(currentAsset.coinData, currentAsset.tk);
+}
+
+function getManual() {
+  return {
+    rsi:     parseFloat(document.getElementById('i-rsi').value)||52,
+    funding: parseFloat(document.getElementById('i-fund').value)||0.02,
+    supply:  parseFloat(document.getElementById('i-supply').value)||75,
+    mining:  parseFloat(document.getElementById('i-mining').value)||82000,
+    lth:     document.getElementById('i-lth').value||'neutral',
+  };
+}
+
+// ── COMPUTE SIGNALS ──
+function computeSignals(coinData, tk) {
+  const m = getManual();
+  const price  = coinData?.market_data?.current_price?.usd || btcPrice || 50000;
+  const ch24   = coinData?.market_data?.price_change_percentage_24h || 0;
+  const ch30   = coinData?.market_data?.price_change_percentage_30d || 0;
+  const isBTC  = coinData?.symbol?.toUpperCase() === 'BTC';
+  const ath    = coinData?.market_data?.ath?.usd || price*3;
+
+  // 1. Fear & Greed
+  let s_fg = 'neutral';
+  if (fg !== null) { if (fg<=25) s_fg='buy'; else if (fg>=75) s_fg='sell'; }
+
+  // 2. RSI
+  let s_rsi = 'neutral';
+  if (m.rsi < 30) s_rsi='buy'; else if (m.rsi > 70) s_rsi='sell';
+
+  // 3. Mining / ATH distance
+  let s_mining = 'neutral';
+  if (isBTC && price < m.mining) s_mining='buy';
+  else if (!isBTC && ((price-ath)/ath*100) < -70) s_mining='buy';
+
+  // 4. Funding rate
+  let s_funding = 'neutral';
+  if (m.funding > 0.05) s_funding='sell'; else if (m.funding < -0.01) s_funding='buy';
+
+  // 5. LTH
+  let s_lth = 'neutral';
+  if (m.lth==='accumulating') s_lth='buy'; else if (m.lth==='distributing') s_lth='sell';
+
+  // 6. Supply in profit
+  let s_supply = 'neutral';
+  if (m.supply >= 90) s_supply='sell'; else if (m.supply <= 50) s_supply='buy';
+
+  // 7. Insiders
+  let s_insiders = 'neutral';
+  if (tk.insiders > 50) s_insiders='sell'; else if (tk.insiders < 20) s_insiders='buy';
+
+  // 8. Dilution
+  let s_dilution = 'neutral';
+  if (tk.dilution > 3) s_dilution='sell'; else if (tk.dilution < 1.2) s_dilution='buy';
+
+  // 9. Inflation
+  let s_inflation = 'neutral';
+  if (tk.inflation > 7) s_inflation='sell'; else if (tk.inflation <= 0) s_inflation='buy';
+
+  // 10. Utility
+  let s_utility = 'neutral';
+  if (tk.utility >= 3) s_utility='buy'; else if (tk.utility === 0) s_utility='sell';
+
+  const athDist = ((price-ath)/ath*100).toFixed(1);
+
+  return {
+    fg:           { s:s_fg,       v:fg!==null?String(fg):'—',           note:`${fg??'—'} — ${fg<=25?'Medo Extremo':fg<=45?'Medo':fg<=55?'Neutro':fg<=75?'Ganância':'Ganância Extrema'}` },
+    rsi:          { s:s_rsi,      v:String(m.rsi),                        note:`RSI ${m.rsi} — ${m.rsi<30?'Sobrevendido':m.rsi>70?'Sobrecomprado':'Neutro (30–70)'}` },
+    mining:       { s:s_mining,   v:isBTC?'$'+m.mining.toLocaleString():athDist+'% ATH', note:isBTC?`Custo: $${m.mining.toLocaleString()} · Preço: $${price.toLocaleString('en-US',{maximumFractionDigits:0})}`:`Distância do ATH: ${athDist}%` },
+    funding:      { s:s_funding,  v:(m.funding>0?'+':'')+m.funding.toFixed(3)+'%', note:`Funding ${m.funding>0.05?'extremamente positivo = venda':m.funding<-0.01?'negativo = compra':'neutro'}` },
+    lth:          { s:s_lth,      v:m.lth==='accumulating'?'Acumulando':m.lth==='distributing'?'Distribuindo':'Neutro', note:'LTH = wallets sem mover há +155 dias' },
+    supply_profit:{ s:s_supply,   v:m.supply+'%',                         note:`${m.supply}% do supply em lucro — ${m.supply>=90?'zona de topo':m.supply<=50?'zona de fundo':'moderado'}` },
+    insiders:     { s:s_insiders, v:tk.insiders+'%',                      note:`${tk.insiders}% com equipe+VCs — ${tk.insiders>50?'concentração perigosa':tk.insiders<20?'saudável':'moderado'}` },
+    dilution:     { s:s_dilution, v:tk.dilution+'×',                      note:`Supply vai ${tk.dilution}× — ${tk.dilution>3?'diluição severa':tk.dilution<1.2?'supply estável':'diluição moderada'}` },
+    inflation:    { s:s_inflation,v:(tk.inflation>0?'+':'')+tk.inflation+'%/ano', note:`${tk.inflation<=0?'Deflacionário':tk.inflation>7?'Alta inflação = pressão vendedora':'Inflação moderada'}` },
+    utility:      { s:s_utility,  v:tk.utility+'/5',                      note:`${tk.utility} utilidade(s) real(is) — ${tk.utility>=3?'demanda orgânica sólida':tk.utility===0?'100% especulativo':'utilidade limitada'}` },
+  };
+}
+
+function computeVerdict(sigs) {
+  let buyW=0, sellW=0;
+  Object.keys(W).forEach(k => {
+    if (sigs[k].s==='buy')  buyW  += W[k];
+    if (sigs[k].s==='sell') sellW += W[k];
+  });
+  const buyPct  = Math.round(buyW/TOTAL_W*100);
+  const sellPct = Math.round(sellW/TOTAL_W*100);
+  const holdPct = Math.max(0, 100-buyPct-sellPct);
+  let v = 'hold';
+  if (buyW > sellW && buyW/TOTAL_W > 0.25)  v='buy';
+  else if (sellW > buyW && sellW/TOTAL_W > 0.25) v='sell';
+  return {v, buyPct, sellPct, holdPct};
+}
+
+// ── RENDER ──
+function render(coinData, tk) {
+  const sigs    = computeSignals(coinData, tk);
+  const verdict = computeVerdict(sigs);
+  const price   = coinData?.market_data?.current_price?.usd;
+  const ch24    = coinData?.market_data?.price_change_percentage_24h;
+  const ch7     = coinData?.market_data?.price_change_percentage_7d;
+  const ch30    = coinData?.market_data?.price_change_percentage_30d;
+  const ath     = coinData?.market_data?.ath?.usd;
+  const name    = coinData?.name  || document.getElementById('search-inp').value || 'Ativo';
+  const ticker  = coinData?.symbol?.toUpperCase() || '—';
+  const rank    = coinData?.market_cap_rank;
+  const mcap    = coinData?.market_data?.market_cap?.usd;
+
+  const fmtPrice = v => {
+    if (!v && v!==0) return '—';
+    if (Math.abs(v)>=1000) return '$'+v.toLocaleString('en-US',{maximumFractionDigits:0});
+    if (Math.abs(v)>=1)    return '$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return '$'+v.toFixed(6);
+  };
+
+  const athDist = price&&ath ? ((price-ath)/ath*100).toFixed(1) : null;
+  const colors  = ['#f59e0b','#818cf8','#00d97e','#4f6ef7','#f97316','#ff4d6d','#06b6d4','#a855f7'];
+  const color   = colors[name.charCodeAt(0)%colors.length];
+
+  const vCfg = {
+    buy:  {cls:'buy',  ico:'▲', tag:'Sinal de Compra — 10 critérios',    word:'COMPRA',   desc:'Confluência bullish entre sinais de mercado e tokenomics saudável.'},
+    sell: {cls:'sell', ico:'▼', tag:'Sinal de Venda — 10 critérios',     word:'VENDA',    desc:'Múltiplos critérios de mercado e tokenomics apontam risco elevado.'},
+    hold: {cls:'hold', ico:'◆', tag:'Aguardar — sinais mistos',           word:'AGUARDAR', desc:'Não há confluência clara. Mantenha posição e aguarde mais sinais.'},
+  };
+  const vc = vCfg[verdict.v];
+
+  // Definição dos critérios
+  const CRIT_DEF = [
+    {k:'fg',            n:'01',ico:'😨',name:'Fear & Greed Index',    sub:'Pânico=compra · Euforia=venda',             w:W.fg,            group:'market',
+     logic:'Quando o mercado entra em pânico extremo (≤25), há vendedores irracionais — oportunidade de compra. Ganância extrema (≥75) sinaliza topo iminente.'},
+    {k:'rsi',           n:'02',ico:'📉',name:'RSI (14)',               sub:'<30 sobrevendido · >70 sobrecomprado',       w:W.rsi,           group:'market',
+     logic:'RSI abaixo de 30 indica ativo sobrevendido — potencial reversão de alta. Acima de 70 indica sobrecomprado — potencial correção iminente.'},
+    {k:'mining',        n:'03',ico:'⛏', name:'Custo de Mineração',    sub:'BTC abaixo do custo = suporte histórico',   w:W.mining,        group:'market',
+     logic:'Para BTC: abaixo do custo de produção (~$82k), mineradores capitulam. Para altcoins: distância do ATH como proxy de fundo histórico.'},
+    {k:'funding',       n:'04',ico:'📈',name:'Funding Rates',          sub:'Funding >0.05% = longs excessivos = venda', w:W.funding,       group:'market',
+     logic:'Funding rate muito positivo indica excesso de alavancagem comprada. Esse desequilíbrio costuma preceder liquidações em cascata.'},
+    {k:'lth',           n:'05',ico:'🐋',name:'Long Term Holders',      sub:'Acumulando com queda = sinal mais bullish', w:W.lth,           group:'market',
+     logic:'LTH são os "smart money" — wallets sem mover moedas há +155 dias. Quando acumulam durante quedas, é sinal de alta convicção bullish.'},
+    {k:'supply_profit', n:'06',ico:'💰',name:'Supply in Profit',       sub:'~100% em lucro = demanda esgotada = venda', w:W.supply_profit, group:'market',
+     logic:'Quando quase 100% do supply está em lucro, não há compradores novos. Qualquer realização colapsa a demanda marginal.'},
+    {k:'insiders',      n:'07',ico:'👥',name:'Concentração Insiders',  sub:'>50% com equipe+VCs = risco extremo',       w:W.insiders,      group:'tokenomics',
+     logic:'Mais de 50% do supply com insiders = risco de coordenação de vendas massivas. Você se torna exit liquidity.'},
+    {k:'dilution',      n:'08',ico:'📦',name:'Desbloqueio / Diluição', sub:'Supply multiplica = pressão vendedora',     w:W.dilution,      group:'tokenomics',
+     logic:'Se o supply vai triplicar nos próximos 12 meses, a demanda precisa triplicar só para manter o preço. Isso raramente acontece.'},
+    {k:'inflation',     n:'09',ico:'🔄',name:'Inflação vs Deflação',   sub:'Alta emissão = holders diluídos',           w:W.inflation,     group:'tokenomics',
+     logic:'Token que emite muitos tokens por ano dilui os holders constantemente. Deflacionários ou com burn têm escassez crescente.'},
+    {k:'utility',       n:'10',ico:'⚙', name:'Utilidade do Token',    sub:'Sem uso real = depende só de hype',         w:W.utility,       group:'tokenomics',
+     logic:'Token sem utilidade real (fees, staking, governança, DeFi) tem demanda 100% especulativa. Hype acaba — utilidade real cria demanda constante.'},
+  ];
+
+  const renderCrit = c => {
+    const sig     = sigs[c.k];
+    const badgeCls = sig.s==='buy'?'cb-buy':sig.s==='sell'?'cb-sell':'cb-neutral';
+    const badgeTxt = sig.s==='buy'?'COMPRA':sig.s==='sell'?'VENDA':'NEUTRO';
+    const critCls  = sig.s==='buy'?'c-buy':sig.s==='sell'?'c-sell':'';
+    const isOpen   = openCrit===c.k;
+    return `
+    <div class="crit ${critCls}" id="crit-${c.k}">
+      <div class="crit-head" onclick="toggleCrit('${c.k}')">
+        <span class="crit-n">${c.n}</span>
+        <span class="crit-ico">${c.ico}</span>
+        <div class="crit-info">
+          <div class="crit-name">${c.name} <span class="weight-badge">×${c.w}</span></div>
+          <div class="crit-sub">${c.sub}</div>
+        </div>
+        <span class="crit-val">${sig.v}</span>
+        <span class="cbadge ${badgeCls}">${badgeTxt}</span>
+      </div>
+      <div class="crit-body ${isOpen?'open':''}" id="body-${c.k}">
+        <div class="detail-row"><span class="dr-label">Valor atual</span><span class="dr-val">${sig.v}</span></div>
+        <div class="detail-row"><span class="dr-label">Sinal gerado</span><span class="dr-val" style="color:${sig.s==='buy'?'var(--green)':sig.s==='sell'?'var(--red)':'var(--t2)'}">${badgeTxt}</span></div>
+        <div class="detail-row"><span class="dr-label">Peso no veredito</span><span class="dr-val">${c.w} de ${TOTAL_W} (${Math.round(c.w/TOTAL_W*100)}%)</span></div>
+        <div class="logic">${sig.note}<br><br>${c.logic}</div>
+      </div>
+    </div>`;
+  };
+
+  const marketCrits   = CRIT_DEF.filter(c=>c.group==='market');
+  const tokenomicsCrits = CRIT_DEF.filter(c=>c.group==='tokenomics');
+  const marketW       = marketCrits.reduce((s,c)=>s+c.w,0);
+  const tokenW        = tokenomicsCrits.reduce((s,c)=>s+c.w,0);
+
+  document.getElementById('main').innerHTML = `
+    ${coinData ? `
+    <div class="asset-card">
+      <div class="asset-left">
+        <div class="asset-avatar" style="background:${color}22;color:${color}">${ticker.slice(0,3)}</div>
+        <div class="asset-name-block">
+          <div class="asset-name">${name} ${rank?`<span style="font-size:11px;color:var(--t2);font-weight:400">#${rank}</span>`:''}</div>
+          <div class="asset-meta">${ticker}/USD ${mcap?'· MCap $'+(mcap/1e9).toFixed(1)+'B':''}</div>
+        </div>
+      </div>
+      <div class="asset-right">
+        <div class="asset-price">${fmtPrice(price)}</div>
+        <div class="asset-changes">
+          <span class="${ch24>=0?'up':'dn'}">${ch24!=null?(ch24>=0?'▲':'▼')+Math.abs(ch24).toFixed(2)+'% 24h':''}</span>
+          ${ch7!=null?`<span style="color:var(--t2)"> · </span><span class="${ch7>=0?'up':'dn'}">${ch7>=0?'+':''}${ch7.toFixed(1)}% 7d</span>`:''}
+          ${athDist?`<span style="color:var(--t2)"> · </span><span style="color:var(--t2);font-size:10px">${athDist}% ATH</span>`:''}
+        </div>
+      </div>
+    </div>` : ''}
+
+    <div class="verdict ${vc.cls}">
+      <div class="v-sig">${vc.ico}</div>
+      <div>
+        <div class="v-tag">${vc.tag}</div>
+        <div class="v-word">${vc.word}</div>
+        <div class="v-desc">${vc.desc}</div>
+      </div>
+      <div class="v-scores">
+        <div class="vs-row"><span class="vs-lbl" style="color:var(--green)">COMPRA</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.buyPct}%;background:var(--green)"></div></div><span class="vs-num up">${verdict.buyPct}%</span></div>
+        <div class="vs-row"><span class="vs-lbl" style="color:var(--amber)">NEUTRO</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.holdPct}%;background:var(--amber)"></div></div><span class="vs-num" style="color:var(--amber)">${verdict.holdPct}%</span></div>
+        <div class="vs-row"><span class="vs-lbl" style="color:var(--red)">VENDA</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.sellPct}%;background:var(--red)"></div></div><span class="vs-num dn">${verdict.sellPct}%</span></div>
+      </div>
+    </div>
+
+    <div class="group-label">sinais de mercado <span class="group-tag">critérios 01–06 · peso ${marketW} de ${TOTAL_W}</span></div>
+    <div class="crit-list">${marketCrits.map(renderCrit).join('')}</div>
+
+    <div class="group-label">tokenomics <span class="group-tag">critérios 07–10 · peso ${tokenW} de ${TOTAL_W}</span></div>
+    <div class="crit-list">${tokenomicsCrits.map(renderCrit).join('')}</div>
+  `;
+
+  runAI(sigs, verdict, name, ticker, price, ch24);
+}
+
+function toggleCrit(k) {
+  openCrit = openCrit===k ? null : k;
+  document.querySelectorAll('.crit-body').forEach(b=>b.classList.remove('open'));
+  if (openCrit) {
+    const el = document.getElementById('body-'+openCrit);
+    if (el) el.classList.add('open');
+  }
+}
+
+// ── AI ──
+async function runAI(sigs, verdict, name, ticker, price, ch24) {
+  const el = document.getElementById('ai-text');
+  el.innerHTML = '<span class="spin"></span> Analisando...';
+
+  const sigSummary = Object.entries(sigs).map(([k,v])=>`${k}:${v.s}(${v.v})`).join(' · ');
+  const prompt = `Você é um analista profissional de crypto. Analise ${name} (${ticker}) em português, máximo 5 linhas diretas e objetivas.
+
+10 Critérios: ${sigSummary}
+Veredito: ${verdict.v.toUpperCase()} (compra ${verdict.buyPct}% · venda ${verdict.sellPct}%)
+Preço atual: ${price?'$'+price.toLocaleString('en-US',{maximumFractionDigits:2}):'N/A'} · 24h: ${ch24?.toFixed(2)||'—'}%
+
+Responda com: (1) veredito justificado, (2) critério mais relevante agora, (3) maior risco identificado, (4) ação recomendada. Sem disclaimers genéricos.`;
+
+  try {
+    // Em produção: chame /api/claude em vez da Anthropic diretamente
+    const r = await fetch('/api/claude', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        system: 'Você é um analista profissional de criptoativos. Responda sempre em português, de forma direta e sem rodeios.',
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    const d = await r.json();
+    const txt = d.content?.map(b=>b.text||'').join('') || 'Sem resposta.';
+    el.innerHTML = txt.replace(/\n/g,'<br>');
+  } catch(e) {
+    el.innerHTML = '<span style="color:var(--red)">Erro ao conectar com a IA. Verifique se /api/claude está configurado no Vercel.</span>';
+  }
+}
+
+// ── CLOCK + INIT ──
+setInterval(() => {
+  const el = document.getElementById('clock');
+  if (el) el.textContent = new Date().toLocaleTimeString('pt-BR');
+}, 1000);
+
+fetchLive();
+setInterval(fetchLive, 60000);
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoSignal — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#06080f;--s1:#0c0f1a;--s2:#111824;--s3:#171e2e;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.16);
+  --t1:#e4e9f8;--t2:#6b7fa3;--t3:#2e3a52;
+  --green:#00d97e;--green2:rgba(0,217,126,0.1);--greenb:rgba(0,217,126,0.22);
+  --red:#ff4d6d;--red2:rgba(255,77,109,0.1);--redb:rgba(255,77,109,0.22);
+  --amber:#f5a623;--amber2:rgba(245,166,35,0.1);--amberb:rgba(245,166,35,0.22);
+  --blue:#4f6ef7;--blue2:rgba(79,110,247,0.12);--blueb:rgba(79,110,247,0.25);
+  --gold:#f0c040;--gold2:rgba(240,192,64,0.09);--goldb:rgba(240,192,64,0.22);
+  --mono:'JetBrains Mono',monospace;--ui:'Outfit',sans-serif;
+}
+body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh;}
+.topbar{background:var(--s1);border-bottom:1px solid var(--b2);padding:.875rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.brand-ico{width:30px;height:30px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;}
+.brand-name{font-size:14px;font-weight:800;color:var(--t1);}
+.brand-name span{color:#4f6ef7;}
+.top-right{display:flex;align-items:center;gap:10px;}
+.plan-chip{font-size:10px;font-family:var(--mono);font-weight:700;padding:3px 9px;border-radius:10px;background:var(--gold2);color:var(--gold);border:1px solid var(--goldb);}
+.user-chip{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--b2);border-radius:20px;padding:4px 11px 4px 5px;}
+.user-av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#4f6ef7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
+.user-nm{font-size:12px;font-weight:500;}
+.logout-btn{font-size:12px;color:var(--t2);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;}
+.logout-btn:hover{color:var(--red);}
+.live-pill{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:var(--green);background:var(--green2);padding:3px 10px;border-radius:20px;border:1px solid var(--greenb);}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:p 1.5s infinite;}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
+
+.body{padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;max-width:1100px;margin:0 auto;}
+.welcome{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
+.welcome h2{font-size:20px;font-weight:700;letter-spacing:-.01em;}
+.welcome p{font-size:13px;color:var(--t2);margin-top:3px;}
+.clock{font-size:11px;font-family:var(--mono);color:var(--t2);}
+
+/* TICKER */
+.ticker{display:flex;gap:1rem;overflow-x:auto;padding:.75rem 1.25rem;background:var(--s1);border:1px solid var(--b1);border-radius:10px;scrollbar-width:none;}
+.ticker::-webkit-scrollbar{display:none;}
+.tick-item{display:flex;align-items:center;gap:.625rem;flex-shrink:0;}
+.tick-name{font-size:11px;color:var(--t2);font-family:var(--mono);}
+.tick-price{font-size:13px;font-weight:600;font-family:var(--mono);}
+.tick-chg{font-size:11px;font-family:var(--mono);}
+.tick-div{width:1px;height:24px;background:var(--b2);}
+
+/* SIGNAL BAR */
+.signal-bar{background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:1.1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.sb-left{display:flex;align-items:center;gap:.875rem;}
+.sb-label{font-size:10px;color:var(--t2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px;}
+.sb-verdict{font-family:var(--mono);font-size:22px;font-weight:700;}
+.sb-scores{display:flex;gap:1rem;}
+.sb-score{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.sb-score-val{font-family:var(--mono);font-size:16px;font-weight:700;}
+.sb-score-lbl{font-size:9px;color:var(--t2);}
+.sb-cta{padding:8px 18px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--ui);font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;}
+
+/* MODULES */
+.modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;}
+.module{background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:1.1rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;text-decoration:none;display:block;}
+.module:hover{border-color:var(--b3);transform:translateY(-1px);}
+.module::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.m-blue::before{background:#4f6ef7;}
+.m-green::before{background:var(--green);}
+.m-gold::before{background:var(--gold);}
+.m-purple::before{background:#a78bfa;}
+.m-cyan::before{background:#06b6d4;}
+.m-red::before{background:var(--red);}
+.module-ico{font-size:24px;margin-bottom:.625rem;}
+.module-name{font-size:13px;font-weight:600;margin-bottom:3px;color:var(--t1);}
+.module-desc{font-size:11px;color:var(--t2);line-height:1.5;}
+.module-tag{display:inline-block;margin-top:.5rem;font-size:9px;font-family:var(--mono);padding:2px 8px;border-radius:10px;background:var(--s3);color:var(--t2);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="dashboard.html" class="brand">
+    <div class="brand-ico">◈</div>
+    <div class="brand-name">Crypto<span>Signal</span></div>
+  </a>
+  <div class="top-right">
+    <div class="live-pill"><div class="dot"></div>LIVE</div>
+    <div class="plan-chip">✦ PRO</div>
+    <div class="user-chip">
+      <div class="user-av" id="user-av">?</div>
+      <span class="user-nm" id="user-nm">—</span>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Sair</button>
+  </div>
+</div>
+
+<div class="body">
+  <div class="welcome">
+    <div>
+      <h2 id="welcome-msg">Olá! 👋</h2>
+      <p id="welcome-sub">Aqui estão os sinais do mercado agora.</p>
+    </div>
+    <div class="clock" id="clock"></div>
+  </div>
+
+  <div class="ticker" id="ticker">
+    <div style="font-size:12px;color:var(--t2)">Carregando preços...</div>
+  </div>
+
+  <div class="signal-bar">
+    <div class="sb-left">
+      <div>
+        <div class="sb-label">Sinal do mercado agora</div>
+        <div class="sb-verdict" id="sb-verdict" style="color:var(--amber)">AGUARDAR</div>
+      </div>
+      <div class="sb-scores">
+        <div class="sb-score"><div class="sb-score-val up" id="sb-buy">—</div><div class="sb-score-lbl">COMPRA</div></div>
+        <div class="sb-score"><div class="sb-score-val" style="color:var(--amber)" id="sb-hold">—</div><div class="sb-score-lbl">NEUTRO</div></div>
+        <div class="sb-score"><div class="sb-score-val dn" id="sb-sell">—</div><div class="sb-score-lbl">VENDA</div></div>
+      </div>
+    </div>
+    <a href="signals.html" class="sb-cta">Ver análise completa →</a>
+  </div>
+
+  <div class="modules-grid">
+    <a href="signals.html" class="module m-blue">
+      <div class="module-ico">◎</div>
+      <div class="module-name">Motor de Sinais</div>
+      <div class="module-desc">10 critérios analisados em tempo real para qualquer ativo. Sinal direto: comprar, vender ou aguardar.</div>
+      <div class="module-tag">live · qualquer ativo</div>
+    </a>
+    <a href="portfolio.html" class="module m-green">
+      <div class="module-ico">◱</div>
+      <div class="module-name">Minha Carteira</div>
+      <div class="module-desc">P&L em tempo real, score de risco por ativo, alocação e recomendações para sua carteira.</div>
+      <div class="module-tag">P&L · risco · alocação</div>
+    </a>
+    <a href="tokenomics.html" class="module m-purple">
+      <div class="module-ico">◎</div>
+      <div class="module-name">Tokenomics</div>
+      <div class="module-desc">Analise distribuição de insiders, desbloqueios, inflação e utilidade. Evite ser exit liquidity.</div>
+      <div class="module-tag">insiders · unlock · utilidade</div>
+    </a>
+    <a href="signals.html" class="module m-cyan">
+      <div class="module-ico">📈</div>
+      <div class="module-name">On-Chain</div>
+      <div class="module-desc">MVRV, SOPR, LTH Supply, Supply in Profit e mais métricas avançadas de blockchain.</div>
+      <div class="module-tag">Glassnode · CryptoQuant</div>
+    </a>
+    <a href="support.html" class="module m-gold">
+      <div class="module-ico">◈</div>
+      <div class="module-name">Cipher — Suporte</div>
+      <div class="module-desc">Tire dúvidas sobre os sinais, plataforma e estratégias com nosso especialista disponível 24/7.</div>
+      <div class="module-tag">24/7 · respostas imediatas</div>
+    </a>
+    <div class="module m-red" onclick="showAccount()">
+      <div class="module-ico">◉</div>
+      <div class="module-name">Minha Conta</div>
+      <div class="module-desc">Gerencie sua assinatura, dados de acesso e preferências do painel CryptoSignal.</div>
+      <div class="module-tag" id="plan-tag">PRO · ativo</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  const SUPABASE_URL = 'COLE_SUA_SUPABASE_URL_AQUI'
+  const SUPABASE_KEY = 'COLE_SUA_SUPABASE_ANON_KEY_AQUI'
+
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+  // Verificar se está logado e com plano ativo
+  async function checkAuth() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = 'login.html'; return }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('active, plan, name')
+      .eq('id', session.user.id)
+      .single()
+
+    if (!profile?.active) { window.location.href = 'login.html'; return }
+
+    const name = profile.name || session.user.email.split('@')[0]
+    document.getElementById('user-av').textContent  = name.charAt(0).toUpperCase()
+    document.getElementById('user-nm').textContent  = name.split(' ')[0]
+    document.getElementById('welcome-msg').textContent = `Olá, ${name.split(' ')[0]}! 👋`
+    document.getElementById('plan-tag').textContent = (profile.plan || 'pro').toUpperCase() + ' · ativo'
+  }
+
+  window.doLogout = async function() {
+    await supabase.auth.signOut()
+    window.location.href = 'index.html'
+  }
+
+  window.showAccount = function() {
+    alert('Gerencie sua assinatura em: dashboard.stripe.com\n\nSua assinatura está ativa. Para cancelar ou atualizar o método de pagamento, acesse o portal do Stripe.')
+  }
+
+  // Ticker
+  async function fetchTicker() {
+    try {
+      const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin&vs_currencies=usd&include_24hr_change=true')
+      const d = await r.json()
+      const items = [{id:'bitcoin',t:'BTC'},{id:'ethereum',t:'ETH'},{id:'solana',t:'SOL'},{id:'binancecoin',t:'BNB'}]
+      const html = items.map((it,i) => {
+        const p = d[it.id]; if (!p) return ''
+        const c = p.usd_24h_change
+        const col = c>=0?'var(--green)':'var(--red)'
+        return `${i>0?'<div class="tick-div"></div>':''}
+          <div class="tick-item">
+            <span class="tick-name">${it.t}</span>
+            <span class="tick-price">$${p.usd.toLocaleString('en-US',{maximumFractionDigits:p.usd<10?4:0})}</span>
+            <span class="tick-chg" style="color:${col}">${c>=0?'▲':'▼'}${Math.abs(c).toFixed(2)}%</span>
+          </div>`
+      }).join('')
+      document.getElementById('ticker').innerHTML = html
+    } catch(e) {}
+  }
+
+  // Fear & Greed para signal bar
+  async function fetchSignal() {
+    try {
+      const r = await fetch('https://api.alternative.me/fng/?limit=1')
+      const d = await r.json()
+      const v = parseInt(d.data[0].value)
+      let verdict, col, buy, hold, sell
+      if (v<=30)      { verdict='COMPRA';   col='var(--green)'; buy=62; hold=25; sell=13 }
+      else if (v>=72) { verdict='VENDA';    col='var(--red)';   buy=15; hold=22; sell=63 }
+      else            { verdict='AGUARDAR'; col='var(--amber)'; buy=30; hold=45; sell=25 }
+      document.getElementById('sb-verdict').textContent = verdict
+      document.getElementById('sb-verdict').style.color = col
+      document.getElementById('sb-buy').textContent  = buy+'%'
+      document.getElementById('sb-hold').textContent = hold+'%'
+      document.getElementById('sb-sell').textContent = sell+'%'
+    } catch(e) {}
+  }
+
+  // Clock
+  setInterval(() => {
+    const el = document.getElementById('clock')
+    if (el) el.textContent = new Date().toLocaleString('pt-BR')
+  }, 1000)
+
+  checkAuth()
+  fetchTicker()
+  fetchSignal()
+  setInterval(fetchTicker, 60000)
+  setInterval(fetchSignal, 300000)
+</script>
+</body>
+</html>
