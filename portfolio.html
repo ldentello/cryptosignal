@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoSignal — Minha Carteira</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#06080f;--s1:#0c0f1a;--s2:#111824;--s3:#171e2e;--s4:#1e2640;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.16);
+  --t1:#e4e9f8;--t2:#6b7fa3;--t3:#2e3a52;
+  --green:#00d97e;--green2:rgba(0,217,126,0.1);--greenb:rgba(0,217,126,0.22);
+  --red:#ff4d6d;--red2:rgba(255,77,109,0.1);--redb:rgba(255,77,109,0.22);
+  --amber:#f5a623;--amber2:rgba(245,166,35,0.1);--amberb:rgba(245,166,35,0.22);
+  --blue:#4f6ef7;--blue2:rgba(79,110,247,0.12);--blueb:rgba(79,110,247,0.25);
+  --mono:'JetBrains Mono',monospace;--ui:'Outfit',sans-serif;
+}
+body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh;}
+
+.topbar{background:var(--s1);border-bottom:1px solid var(--b2);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.brand-ico{width:30px;height:30px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;}
+.brand-name{font-size:14px;font-weight:800;color:var(--t1);}
+.brand-name span{color:#4f6ef7;}
+.top-right{display:flex;align-items:center;gap:10px;}
+.live-pill{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:var(--green);background:var(--green2);padding:3px 10px;border-radius:20px;border:1px solid var(--greenb);}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:p 1.5s infinite;}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
+.add-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--blue);border:none;border-radius:7px;color:#fff;font-family:var(--ui);font-size:12px;font-weight:600;cursor:pointer;}
+.back-btn{font-size:12px;color:var(--t2);text-decoration:none;padding:6px 12px;border:1px solid var(--b2);border-radius:7px;background:var(--s2);}
+
+.layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 53px);}
+.main{padding:1.25rem;display:flex;flex-direction:column;gap:1rem;border-right:1px solid var(--b1);}
+.sidebar{padding:1.25rem;display:flex;flex-direction:column;gap:1rem;background:var(--s1);}
+
+/* SUMMARY */
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;}
+.scard{background:var(--s1);border:1px solid var(--b2);border-radius:10px;padding:.875rem 1rem;position:relative;overflow:hidden;}
+.scard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.scard.blue::after{background:linear-gradient(90deg,var(--blue),transparent);}
+.scard.green::after{background:linear-gradient(90deg,var(--green),transparent);}
+.scard.amber::after{background:linear-gradient(90deg,var(--amber),transparent);}
+.scard.red::after{background:linear-gradient(90deg,var(--red),transparent);}
+.scard-label{font-size:10px;color:var(--t2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;}
+.scard-val{font-family:var(--mono);font-size:20px;font-weight:700;line-height:1;}
+.scard-sub{font-size:11px;margin-top:3px;}
+
+/* TABLE */
+.table-wrap{background:var(--s1);border:1px solid var(--b2);border-radius:12px;overflow:hidden;}
+.table-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 80px 70px;padding:.6rem 1rem;border-bottom:1px solid var(--b2);background:var(--s2);}
+.th{font-size:10px;color:var(--t2);letter-spacing:.07em;text-transform:uppercase;}
+.th.r{text-align:right;}
+.asset-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 80px 70px;padding:.75rem 1rem;border-bottom:1px solid var(--b1);align-items:center;transition:background .15s;}
+.asset-row:last-child{border-bottom:none;}
+.asset-row:hover{background:var(--s2);}
+.asset-cell{display:flex;align-items:center;gap:10px;}
+.asset-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:var(--mono);flex-shrink:0;}
+.asset-name{font-size:13px;font-weight:500;}
+.asset-ticker{font-size:10px;color:var(--t2);margin-top:1px;}
+.cell{font-family:var(--mono);font-size:12px;text-align:right;}
+.up{color:var(--green);}
+.dn{color:var(--red);}
+.muted{color:var(--t2);}
+
+.risk-wrap{display:flex;align-items:center;justify-content:flex-end;gap:5px;}
+.risk-bar-bg{width:40px;height:4px;background:var(--s3);border-radius:2px;}
+.risk-bar-fill{height:100%;border-radius:2px;}
+.risk-num{font-family:var(--mono);font-size:10px;width:20px;text-align:right;}
+
+.rec{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-align:center;font-family:var(--mono);}
+.rec.buy{background:var(--green2);color:var(--green);border:1px solid var(--greenb);}
+.rec.sell{background:var(--red2);color:var(--red);border:1px solid var(--redb);}
+.rec.hold{background:var(--amber2);color:var(--amber);border:1px solid var(--amberb);}
+
+.del-btn{background:none;border:none;color:var(--t3);cursor:pointer;font-size:13px;padding:2px 5px;border-radius:4px;}
+.del-btn:hover{color:var(--red);}
+.empty-row{text-align:center;padding:2rem;color:var(--t2);font-size:13px;}
+
+/* DONUT */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:.75rem;}
+.donut-center-box{position:relative;width:130px;height:130px;}
+.donut-svg{transform:rotate(-90deg);}
+.donut-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.donut-total{font-family:var(--mono);font-size:15px;font-weight:700;line-height:1;}
+.donut-sub{font-size:9px;color:var(--t2);margin-top:2px;}
+.legend{display:flex;flex-direction:column;gap:5px;width:100%;}
+.leg-item{display:flex;align-items:center;justify-content:space-between;font-size:11px;}
+.leg-left{display:flex;align-items:center;gap:7px;}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.leg-name{color:var(--t2);}
+
+/* RISK SUMMARY */
+.risk-summary{background:var(--s2);border:1px solid var(--b2);border-radius:10px;padding:.875rem;}
+.rs-title{font-size:10px;color:var(--t2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.75rem;}
+.rs-overall{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;padding-bottom:.75rem;border-bottom:1px solid var(--b1);}
+.rs-score{font-family:var(--mono);font-size:28px;font-weight:700;}
+.rs-label{font-size:11px;color:var(--t2);margin-top:2px;}
+.rs-items{display:flex;flex-direction:column;gap:.5rem;}
+.rs-item{display:flex;flex-direction:column;gap:3px;}
+.rs-item-hd{display:flex;justify-content:space-between;font-size:11px;}
+.rs-item-label{color:var(--t2);}
+.rs-bar-bg{height:4px;background:var(--s3);border-radius:2px;}
+.rs-bar-fill{height:100%;border-radius:2px;transition:width .6s;}
+
+/* AI */
+.ai-box{background:var(--blue2);border:1px solid var(--blueb);border-radius:10px;padding:.875rem;}
+.ai-hd{display:flex;align-items:center;gap:8px;margin-bottom:.625rem;}
+.ai-ico{width:24px;height:24px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0;}
+.ai-title{font-size:12px;font-weight:600;}
+.ai-text{font-size:12px;line-height:1.7;color:var(--t1);}
+.spin{display:inline-block;width:11px;height:11px;border:2px solid var(--b3);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ALERTS */
+.alert-item{display:flex;gap:9px;padding:9px 11px;border-radius:8px;margin-bottom:7px;font-size:12px;border:1px solid;}
+.alert-high{background:rgba(255,77,109,.07);border-color:rgba(255,77,109,.2);}
+.alert-med{background:rgba(245,166,35,.07);border-color:rgba(245,166,35,.2);}
+.alert-low{background:rgba(0,217,126,.07);border-color:rgba(0,217,126,.2);}
+.alert-ico{font-size:13px;flex-shrink:0;}
+.alert-text{flex:1;line-height:1.5;}
+.section-lbl{font-size:10px;color:var(--t2);letter-spacing:.08em;text-transform:uppercase;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);}
+.overlay.hidden{display:none;}
+.modal{background:var(--s1);border:1px solid var(--b3);border-radius:14px;padding:1.5rem;width:380px;max-width:90vw;}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:1.1rem;}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--t2);}
+.field input{background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:8px 10px;color:var(--t1);font-family:var(--mono);font-size:13px;outline:none;width:100%;}
+.field input:focus{border-color:var(--blue);}
+.modal-hint{font-size:11px;color:var(--t2);line-height:1.5;}
+.modal-btns{display:flex;gap:.5rem;margin-top:1rem;}
+.modal-add{flex:1;padding:9px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--ui);font-size:13px;font-weight:600;cursor:pointer;}
+.modal-cancel{padding:9px 16px;background:var(--s2);border:1px solid var(--b2);border-radius:8px;color:var(--t2);font-family:var(--ui);font-size:13px;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="dashboard.html" class="brand">
+    <div class="brand-ico">◈</div>
+    <div class="brand-name">Crypto<span>Signal</span></div>
+  </a>
+  <div class="top-right">
+    <div class="live-pill"><div class="dot"></div>LIVE</div>
+    <a href="dashboard.html" class="back-btn">← Dashboard</a>
+    <button class="add-btn" onclick="openModal()">+ Adicionar Ativo</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="main">
+    <div class="summary-grid" id="summary-grid">
+      <div class="scard blue"><div class="scard-label">Total Investido</div><div class="scard-val" id="s-invested">—</div><div class="scard-sub muted">custo médio</div></div>
+      <div class="scard green"><div class="scard-label">Valor Atual</div><div class="scard-val" id="s-current">—</div><div class="scard-sub" id="s-pnl-pct">—</div></div>
+      <div class="scard amber"><div class="scard-label">Lucro / Prejuízo</div><div class="scard-val" id="s-pnl">—</div><div class="scard-sub" id="s-pnl-sub">—</div></div>
+      <div class="scard red"><div class="scard-label">Risco Médio</div><div class="scard-val" id="s-risk">—</div><div class="scard-sub" id="s-risk-sub">—</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="th">Ativo</div>
+        <div class="th r">Preço</div>
+        <div class="th r">Valor</div>
+        <div class="th r">P&amp;L</div>
+        <div class="th r">Alocação</div>
+        <div class="th r">Risco</div>
+        <div class="th r">Sinal</div>
+      </div>
+      <div id="asset-rows"><div class="empty-row">Carregando preços...</div></div>
+    </div>
+
+    <div class="ai-box">
+      <div class="ai-hd"><div class="ai-ico">◈</div><div class="ai-title">Análise da Carteira — Consultor IA</div></div>
+      <div class="ai-text" id="ai-text"><span class="spin"></span> Aguardando dados...</div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="section-lbl">Distribuição</div>
+    <div class="donut-wrap">
+      <div class="donut-center-box">
+        <svg class="donut-svg" width="130" height="130" id="donut-svg"></svg>
+        <div class="donut-label">
+          <div class="donut-total" id="donut-total">—</div>
+          <div class="donut-sub">total USD</div>
+        </div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="risk-summary">
+      <div class="rs-title">Score de Risco</div>
+      <div class="rs-overall">
+        <div>
+          <div class="rs-score" id="rs-score" style="color:var(--amber)">—</div>
+          <div class="rs-label">score ponderado</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px;color:var(--t2)">Perfil</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px" id="rs-profile">—</div>
+        </div>
+      </div>
+      <div class="rs-items" id="rs-items"></div>
+    </div>
+
+    <div class="section-lbl">Alertas</div>
+    <div id="alerts-container"></div>
+  </div>
+</div>
+
+<!-- MODAL ADICIONAR -->
+<div class="overlay hidden" id="overlay">
+  <div class="modal">
+    <div class="modal-title">Adicionar Ativo</div>
+    <div class="modal-grid">
+      <div class="field" style="grid-column:span 2">
+        <label>Nome ou ID do CoinGecko</label>
+        <input id="m-id" type="text" placeholder="ex: bitcoin, ethereum, solana">
+      </div>
+      <div class="field">
+        <label>Quantidade</label>
+        <input id="m-qty" type="number" placeholder="ex: 0.5" step="any">
+      </div>
+      <div class="field">
+        <label>Preço de Entrada (USD)</label>
+        <input id="m-entry" type="number" placeholder="ex: 42000" step="any">
+      </div>
+    </div>
+    <div class="modal-hint">Use o ID do CoinGecko: bitcoin, ethereum, solana, arbitrum, render-token, pepe...</div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="modal-add" onclick="addAsset()">Adicionar →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const RISK_PROFILE = {
+  bitcoin:20, ethereum:30, solana:55, arbitrum:65,
+  'render-token':72, pepe:95, chainlink:48, avalanche:58,
+  'the-open-network':50, sui:70, aptos:72, optimism:62,
+};
+const SIGNALS = {
+  bitcoin:'hold', ethereum:'buy', solana:'buy', arbitrum:'hold',
+  'render-token':'buy', pepe:'sell', chainlink:'buy', avalanche:'hold',
+};
+const COLORS = ['#f59e0b','#818cf8','#00d97e','#4f6ef7','#f97316','#ff4d6d','#06b6d4','#a855f7','#ec4899','#84cc16'];
+
+// Carregar carteira salva no localStorage
+let portfolio = JSON.parse(localStorage.getItem('cs_portfolio') || '[]');
+if (!portfolio.length) {
+  portfolio = [
+    {id:'bitcoin',     ticker:'BTC',  name:'Bitcoin',   qty:0.12,   entry:68000, color:'#f59e0b'},
+    {id:'ethereum',    ticker:'ETH',  name:'Ethereum',  qty:1.8,    entry:3200,  color:'#818cf8'},
+    {id:'solana',      ticker:'SOL',  name:'Solana',    qty:12,     entry:145,   color:'#00d97e'},
+    {id:'arbitrum',    ticker:'ARB',  name:'Arbitrum',  qty:800,    entry:1.80,  color:'#4f6ef7'},
+    {id:'render-token',ticker:'RNDR', name:'Render',    qty:200,    entry:7.40,  color:'#f97316'},
+    {id:'pepe',        ticker:'PEPE', name:'Pepe',      qty:8000000,entry:0.000018,color:'#ff4d6d'},
+  ];
+  savePortfolio();
+}
+
+let prices = {};
+let aiDone = false;
+
+function savePortfolio() {
+  localStorage.setItem('cs_portfolio', JSON.stringify(portfolio));
+}
+
+function fmtPrice(v) {
+  if (v === null || v === undefined) return '—';
+  if (Math.abs(v) >= 1000) return '$'+v.toLocaleString('en-US',{maximumFractionDigits:0});
+  if (Math.abs(v) >= 1)    return '$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return '$'+v.toFixed(6);
+}
+
+async function fetchPrices() {
+  if (!portfolio.length) { render(); return; }
+  const ids = [...new Set(portfolio.map(a=>a.id))].join(',');
+  try {
+    const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
+    if (!r.ok) return;
+    prices = await r.json();
+    render();
+    if (!aiDone) { aiDone = true; runAI(); }
+  } catch(e) {}
+}
+
+function render() {
+  if (!portfolio.length) {
+    document.getElementById('asset-rows').innerHTML = '<div class="empty-row">Nenhum ativo. Clique em "+ Adicionar Ativo".</div>';
+    updateSummary([]);
+    renderDonut([]);
+    renderRisk([]);
+    document.getElementById('ai-text').innerHTML = 'Adicione ativos para receber análise.';
+    return;
+  }
+
+  const vals = portfolio.map(a => {
+    const p = prices[a.id];
+    return p ? p.usd * a.qty : a.entry * a.qty;
+  });
+  const totalVal = vals.reduce((s,v)=>s+v,0);
+
+  const rows = portfolio.map((a, idx) => {
+    const p      = prices[a.id];
+    const price  = p?.usd ?? null;
+    const ch24   = p?.usd_24h_change ?? null;
+    const val    = vals[idx];
+    const cost   = a.entry * a.qty;
+    const pnl    = val - cost;
+    const pnlPct = cost > 0 ? (pnl/cost*100) : 0;
+    const alloc  = totalVal > 0 ? (val/totalVal*100) : 0;
+    const risk   = RISK_PROFILE[a.id] ?? 60;
+    const sig    = SIGNALS[a.id] ?? 'hold';
+    const sigCls = sig==='buy'?'buy':sig==='sell'?'sell':'hold';
+    const sigTxt = sig==='buy'?'COMPRA':sig==='sell'?'VENDA':'HOLD';
+    const riskCol= risk>70?'var(--red)':risk>45?'var(--amber)':'var(--green)';
+    const color  = a.color || COLORS[idx%COLORS.length];
+
+    return `<div class="asset-row">
+      <div class="asset-cell">
+        <div class="asset-ico" style="background:${color}22;color:${color}">${a.ticker.slice(0,3)}</div>
+        <div>
+          <div class="asset-name">${a.name}</div>
+          <div class="asset-ticker">${a.ticker}
+            ${ch24!==null?`<span class="${ch24>=0?'up':'dn'}">${ch24>=0?'▲':'▼'}${Math.abs(ch24).toFixed(1)}%</span>`:''}
+          </div>
+        </div>
+      </div>
+      <div class="cell">${price!==null?fmtPrice(price):'—'}</div>
+      <div class="cell">${fmtPrice(val)}</div>
+      <div class="cell ${pnl>=0?'up':'dn'}">${pnl>=0?'+':''}${fmtPrice(pnl)}<br><span style="font-size:10px;opacity:.7">${pnlPct>=0?'+':''}${pnlPct.toFixed(1)}%</span></div>
+      <div class="cell">
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px">
+          <div style="width:36px;height:4px;background:var(--s3);border-radius:2px"><div style="width:${Math.min(alloc,100)}%;height:100%;border-radius:2px;background:${color}"></div></div>
+          <span style="color:var(--t2);font-size:10px">${alloc.toFixed(1)}%</span>
+        </div>
+      </div>
+      <div class="cell">
+        <div class="risk-wrap">
+          <div class="risk-bar-bg"><div class="risk-bar-fill" style="width:${risk}%;background:${riskCol}"></div></div>
+          <div class="risk-num" style="color:${riskCol}">${risk}</div>
+        </div>
+      </div>
+      <div class="cell" style="display:flex;align-items:center;justify-content:flex-end;gap:5px">
+        <span class="rec ${sigCls}">${sigTxt}</span>
+        <button class="del-btn" onclick="removeAsset(${idx})" title="Remover">✕</button>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('asset-rows').innerHTML = rows.join('');
+  updateSummary(vals);
+  renderDonut(vals);
+  renderRisk(vals);
+}
+
+function updateSummary(vals) {
+  const totalCost = portfolio.reduce((s,a)=>s+a.entry*a.qty,0);
+  const totalVal  = vals.reduce((s,v)=>s+v,0);
+  const pnl       = totalVal - totalCost;
+  const pnlPct    = totalCost>0 ? pnl/totalCost*100 : 0;
+  const avgRisk   = portfolio.length>0 ? portfolio.reduce((s,a)=>s+(RISK_PROFILE[a.id]??60),0)/portfolio.length : 0;
+
+  document.getElementById('s-invested').textContent = fmtPrice(totalCost);
+  document.getElementById('s-current').textContent  = fmtPrice(totalVal);
+  document.getElementById('s-pnl').textContent      = (pnl>=0?'+':'')+fmtPrice(pnl);
+  document.getElementById('s-pnl').style.color      = pnl>=0?'var(--green)':'var(--red)';
+  document.getElementById('s-pnl-pct').textContent  = (pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'% total';
+  document.getElementById('s-pnl-pct').style.color  = pnlPct>=0?'var(--green)':'var(--red)';
+  document.getElementById('s-pnl-sub').textContent  = 'base: '+fmtPrice(totalCost);
+  document.getElementById('s-pnl-sub').style.color  = 'var(--t2)';
+
+  const riskCol = avgRisk>70?'var(--red)':avgRisk>45?'var(--amber)':'var(--green)';
+  const riskLbl = avgRisk>70?'Alto':avgRisk>45?'Moderado':'Baixo';
+  document.getElementById('s-risk').textContent     = avgRisk.toFixed(0)+'/100';
+  document.getElementById('s-risk').style.color     = riskCol;
+  document.getElementById('s-risk-sub').textContent = riskLbl;
+  document.getElementById('s-risk-sub').style.color = riskCol;
+}
+
+function renderDonut(vals) {
+  const total = vals.reduce((s,v)=>s+v,0);
+  const svg   = document.getElementById('donut-svg');
+  const legend= document.getElementById('legend');
+  document.getElementById('donut-total').textContent = '$'+total.toLocaleString('en-US',{maximumFractionDigits:0});
+
+  if (!portfolio.length) { svg.innerHTML=''; legend.innerHTML=''; return; }
+
+  const cx=65, cy=65, r=52, stroke=16, circ=2*Math.PI*r;
+  let offset=0, paths='', legHTML='';
+
+  portfolio.forEach((a,i) => {
+    const pct   = total>0 ? vals[i]/total : 1/portfolio.length;
+    const dash  = pct*circ;
+    const gap   = circ-dash;
+    const color = a.color||COLORS[i%COLORS.length];
+    paths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" />`;
+    offset += dash;
+    legHTML += `<div class="leg-item"><div class="leg-left"><div class="leg-dot" style="background:${color}"></div><span class="leg-name">${a.ticker}</span></div><span style="font-family:var(--mono);font-size:11px">${(pct*100).toFixed(1)}%</span></div>`;
+  });
+
+  svg.innerHTML = paths;
+  legend.innerHTML = legHTML;
+}
+
+function renderRisk(vals) {
+  const total   = vals.reduce((s,v)=>s+v,0);
+  const avgRisk = portfolio.length>0 ? portfolio.reduce((s,a)=>s+(RISK_PROFILE[a.id]??60),0)/portfolio.length : 0;
+  const topAlloc= total>0 ? Math.max(...vals.map(v=>v/total*100)) : 0;
+  const memeIds = ['pepe','dogecoin','shiba-inu','floki'];
+  const memeVal = portfolio.reduce((s,a,i)=>memeIds.includes(a.id)?s+vals[i]:s,0);
+  const memePct = total>0 ? memeVal/total*100 : 0;
+  const wtRisk  = total>0 ? portfolio.reduce((s,a,i)=>s+(RISK_PROFILE[a.id]??60)*(vals[i]/total),0) : avgRisk;
+
+  const score   = Math.min(10, ((wtRisk/100)*6 + (topAlloc/100)*2 + (memePct/100)*2)).toFixed(1);
+  const scoreCol= score>7?'var(--red)':score>4?'var(--amber)':'var(--green)';
+  const profile = score>7?'Agressivo':score>4?'Moderado':'Conservador';
+
+  document.getElementById('rs-score').textContent = score+'/10';
+  document.getElementById('rs-score').style.color = scoreCol;
+  document.getElementById('rs-profile').textContent = profile;
+  document.getElementById('rs-profile').style.color = scoreCol;
+
+  const items = [
+    {label:'Volatilidade',   val:Math.round(wtRisk),   color:wtRisk>70?'var(--red)':wtRisk>45?'var(--amber)':'var(--green)'},
+    {label:'Concentração',   val:Math.round(topAlloc), color:topAlloc>60?'var(--red)':topAlloc>40?'var(--amber)':'var(--green)'},
+    {label:'Exp. Memecoins', val:Math.round(memePct),  color:memePct>20?'var(--red)':memePct>10?'var(--amber)':'var(--green)'},
+  ];
+
+  document.getElementById('rs-items').innerHTML = items.map(it=>`
+    <div class="rs-item">
+      <div class="rs-item-hd"><span class="rs-item-label">${it.label}</span><span style="font-family:var(--mono);font-size:11px;color:${it.color}">${it.val}%</span></div>
+      <div class="rs-bar-bg"><div class="rs-bar-fill" style="width:${it.val}%;background:${it.color}"></div></div>
+    </div>`).join('');
+
+  // Alertas
+  const alerts = [];
+  if (topAlloc > 50) alerts.push({level:'high', ico:'⚠', text:`Ativo mais pesado representa ${topAlloc.toFixed(0)}% — concentração elevada.`});
+  if (memePct > 15)  alerts.push({level:'med',  ico:'◎', text:`${memePct.toFixed(0)}% em memecoins — considere reduzir exposição especulativa.`});
+  if (wtRisk > 65)   alerts.push({level:'med',  ico:'◎', text:`Volatilidade média alta (${wtRisk.toFixed(0)}/100) — carteira agressiva.`});
+  if (!alerts.length) alerts.push({level:'low', ico:'✓', text:'Nenhum alerta crítico. Carteira dentro dos parâmetros aceitáveis.'});
+
+  document.getElementById('alerts-container').innerHTML = alerts.map(a=>`
+    <div class="alert-item alert-${a.level}">
+      <div class="alert-ico">${a.ico}</div>
+      <div class="alert-text">${a.text}</div>
+    </div>`).join('');
+}
+
+async function runAI() {
+  const el = document.getElementById('ai-text');
+  const vals = portfolio.map(a=>{ const p=prices[a.id]; return p?p.usd*a.qty:a.entry*a.qty; });
+  const totalCost = portfolio.reduce((s,a)=>s+a.entry*a.qty,0);
+  const totalVal  = vals.reduce((s,v)=>s+v,0);
+  const pnl = totalVal-totalCost;
+  const pnlPct = totalCost>0?pnl/totalCost*100:0;
+  const avgRisk = portfolio.reduce((s,a)=>s+(RISK_PROFILE[a.id]??60),0)/portfolio.length;
+
+  const summary = portfolio.map((a,i)=>{
+    const p = prices[a.id];
+    const price = p?.usd;
+    const val = vals[i];
+    const pnlA = val - a.entry*a.qty;
+    const alloc = totalVal>0?(val/totalVal*100):0;
+    return `${a.ticker}: $${price?price.toLocaleString('en-US',{maximumFractionDigits:2}):'N/A'}, entrada $${a.entry}, P&L ${pnlA>=0?'+':''}${pnlA.toFixed(0)} (${totalCost>0?((pnlA/(a.entry*a.qty))*100).toFixed(1):'—'}%), alocação ${alloc.toFixed(1)}%`;
+  }).join('\n');
+
+  const prompt = `Você é um consultor profissional de criptoativos. Analise a carteira abaixo em 5 linhas objetivas em português.\n\nCarteira:\n${summary}\n\nTotal investido: $${totalCost.toLocaleString('en-US',{maximumFractionDigits:0})}\nValor atual: $${totalVal.toLocaleString('en-US',{maximumFractionDigits:0})}\nP&L: ${pnl>=0?'+':''}$${pnl.toFixed(0)} (${pnlPct.toFixed(1)}%)\nRisco médio: ${avgRisk.toFixed(0)}/100\n\nComente: (1) saúde geral, (2) melhor e pior posição, (3) maior risco, (4) recomendação principal. Sem disclaimers.`;
+
+  try {
+    const r = await fetch('/api/claude', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({system:'Você é um analista profissional de crypto. Responda em português, direto e objetivo.',messages:[{role:'user',content:prompt}]})
+    });
+    const d = await r.json();
+    el.innerHTML = (d.content?.map(b=>b.text||'').join('')||'Sem resposta.').replace(/\n/g,'<br>');
+  } catch(e) {
+    el.innerHTML = '<span style="color:var(--red)">Erro ao conectar com IA.</span>';
+  }
+}
+
+function openModal()  { document.getElementById('overlay').classList.remove('hidden'); }
+function closeModal() {
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('m-id').value='';
+  document.getElementById('m-qty').value='';
+  document.getElementById('m-entry').value='';
+}
+
+async function addAsset() {
+  const rawId = document.getElementById('m-id').value.trim().toLowerCase();
+  const qty   = parseFloat(document.getElementById('m-qty').value);
+  const entry = parseFloat(document.getElementById('m-entry').value);
+  if (!rawId||!qty||!entry) { alert('Preencha todos os campos.'); return; }
+
+  let coinId=rawId, coinName=rawId, ticker=rawId.toUpperCase();
+  const color = COLORS[portfolio.length%COLORS.length];
+
+  try {
+    const sr = await fetch(`https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(rawId)}`);
+    const sd = await sr.json();
+    if (sd.coins?.length>0) {
+      coinId=sd.coins[0].id; coinName=sd.coins[0].name; ticker=sd.coins[0].symbol.toUpperCase();
+    }
+  } catch(e) {}
+
+  portfolio.push({id:coinId,ticker,name:coinName,qty,entry,color});
+  savePortfolio();
+  closeModal();
+  aiDone=false;
+  await fetchPrices();
+}
+
+function removeAsset(idx) {
+  portfolio.splice(idx,1);
+  savePortfolio();
+  aiDone=false;
+  if (Object.keys(prices).length>0) { render(); runAI(); }
+  else fetchPrices();
+}
+
+fetchPrices();
+setInterval(fetchPrices, 60000);
+</script>
+</body>
+</html>
