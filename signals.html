@@ -223,11 +223,11 @@ body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh
     <div class="section-lbl">dados manuais</div>
     <div class="input-group">
       <div class="inp-row">
-        <div class="inp-field"><div class="inp-label">RSI (14)</div><input class="inp" id="i-rsi" type="number" value="52" min="0" max="100"></div>
+        <div class="inp-field"><div class="inp-label" id="lbl-rsi">RSI (14) <span style="color:var(--green);font-size:9px" id="rsi-auto"></span></div><input class="inp" id="i-rsi" type="number" value="52" min="0" max="100"></div>
         <div class="inp-field"><div class="inp-label">Funding Rate %</div><input class="inp" id="i-fund" type="number" value="0.02" step="0.01"></div>
       </div>
       <div class="inp-row">
-        <div class="inp-field"><div class="inp-label">Supply in Profit %</div><input class="inp" id="i-supply" type="number" value="75" min="0" max="100"></div>
+        <div class="inp-field"><div class="inp-label">Supply in Profit % <span style="color:var(--green);font-size:9px" id="supply-auto"></span></div><input class="inp" id="i-supply" type="number" value="75" min="0" max="100"></div>
         <div class="inp-field"><div class="inp-label">Custo Mineração $</div><input class="inp" id="i-mining" type="number" value="82000"></div>
       </div>
       <div class="inp-field">
@@ -280,6 +280,26 @@ const W = {
   insiders:2.0, dilution:2.0, inflation:1.5, utility:1.5
 };
 const TOTAL_W = Object.values(W).reduce((s,v)=>s+v,0);
+
+// ── RSI AUTO-CALC ──
+function calcRSI14(prices) {
+  const period = 14;
+  if (prices.length < period + 1) return null;
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const diff = prices[i] - prices[i-1];
+    if (diff > 0) gains += diff; else losses -= diff;
+  }
+  let avgGain = gains / period;
+  let avgLoss = losses / period;
+  for (let i = period + 1; i < prices.length; i++) {
+    const diff = prices[i] - prices[i-1];
+    avgGain = (avgGain * (period-1) + (diff > 0 ? diff : 0)) / period;
+    avgLoss = (avgLoss * (period-1) + (diff < 0 ? -diff : 0)) / period;
+  }
+  if (avgLoss === 0) return 100;
+  return Math.round(100 - (100 / (1 + avgGain / avgLoss)));
+}
 
 let fg=null, btcPrice=null;
 let openCrit=null;
@@ -361,6 +381,35 @@ async function runAnalysis(directId) {
     }
     const r = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false`);
     if (r.ok) coinData = await r.json();
+
+    // Auto-calcular RSI (14 períodos diários) via histórico gratuito da CoinGecko
+    try {
+      const hist = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=30&interval=daily`);
+      if (hist.ok) {
+        const hd = await hist.json();
+        const closes = hd.prices.map(p => p[1]);
+        const rsiCalc = calcRSI14(closes);
+        if (rsiCalc !== null) {
+          document.getElementById('i-rsi').value = rsiCalc;
+          document.getElementById('i-rsi').title = 'Calculado automaticamente';
+          const rsiAutoEl = document.getElementById('rsi-auto'); if (rsiAutoEl) rsiAutoEl.textContent = '● auto';
+        }
+      }
+    } catch(e2) {}
+
+    // Estimar Supply in Profit pela variação de 30 dias (proxy gratuito)
+    const ch30auto = coinData?.market_data?.price_change_percentage_30d || 0;
+    let supplyEst = 75;
+    if      (ch30auto > 50)  supplyEst = 92;
+    else if (ch30auto > 20)  supplyEst = 83;
+    else if (ch30auto > 0)   supplyEst = 75;
+    else if (ch30auto > -20) supplyEst = 62;
+    else if (ch30auto > -40) supplyEst = 50;
+    else                     supplyEst = 38;
+    document.getElementById('i-supply').value = supplyEst;
+    document.getElementById('i-supply').title = 'Estimado com base na variação de 30 dias';
+    const supplyAutoEl = document.getElementById('supply-auto'); if (supplyAutoEl) supplyAutoEl.textContent = '● estimado';
+
   } catch(e) {}
 
   const tk = TOKENOMICS[query] || {
