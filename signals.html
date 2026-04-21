@@ -106,23 +106,26 @@ body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh
 .crit:hover{border-color:var(--b2);}
 .crit.c-buy{border-color:rgba(0,229,137,0.15);}
 .crit.c-sell{border-color:rgba(255,61,92,0.15);}
-.crit-head{display:flex;align-items:center;gap:10px;padding:.7rem 1rem;cursor:pointer;}
-.crit-n{font-family:var(--mono);font-size:10px;color:var(--t3);width:16px;flex-shrink:0;}
-.crit-ico{font-size:15px;width:22px;text-align:center;flex-shrink:0;}
+.crit-head{display:flex;align-items:center;gap:12px;padding:.875rem 1.1rem;cursor:pointer;transition:background .15s;}
+.crit-head:hover{background:var(--s2);}
+.crit-n{font-family:var(--mono);font-size:10px;color:var(--t3);width:18px;flex-shrink:0;font-weight:500;}
 .crit-info{flex:1;min-width:0;}
-.crit-name{font-size:12px;font-weight:600;letter-spacing:-.01em;}
-.crit-sub{font-size:10px;color:var(--t2);margin-top:1px;}
-.crit-val{font-family:var(--mono);font-size:11px;color:var(--t2);margin-right:6px;flex-shrink:0;}
-.cbadge{font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;letter-spacing:.04em;}
+.crit-name{font-size:13px;font-weight:600;letter-spacing:-.01em;color:var(--t1);}
+.crit-val{font-family:var(--mono);font-size:12px;color:var(--t2);margin-right:8px;flex-shrink:0;font-weight:500;}
+.crit-chevron{font-size:10px;color:var(--t3);flex-shrink:0;transition:transform .2s;}
+.crit-body.open+.crit-head .crit-chevron,.crit.expanded .crit-chevron{transform:rotate(180deg);}
+.cbadge{font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 11px;border-radius:20px;flex-shrink:0;letter-spacing:.06em;}
 .cb-buy{background:var(--green2);color:var(--green);border:1px solid var(--greenb);}
 .cb-sell{background:var(--red2);color:var(--red);border:1px solid var(--redb);}
-.cb-neutral{background:var(--s3);color:var(--t2);border:1px solid var(--b2);}
-.crit-body{display:none;padding:.75rem 1rem;border-top:1px solid var(--b1);background:var(--s2);}
+.cb-neutral{background:var(--s3);color:var(--t2);border:1px solid var(--b1);}
+.crit-body{display:none;padding:1rem 1.1rem 1.1rem;border-top:1px solid var(--b1);background:var(--s2);}
 .crit-body.open{display:block;}
-.detail-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;}
-.dr-label{color:var(--t2);}
-.dr-val{font-family:var(--mono);font-weight:500;}
-.logic{margin-top:.625rem;padding:.625rem .75rem;background:var(--s3);border-radius:7px;font-size:11px;color:var(--t2);line-height:1.65;border-left:2px solid var(--b3);}
+.crit-explain{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:.75rem;}
+.crit-explain strong{color:var(--t1);font-weight:600;}
+.crit-detail-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:4px 0;border-bottom:1px solid var(--b1);}
+.crit-detail-row:last-child{border-bottom:none;}
+.cdr-label{color:var(--t2);}
+.cdr-val{font-family:var(--mono);font-weight:600;font-size:11px;}
 .weight-badge{font-size:9px;font-family:var(--mono);padding:1px 6px;border-radius:8px;background:var(--s3);color:var(--t3);}
 
 /* ── RIGHT PANEL ── */
@@ -583,51 +586,51 @@ function render(coinData, tk) {
 
   // Definição dos critérios
   const CRIT_DEF = [
-    {k:'fg',            n:'01',ico:'😨',name:'Fear & Greed Index',    sub:'Pânico=compra · Euforia=venda',             w:W.fg,            group:'market',
-     logic:'Quando o mercado entra em pânico extremo (≤25), há vendedores irracionais — oportunidade de compra. Ganância extrema (≥75) sinaliza topo iminente.'},
-    {k:'rsi',           n:'02',ico:'📉',name:'RSI (14)',               sub:'<30 sobrevendido · >70 sobrecomprado',       w:W.rsi,           group:'market',
-     logic:'RSI abaixo de 30 indica ativo sobrevendido — potencial reversão de alta. Acima de 70 indica sobrecomprado — potencial correção iminente.'},
-    {k:'mining',        n:'03',ico:'⛏', name:'Custo de Mineração',    sub:'BTC abaixo do custo = suporte histórico',   w:W.mining,        group:'market',
-     logic:'Para BTC: abaixo do custo de produção (~$82k), mineradores capitulam. Para altcoins: distância do ATH como proxy de fundo histórico.'},
-    {k:'funding',       n:'04',ico:'📈',name:'Funding Rates',          sub:'Funding >0.05% = longs excessivos = venda', w:W.funding,       group:'market',
-     logic:'Funding rate muito positivo indica excesso de alavancagem comprada. Esse desequilíbrio costuma preceder liquidações em cascata.'},
-    {k:'lth',           n:'05',ico:'🐋',name:'Long Term Holders',      sub:'Acumulando com queda = sinal mais bullish', w:W.lth,           group:'market',
-     logic:'LTH são os "smart money" — wallets sem mover moedas há +155 dias. Quando acumulam durante quedas, é sinal de alta convicção bullish.'},
-    {k:'supply_profit', n:'06',ico:'💰',name:'Supply in Profit',       sub:'~100% em lucro = demanda esgotada = venda', w:W.supply_profit, group:'market',
-     logic:'Quando quase 100% do supply está em lucro, não há compradores novos. Qualquer realização colapsa a demanda marginal.'},
-    {k:'insiders',      n:'07',ico:'👥',name:'Concentração Insiders',  sub:'>50% com equipe+VCs = risco extremo',       w:W.insiders,      group:'tokenomics',
-     logic:'Mais de 50% do supply com insiders = risco de coordenação de vendas massivas. Você se torna exit liquidity.'},
-    {k:'dilution',      n:'08',ico:'📦',name:'Desbloqueio / Diluição', sub:'Supply multiplica = pressão vendedora',     w:W.dilution,      group:'tokenomics',
-     logic:'Se o supply vai triplicar nos próximos 12 meses, a demanda precisa triplicar só para manter o preço. Isso raramente acontece.'},
-    {k:'inflation',     n:'09',ico:'🔄',name:'Inflação vs Deflação',   sub:'Alta emissão = holders diluídos',           w:W.inflation,     group:'tokenomics',
-     logic:'Token que emite muitos tokens por ano dilui os holders constantemente. Deflacionários ou com burn têm escassez crescente.'},
-    {k:'utility',       n:'10',ico:'⚙', name:'Utilidade do Token',    sub:'Sem uso real = depende só de hype',         w:W.utility,       group:'tokenomics',
-     logic:'Token sem utilidade real (fees, staking, governança, DeFi) tem demanda 100% especulativa. Hype acaba — utilidade real cria demanda constante.'},
+    {k:'fg',            n:'01', name:'Sentimento do Mercado',   w:W.fg,            group:'market',
+     explain: (sig,v) => sig==='buy' ? `O mercado está com <strong>muito medo agora (${v}/100)</strong>. Historicamente, quando todo mundo está com medo é quando surgem as melhores oportunidades de compra — os preços caem por pânico, não por fundamentos ruins.` : sig==='sell' ? `O mercado está em <strong>euforia (${v}/100)</strong>. Quando todo mundo está animado e achando que o preço só sobe, costuma ser sinal de que uma correção está próxima.` : `O sentimento do mercado está <strong>neutro (${v}/100)</strong>. Sem excesso de medo ou euforia — não é um sinal decisivo em nenhuma direção.` },
+    {k:'rsi',           n:'02', name:'Força do Preço (RSI)',    w:W.rsi,           group:'market',
+     explain: (sig,v) => sig==='buy' ? `O preço do ativo está <strong>barato em termos técnicos (RSI ${v})</strong>. Isso indica que venderam demais e pode haver uma recuperação. Pense como uma mola pressionada — tende a voltar.` : sig==='sell' ? `O preço subiu rápido demais e está <strong>esticado (RSI ${v})</strong>. Compradores podem estar esgotados, aumentando o risco de queda.` : `O preço está em um ritmo <strong>equilibrado (RSI ${v})</strong>, nem muito esticado nem muito deprimido.` },
+    {k:'mining',        n:'03', name:'Preço vs Valor Histórico', w:W.mining,        group:'market',
+     explain: (sig,v) => sig==='buy' ? `O ativo está <strong>muito abaixo do seu valor histórico (${v})</strong>. Para o Bitcoin, está abaixo do custo de produção. Para outras moedas, está muito longe do pico — o que historicamente representa oportunidade.` : `O ativo está <strong>próximo do valor histórico normal (${v})</strong>. Não há desconto relevante que justifique compra por esse critério.` },
+    {k:'funding',       n:'04', name:'Alavancagem no Mercado',  w:W.funding,       group:'market',
+     explain: (sig,v) => sig==='sell' ? `Muita gente está <strong>apostando na alta usando dinheiro emprestado (${v})</strong>. Isso é perigoso — se o preço cair um pouco, essas apostas são fechadas automaticamente, causando quedas maiores em cascata.` : sig==='buy' ? `As apostas alavancadas estão <strong>favorecendo a alta (${v})</strong>. Quem apostou na queda está perdendo, o que costuma pressionar o preço para cima.` : `O nível de apostas alavancadas está <strong>equilibrado (${v})</strong>. Sem pressão extrema em nenhum sentido.` },
+    {k:'lth',           n:'05', name:'Investidores de Longo Prazo', w:W.lth,        group:'market',
+     explain: (sig,v) => sig==='buy' ? `Os investidores que nunca vendem estão <strong>comprando mais agora</strong>. Eles são os mais experientes do mercado — quando acumulam durante quedas, é um sinal muito forte de confiança no ativo.` : sig==='sell' ? `Os investidores de longo prazo estão <strong>começando a vender</strong>. Quando eles desfazem posições, costuma indicar que acreditam que o preço chegou em um ponto alto.` : `Os investidores de longo prazo estão <strong>parados, sem comprar nem vender</strong>. Sinal neutro.` },
+    {k:'supply_profit', n:'06', name:'Quem está no Lucro',      w:W.supply_profit, group:'market',
+     explain: (sig,v) => sig==='sell' ? `<strong>${v}% de todas as moedas em circulação estão no lucro</strong>. Quando quase todo mundo está ganhando, há muita gente querendo realizar o lucro — o que cria pressão de venda. Historicamente é sinal de topo.` : sig==='buy' ? `Apenas <strong>${v}% das moedas estão no lucro</strong>. A maioria das pessoas está no prejuízo, o que significa que já venderam quem ia vender — o pior pode ter passado.` : `Cerca de <strong>${v}% das moedas estão no lucro</strong>. Nível moderado, sem extremo em nenhuma direção.` },
+    {k:'insiders',      n:'07', name:'Concentração nas Mãos de Poucos', w:W.insiders, group:'tokenomics',
+     explain: (sig,v) => sig==='sell' ? `<strong>${v}% de todas as moedas estão com a equipe e investidores iniciais</strong>. Isso é preocupante — quando essas pessoas decidirem vender, vão derrubar o preço. O investidor comum costuma ser o último a saber.` : sig==='buy' ? `Apenas <strong>${v}% das moedas estão concentradas com insiders</strong>. A distribuição está saudável — o preço não depende da decisão de poucas pessoas.` : `<strong>${v}% das moedas com insiders</strong> — concentração moderada. Fique de olho nos desbloqueios futuros.` },
+    {k:'dilution',      n:'08', name:'Novas Moedas Sendo Emitidas', w:W.dilution,   group:'tokenomics',
+     explain: (sig,v) => sig==='sell' ? `O total de moedas vai <strong>multiplicar ${v}× nos próximos anos</strong>. Isso dilui quem já tem — imagine comprar uma pizza e depois descobrir que vão fatiar em 3× mais pedaços. Cada pedaço vale menos.` : sig==='buy' ? `A emissão de novas moedas é <strong>mínima (${v}×)</strong>. O supply está praticamente fixo, o que significa que qualquer aumento de demanda pressiona o preço para cima.` : `O supply vai crescer <strong>${v}×</strong> — diluição moderada. Não é ideal, mas não é crítico.` },
+    {k:'inflation',     n:'09', name:'Taxa de Emissão Anual',   w:W.inflation,     group:'tokenomics',
+     explain: (sig,v) => sig==='buy' ? `Esta moeda é <strong>deflacionária (${v}%/ano)</strong> — o total em circulação está diminuindo ou crescendo muito pouco. Menos moedas com a mesma demanda = tende a valorizar.` : sig==='sell' ? `São emitidas <strong>${v}% novas moedas todo ano</strong>. Quem já tem vai sendo diluído constantemente — como imprimir dinheiro. Pressiona o preço para baixo no longo prazo.` : `A taxa de emissão anual é <strong>${v}%</strong> — dentro de um nível razoável.` },
+    {k:'utility',       n:'10', name:'Para que serve este ativo?', w:W.utility,     group:'tokenomics',
+     explain: (sig,v) => sig==='buy' ? `Este ativo tem <strong>${v} usos reais consolidados</strong> — pagamento de taxas, rendimento, governança e outros. Quanto mais útil, mais demanda orgânica e menos dependente de hype.` : sig==='sell' ? `Este ativo <strong>não tem uso prático real</strong>. O preço depende 100% de especulação e marketing. Quando o hype acabar, a demanda some junto.` : `Este ativo tem <strong>${v} usos reais</strong> — utilidade limitada mas existente. A demanda ainda depende muito de especulação.` },
   ];
 
   const renderCrit = c => {
-    const sig     = sigs[c.k];
+    const sig      = sigs[c.k];
     const badgeCls = sig.s==='buy'?'cb-buy':sig.s==='sell'?'cb-sell':'cb-neutral';
     const badgeTxt = sig.s==='buy'?'COMPRA':sig.s==='sell'?'VENDA':'NEUTRO';
     const critCls  = sig.s==='buy'?'c-buy':sig.s==='sell'?'c-sell':'';
     const isOpen   = openCrit===c.k;
+    const explainHtml = c.explain(sig.s, sig.v);
+    const sigColor = sig.s==='buy'?'var(--green)':sig.s==='sell'?'var(--red)':'var(--t2)';
     return `
-    <div class="crit ${critCls}" id="crit-${c.k}">
+    <div class="crit ${critCls} ${isOpen?'expanded':''}" id="crit-${c.k}">
       <div class="crit-head" onclick="toggleCrit('${c.k}')">
         <span class="crit-n">${c.n}</span>
-        <span class="crit-ico">${c.ico}</span>
         <div class="crit-info">
-          <div class="crit-name">${c.name} <span class="weight-badge">×${c.w}</span></div>
-          <div class="crit-sub">${c.sub}</div>
+          <div class="crit-name">${c.name}</div>
         </div>
         <span class="crit-val">${sig.v}</span>
         <span class="cbadge ${badgeCls}">${badgeTxt}</span>
+        <span class="crit-chevron">▾</span>
       </div>
       <div class="crit-body ${isOpen?'open':''}" id="body-${c.k}">
-        <div class="detail-row"><span class="dr-label">Valor atual</span><span class="dr-val">${sig.v}</span></div>
-        <div class="detail-row"><span class="dr-label">Sinal gerado</span><span class="dr-val" style="color:${sig.s==='buy'?'var(--green)':sig.s==='sell'?'var(--red)':'var(--t2)'}">${badgeTxt}</span></div>
-        <div class="detail-row"><span class="dr-label">Peso no veredito</span><span class="dr-val">${c.w} de ${TOTAL_W} (${Math.round(c.w/TOTAL_W*100)}%)</span></div>
-        <div class="logic">${sig.note}<br><br>${c.logic}</div>
+        <div class="crit-explain">${explainHtml}</div>
+        <div class="crit-detail-row"><span class="cdr-label">Valor medido</span><span class="cdr-val" style="color:${sigColor}">${sig.v}</span></div>
+        <div class="crit-detail-row"><span class="cdr-label">Peso no resultado final</span><span class="cdr-val">${Math.round(c.w/TOTAL_W*100)}% do total</span></div>
       </div>
     </div>`;
   };
