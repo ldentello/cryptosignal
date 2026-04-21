@@ -5,6 +5,9 @@
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
 
+// Necessário para o Stripe verificar a assinatura do webhook
+export const config = { api: { bodyParser: false } }
+
 // Inicializar Stripe e Supabase com variáveis de ambiente do Vercel
 const stripe    = new Stripe(process.env.STRIPE_SECRET_KEY)
 const supabase  = createClient(
