@@ -70,8 +70,8 @@ body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh
   // ── SUPABASE AUTH ──
   // Substitua os valores abaixo pelos do seu projeto Supabase
   // Settings → API → Project URL e anon public key
-  const SUPABASE_URL  = 'COLE_SUA_SUPABASE_URL_AQUI'
-  const SUPABASE_KEY  = 'COLE_SUA_SUPABASE_ANON_KEY_AQUI'
+  const SUPABASE_URL  = 'https://vjwotimvkzbmphamrpnl.supabase.co'
+  const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqd290aW12a3pibXBoYW1ycG5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0Njk3MzIsImV4cCI6MjA5MjA0NTczMn0.MlE8Wa4POxocu4drwOqd86UiXSGSloPMEp-aERu_hAY'
 
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
