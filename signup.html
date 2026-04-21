@@ -7,36 +7,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#06080f;--s1:#0c0f1a;--s2:#111824;
-  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.16);
-  --t1:#e4e9f8;--t2:#6b7fa3;--t3:#2e3a52;
-  --green:#00d97e;--green2:rgba(0,217,126,0.1);--greenb:rgba(0,217,126,0.22);
-  --red:#ff4d6d;--red2:rgba(255,77,109,0.1);--redb:rgba(255,77,109,0.22);
-  --blue:#4f6ef7;--blue2:rgba(79,110,247,0.12);--blueb:rgba(79,110,247,0.25);
-  --gold:#f0c040;--gold2:rgba(240,192,64,0.09);--goldb:rgba(240,192,64,0.22);
-  --purple:#a78bfa;--purple2:rgba(167,139,250,0.1);--purpleb:rgba(167,139,250,0.22);
-  --mono:'JetBrains Mono',monospace;--ui:'Outfit',sans-serif;
-}
+:root{--bg:#06080f;--s1:#0c0f1a;--s2:#111824;--b2:rgba(255,255,255,0.09);--t1:#e4e9f8;--t2:#6b7fa3;--t3:#2e3a52;--red:#ff4d6d;--red2:rgba(255,77,109,0.1);--redb:rgba(255,77,109,0.22);--blue:#4f6ef7;--blue2:rgba(79,110,247,0.12);--blueb:rgba(79,110,247,0.25);--mono:'JetBrains Mono',monospace;--ui:'Outfit',sans-serif;}
 body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
 .card{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:2rem;width:100%;max-width:420px;}
 .logo{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;text-decoration:none;}
 .logo-ico{width:36px;height:36px;background:linear-gradient(135deg,#4f6ef7,#7c3aed);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;}
 .logo-name{font-size:18px;font-weight:800;color:var(--t1);}
 .logo-name span{color:#4f6ef7;}
-.plan-badge{display:flex;align-items:center;gap:8px;border-radius:8px;padding:.625rem .875rem;margin-bottom:1.25rem;font-size:12px;}
-.plan-badge.mensal{background:var(--blue2);border:1px solid var(--blueb);color:#4f6ef7;}
+.badge{background:var(--blue2);border:1px solid var(--blueb);color:#4f6ef7;border-radius:8px;padding:.625rem .875rem;margin-bottom:1.25rem;font-size:12px;display:flex;gap:6px;}
 .title{font-size:20px;font-weight:700;margin-bottom:.375rem;}
 .subtitle{font-size:13px;color:var(--t2);margin-bottom:1.25rem;line-height:1.5;}
 .error{background:var(--red2);border:1px solid var(--redb);border-radius:7px;padding:.625rem .875rem;font-size:12px;color:var(--red);margin-bottom:.875rem;display:none;}
 .field{display:flex;flex-direction:column;gap:5px;margin-bottom:.75rem;}
 .field label{font-size:12px;color:var(--t2);}
-.field input{background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px 12px;color:var(--t1);font-family:var(--ui);font-size:14px;outline:none;transition:border-color .2s;width:100%;}
+.field input{background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px 12px;color:var(--t1);font-family:var(--ui);font-size:14px;outline:none;width:100%;}
 .field input:focus{border-color:#4f6ef7;}
-.btn{width:100%;padding:11px;border:none;border-radius:9px;font-family:var(--ui);font-size:14px;font-weight:700;cursor:pointer;margin-top:.25rem;transition:all .15s;}
-.btn-mensal{background:#4f6ef7;color:#fff;}
-.btn-mensal:hover{opacity:.88;}
-.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn{width:100%;padding:11px;background:#4f6ef7;border:none;border-radius:9px;color:#fff;font-family:var(--ui);font-size:14px;font-weight:700;cursor:pointer;margin-top:.25rem;}
+.btn:disabled{opacity:.5;}
 .note{font-size:11px;color:var(--t3);text-align:center;margin-top:.75rem;line-height:1.5;}
 .toggle{text-align:center;font-size:13px;color:var(--t2);margin-top:1rem;}
 .toggle a{color:#4f6ef7;text-decoration:none;}
@@ -52,26 +39,49 @@ body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh
     <div class="logo-ico">◈</div>
     <div class="logo-name">Crypto<span>Signal</span></div>
   </a>
-  <div class="plan-badge mensal">
-    <span>◎</span>
-    <span>Plano Mensal — R$97/mês</span>
-  </div>
+  <div class="badge"><span>◎</span><span>Plano Mensal — R$97/mes</span></div>
   <div class="title">Criar sua conta</div>
   <div class="subtitle">Comece agora e tenha sinais profissionais em tempo real.</div>
   <div class="error" id="error-msg"></div>
-  <div class="field">
-    <label>Nome completo</label>
-    <input type="text" id="name" placeholder="Seu nome completo" autocomplete="name">
-  </div>
-  <div class="field">
-    <label>E-mail</label>
-    <input type="email" id="email" placeholder="seu@email.com" autocomplete="email">
-  </div>
-  <div class="field">
-    <label>Senha</label>
-    <input type="password" id="password" placeholder="mínimo 8 caracteres" autocomplete="new-password">
-  </div>
-  <button class="btn btn-mensal" id="btn-signup" onclick="doSignup()">Criar conta e assinar →</button>
-  <div class="note">Ao continuar você será redirecionado ao Stripe para pagamento seguro.<br>Garantia de 7 dias — sem perguntas.</div>
-  <div class="toggle">Já tem conta? <a href="login.html">Entrar</a></div>
-  <div cla
+  <div class="field"><label>Nome completo</label><input type="text" id="name" placeholder="Seu nome completo"></div>
+  <div class="field"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com"></div>
+  <div class="field"><label>Senha</label><input type="password" id="password" placeholder="minimo 8 caracteres"></div>
+  <button class="btn" id="btn-signup" onclick="doSignup()">Criar conta e assinar</button>
+  <div class="note">Voce sera redirecionado ao Stripe para pagamento seguro. Garantia de 7 dias.</div>
+  <div class="toggle">Ja tem conta? <a href="login.html">Entrar</a></div>
+  <div class="back"><a href="index.html">Voltar</a></div>
+</div>
+<script type="module">
+  const SURL = 'https://vjwotimvkzbmphamrpnl.supabase.co'
+  const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqd290aW12a3pibXBoYW1ycG5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0Njk3MzIsImV4cCI6MjA5MjA0NTczMn0.MlE8Wa4POxocu4drwOqd86UiXSGSloPMEp-aERu_hAY'
+  const STRIPE = 'https://buy.stripe.com/8x24gse3QbB3d6yfPP9Ve00'
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+  const supabase = createClient(SURL, SKEY)
+  const btn = document.getElementById('btn-signup')
+  window.doSignup = async function() {
+    const name = document.getElementById('name').value.trim()
+    const email = document.getElementById('email').value.trim()
+    const password = document.getElementById('password').value
+    const errEl = document.getElementById('error-msg')
+    errEl.style.display = 'none'
+    if (!name || !email || password.length < 8) {
+      errEl.textContent = 'Preencha todos os campos. Senha minimo 8 caracteres.'
+      errEl.style.display = 'block'
+      return
+    }
+    btn.disabled = true
+    btn.innerHTML = '<span class="spin"></span> Criando conta...'
+    const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name } } })
+    if (error) {
+      errEl.textContent = error.message === 'User already registered' ? 'Email ja cadastrado. Faca login.' : 'Erro: ' + error.message
+      errEl.style.display = 'block'
+      btn.disabled = false
+      btn.innerHTML = 'Criar conta e assinar'
+      return
+    }
+    await supabase.from('profiles').insert({ id: data.user.id, email: data.user.email, name: name, plan: 'mensal', active: false })
+    window.location.href = STRIPE + '?client_reference_id=' + data.user.id
+  }
+</script>
+</body>
+</html>
