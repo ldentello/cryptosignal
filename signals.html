@@ -3,202 +3,202 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CryptoSignal — Motor de Sinais</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<title>CryptoSignal — Sinais</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#080a12;--s1:#0d1020;--s2:#121628;--s3:#181d30;--s4:#1e2438;
-  --b1:rgba(255,255,255,0.04);--b2:rgba(255,255,255,0.08);--b3:rgba(255,255,255,0.14);
-  --t1:#eef1fb;--t2:#5d6e94;--t3:#2a3350;
-  --green:#00e589;--green2:rgba(0,229,137,0.08);--greenb:rgba(0,229,137,0.2);
-  --red:#ff3d5c;--red2:rgba(255,61,92,0.08);--redb:rgba(255,61,92,0.2);
-  --amber:#ffab00;--amber2:rgba(255,171,0,0.08);--amberb:rgba(255,171,0,0.2);
-  --blue:#5b7cff;--blue2:rgba(91,124,255,0.1);--blueb:rgba(91,124,255,0.22);
-  --purple:#a78bfa;
-  --mono:'JetBrains Mono',monospace;--ui:'Syne',sans-serif;
+  --bg:#000;
+  --s1:#0a0a0a;
+  --s2:#111;
+  --s3:#1a1a1a;
+  --b1:rgba(255,255,255,0.06);
+  --b2:rgba(255,255,255,0.1);
+  --b3:rgba(255,255,255,0.18);
+  --t1:#fff;
+  --t2:#666;
+  --t3:#333;
+  --accent:#4ade80;
+  --accent2:rgba(74,222,128,0.08);
+  --accentb:rgba(74,222,128,0.2);
+  --red:#f87171;
+  --red2:rgba(248,113,113,0.08);
+  --redb:rgba(248,113,113,0.2);
+  --neutral:#555;
+  --mono:'DM Mono',monospace;
+  --ui:'DM Sans',sans-serif;
 }
-body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh;}
+body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh;font-size:14px;}
+a{text-decoration:none;color:inherit;}
 
 /* ── TOPBAR ── */
-.topbar{background:rgba(8,10,18,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--b2);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-.brand{display:flex;align-items:center;gap:9px;text-decoration:none;}
-.brand-ico{width:30px;height:30px;background:linear-gradient(135deg,#5b7cff,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;}
-.brand-name{font-size:14px;font-weight:800;letter-spacing:-.01em;color:var(--t1);}
-.brand-name span{color:#5b7cff;}
-.top-right{display:flex;align-items:center;gap:10px;}
-.live-pill{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:var(--green);background:var(--green2);padding:3px 10px;border-radius:20px;border:1px solid var(--greenb);}
-.dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
-#clock{font-size:11px;font-family:var(--mono);color:var(--t2);}
+.topbar{border-bottom:1px solid var(--b1);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:50;background:rgba(0,0,0,0.9);backdrop-filter:blur(20px);}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-mark{width:28px;height:28px;border:1px solid var(--b3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--t2);font-family:var(--mono);}
+.brand-name{font-size:13px;font-weight:500;letter-spacing:.02em;color:var(--t1);}
+.brand-name b{font-weight:600;}
+.top-right{display:flex;align-items:center;gap:1.5rem;}
+.live-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);color:var(--accent);letter-spacing:.05em;}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.clock-txt{font-size:11px;font-family:var(--mono);color:var(--t3);}
+.back-link{font-size:12px;color:var(--t2);border:1px solid var(--b1);padding:5px 12px;border-radius:4px;transition:all .15s;}
+.back-link:hover{color:var(--t1);border-color:var(--b2);}
 
 /* ── SEARCH ── */
-.search-section{padding:1rem 1.5rem;display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--b1);background:var(--s1);}
-.search-wrap{position:relative;flex:1;max-width:440px;}
-.search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:15px;}
-.search-inp{width:100%;background:var(--s2);border:1.5px solid var(--b2);border-radius:10px;padding:10px 12px 10px 38px;color:var(--t1);font-family:var(--ui);font-size:13px;outline:none;transition:border-color .2s;}
-.search-inp:focus{border-color:var(--blue);}
-.search-inp::placeholder{color:var(--t3);}
-.search-btn{padding:10px 22px;background:var(--blue);border:none;border-radius:10px;color:#fff;font-family:var(--ui);font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s;letter-spacing:.01em;}
+.search-bar{border-bottom:1px solid var(--b1);padding:1rem 2rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
+.search-field{flex:1;max-width:380px;position:relative;}
+.search-field input{width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:6px;padding:9px 14px;font-family:var(--ui);font-size:13px;color:var(--t1);outline:none;transition:border-color .15s;}
+.search-field input:focus{border-color:rgba(255,255,255,0.3);}
+.search-field input::placeholder{color:var(--t3);}
+.search-btn{background:var(--t1);color:var(--bg);border:none;border-radius:6px;padding:9px 20px;font-family:var(--ui);font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s;}
 .search-btn:hover{opacity:.85;}
-.chips{display:flex;gap:.4rem;flex-wrap:wrap;}
-.chip{font-size:11px;padding:5px 13px;border-radius:20px;border:1px solid var(--b2);background:var(--s2);color:var(--t2);cursor:pointer;transition:all .15s;font-family:var(--mono);font-weight:500;}
-.chip:hover{border-color:var(--blue);color:var(--t1);}
+.chips{display:flex;gap:.375rem;flex-wrap:wrap;}
+.chip{font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:4px;border:1px solid var(--b1);color:var(--t2);cursor:pointer;transition:all .15s;letter-spacing:.02em;}
+.chip:hover{border-color:var(--b2);color:var(--t1);}
 
 /* ── LAYOUT ── */
-.layout{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 110px);}
-.main{padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;border-right:1px solid var(--b1);}
-.right{padding:1.25rem;display:flex;flex-direction:column;gap:1rem;background:var(--s1);}
+.layout{display:grid;grid-template-columns:1fr 280px;}
+.main{padding:1.5rem 2rem;display:flex;flex-direction:column;gap:1.5rem;border-right:1px solid var(--b1);min-height:calc(100vh - 105px);}
+.sidebar{padding:1.25rem;display:flex;flex-direction:column;gap:1.5rem;background:var(--s1);}
 
-/* ── ASSET CARD ── */
-.asset-card{background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
-.asset-left{display:flex;align-items:center;gap:12px;}
-.asset-avatar{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;font-family:var(--mono);}
-.asset-name{font-size:15px;font-weight:700;letter-spacing:-.01em;}
-.asset-meta{font-size:11px;color:var(--t2);margin-top:2px;}
+/* ── EMPTY ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:4rem;gap:.75rem;text-align:center;}
+.empty-title{font-size:15px;font-weight:500;color:var(--t1);}
+.empty-sub{font-size:13px;color:var(--t2);line-height:1.6;}
+
+/* ── ASSET HEADER ── */
+.asset-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding-bottom:1.25rem;border-bottom:1px solid var(--b1);}
+.asset-left{display:flex;align-items:center;gap:.875rem;}
+.asset-mark{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;font-family:var(--mono);border:1px solid var(--b2);}
+.asset-name{font-size:16px;font-weight:600;letter-spacing:-.02em;}
+.asset-sub{font-size:11px;color:var(--t2);margin-top:2px;font-family:var(--mono);}
 .asset-right{text-align:right;}
-.asset-price{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:-.02em;}
-.asset-changes{font-size:11px;font-family:var(--mono);margin-top:3px;display:flex;gap:.5rem;justify-content:flex-end;align-items:center;}
+.asset-price{font-size:22px;font-weight:500;font-family:var(--mono);letter-spacing:-.03em;}
+.asset-changes{display:flex;gap:.75rem;justify-content:flex-end;margin-top:3px;}
+.chg{font-size:11px;font-family:var(--mono);}
+.up{color:var(--accent);}
+.dn{color:var(--red);}
 
 /* ── VERDICT HERO ── */
-.verdict-hero{border-radius:18px;padding:2rem;position:relative;overflow:hidden;}
-.verdict-hero.buy{background:linear-gradient(135deg,rgba(0,229,137,0.06) 0%,rgba(0,229,137,0.02) 100%);border:1px solid var(--greenb);}
-.verdict-hero.sell{background:linear-gradient(135deg,rgba(255,61,92,0.07) 0%,rgba(255,61,92,0.02) 100%);border:1px solid var(--redb);}
-.verdict-hero.hold{background:linear-gradient(135deg,rgba(255,171,0,0.07) 0%,rgba(255,171,0,0.02) 100%);border:1px solid var(--amberb);}
-.verdict-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;opacity:.05;}
-.verdict-hero.buy::before{background:var(--green);}
-.verdict-hero.sell::before{background:var(--red);}
-.verdict-hero.hold::before{background:var(--amber);}
-
-.vh-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;}
+.verdict-hero{padding:2rem;border-radius:8px;border:1px solid var(--b1);}
+.verdict-hero.buy{border-color:var(--accentb);background:var(--accent2);}
+.verdict-hero.sell{border-color:var(--redb);background:var(--red2);}
+.verdict-hero.hold{border-color:var(--b2);background:var(--s1);}
+.vh-inner{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap;}
 .vh-left{}
-.vh-tag{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:6px;}
-.vh-tag::before{content:'';width:6px;height:6px;border-radius:50%;}
-.verdict-hero.buy .vh-tag{color:var(--green);}
-.verdict-hero.buy .vh-tag::before{background:var(--green);}
-.verdict-hero.sell .vh-tag{color:var(--red);}
-.verdict-hero.sell .vh-tag::before{background:var(--red);}
-.verdict-hero.hold .vh-tag{color:var(--amber);}
-.verdict-hero.hold .vh-tag::before{background:var(--amber);}
-
-.vh-word{font-family:var(--mono);font-size:56px;font-weight:700;line-height:.95;letter-spacing:-.03em;}
-.verdict-hero.buy .vh-word{color:var(--green);}
+.vh-label{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.625rem;}
+.verdict-hero.buy .vh-label{color:var(--accent);}
+.verdict-hero.sell .vh-label{color:var(--red);}
+.verdict-hero.hold .vh-label{color:var(--t2);}
+.vh-word{font-size:64px;font-weight:300;letter-spacing:-.04em;line-height:.9;font-family:var(--ui);}
+.verdict-hero.buy .vh-word{color:var(--accent);}
 .verdict-hero.sell .vh-word{color:var(--red);}
-.verdict-hero.hold .vh-word{color:var(--amber);}
+.verdict-hero.hold .vh-word{color:var(--t1);}
+.vh-desc{font-size:13px;color:var(--t2);margin-top:1rem;line-height:1.6;max-width:500px;font-weight:300;}
+.vh-right{display:flex;flex-direction:column;gap:6px;min-width:180px;}
+.vs-row{display:flex;align-items:center;gap:10px;}
+.vs-label{font-size:10px;font-family:var(--mono);color:var(--t2);width:52px;text-align:right;letter-spacing:.04em;}
+.vs-track{flex:1;height:3px;background:var(--s3);border-radius:2px;overflow:hidden;}
+.vs-fill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.vs-pct{font-size:10px;font-family:var(--mono);width:28px;font-weight:500;}
 
-.vh-desc{font-size:13px;color:var(--t2);margin-top:.875rem;line-height:1.6;max-width:480px;}
+/* ── SECTION HEADER ── */
+.section-head{display:flex;align-items:center;gap:.75rem;padding:.25rem 0;}
+.section-title{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);}
+.section-line{flex:1;height:1px;background:var(--b1);}
+.section-count{font-size:10px;font-family:var(--mono);color:var(--t3);}
 
-.vh-scores{display:flex;flex-direction:column;gap:8px;min-width:160px;}
-.vs-row{display:flex;align-items:center;gap:8px;}
-.vs-lbl{font-size:10px;font-weight:600;letter-spacing:.05em;width:48px;text-align:right;}
-.vs-bar{flex:1;height:5px;background:var(--s4);border-radius:3px;overflow:hidden;}
-.vs-fill{height:100%;border-radius:3px;transition:width .6s;}
-.vs-num{font-family:var(--mono);font-size:11px;width:30px;font-weight:600;}
+/* ── CRITERIA LIST ── */
+.crit-list{display:flex;flex-direction:column;}
+.crit{border-bottom:1px solid var(--b1);}
+.crit:last-child{border-bottom:none;}
+.crit-row{display:flex;align-items:center;gap:1rem;padding:.875rem 0;cursor:pointer;transition:opacity .15s;}
+.crit-row:hover{opacity:.7;}
+.crit-num{font-size:10px;font-family:var(--mono);color:var(--t3);width:20px;flex-shrink:0;}
+.crit-name{flex:1;font-size:13px;font-weight:400;color:var(--t1);}
+.crit-val{font-size:12px;font-family:var(--mono);color:var(--t2);flex-shrink:0;}
+.badge{font-size:9px;font-family:var(--mono);font-weight:500;padding:3px 10px;border-radius:3px;flex-shrink:0;letter-spacing:.06em;}
+.badge-buy{color:var(--accent);border:1px solid var(--accentb);}
+.badge-sell{color:var(--red);border:1px solid var(--redb);}
+.badge-neutral{color:var(--t3);border:1px solid var(--b1);}
+.crit-arrow{font-size:10px;color:var(--t3);flex-shrink:0;transition:transform .2s;font-family:var(--mono);}
+.crit.open .crit-arrow{transform:rotate(180deg);}
 
-/* ── GROUPS ── */
-.group-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);display:flex;align-items:center;gap:10px;font-weight:600;}
-.group-label::after{content:'';flex:1;height:1px;background:var(--b2);}
-.group-tag{font-size:9px;padding:2px 8px;border-radius:10px;background:var(--s3);color:var(--t3);letter-spacing:0;text-transform:none;font-weight:400;}
+.crit-detail{display:none;padding:0 0 1.25rem 2rem;}
+.crit-detail.open{display:block;}
+.crit-explain{font-size:13px;color:var(--t2);line-height:1.7;font-weight:300;}
+.crit-explain strong{color:var(--t1);font-weight:500;}
+.crit-meta{display:flex;gap:1.5rem;margin-top:.875rem;padding-top:.875rem;border-top:1px solid var(--b1);}
+.crit-meta-item{display:flex;flex-direction:column;gap:3px;}
+.crit-meta-label{font-size:10px;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;}
+.crit-meta-val{font-size:12px;font-family:var(--mono);font-weight:500;}
 
-/* ── CRITERIA ── */
-.crit-list{display:flex;flex-direction:column;gap:.4rem;}
-.crit{border-radius:10px;border:1px solid var(--b1);background:var(--s1);overflow:hidden;transition:border-color .2s;}
-.crit:hover{border-color:var(--b2);}
-.crit.c-buy{border-color:rgba(0,229,137,0.15);}
-.crit.c-sell{border-color:rgba(255,61,92,0.15);}
-.crit-head{display:flex;align-items:center;gap:12px;padding:.875rem 1.1rem;cursor:pointer;transition:background .15s;}
-.crit-head:hover{background:var(--s2);}
-.crit-n{font-family:var(--mono);font-size:10px;color:var(--t3);width:18px;flex-shrink:0;font-weight:500;}
-.crit-info{flex:1;min-width:0;}
-.crit-name{font-size:13px;font-weight:600;letter-spacing:-.01em;color:var(--t1);}
-.crit-val{font-family:var(--mono);font-size:12px;color:var(--t2);margin-right:8px;flex-shrink:0;font-weight:500;}
-.crit-chevron{font-size:10px;color:var(--t3);flex-shrink:0;transition:transform .2s;}
-.crit-body.open+.crit-head .crit-chevron,.crit.expanded .crit-chevron{transform:rotate(180deg);}
-.cbadge{font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 11px;border-radius:20px;flex-shrink:0;letter-spacing:.06em;}
-.cb-buy{background:var(--green2);color:var(--green);border:1px solid var(--greenb);}
-.cb-sell{background:var(--red2);color:var(--red);border:1px solid var(--redb);}
-.cb-neutral{background:var(--s3);color:var(--t2);border:1px solid var(--b1);}
-.crit-body{display:none;padding:1rem 1.1rem 1.1rem;border-top:1px solid var(--b1);background:var(--s2);}
-.crit-body.open{display:block;}
-.crit-explain{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:.75rem;}
-.crit-explain strong{color:var(--t1);font-weight:600;}
-.crit-detail-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:4px 0;border-bottom:1px solid var(--b1);}
-.crit-detail-row:last-child{border-bottom:none;}
-.cdr-label{color:var(--t2);}
-.cdr-val{font-family:var(--mono);font-weight:600;font-size:11px;}
-.weight-badge{font-size:9px;font-family:var(--mono);padding:1px 6px;border-radius:8px;background:var(--s3);color:var(--t3);}
-
-/* ── RIGHT PANEL ── */
-.section-lbl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-weight:600;}
-.card{background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:1rem;}
+/* ── SIDEBAR ── */
+.sb-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--t2);margin-bottom:.625rem;}
 
 /* FEAR & GREED */
-.fg-big{font-family:var(--mono);font-size:48px;font-weight:700;text-align:center;line-height:1;}
-.fg-cls{font-size:11px;color:var(--t2);text-align:center;margin-top:4px;}
-.fg-track{width:100%;height:6px;border-radius:3px;background:linear-gradient(90deg,#ff3d5c,#ffab00,#00e589);margin-top:14px;position:relative;}
-.fg-thumb{position:absolute;top:-5px;width:16px;height:16px;border-radius:50%;background:var(--t1);border:2.5px solid var(--bg);transform:translateX(-50%);transition:left .6s;}
-.fg-ticks{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:5px;}
+.fg-num{font-size:44px;font-weight:300;font-family:var(--mono);letter-spacing:-.04em;line-height:1;}
+.fg-cls{font-size:11px;color:var(--t2);margin-top:.25rem;}
+.fg-bar{width:100%;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--red),#f59e0b,var(--accent));margin-top:.875rem;position:relative;}
+.fg-pin{position:absolute;top:-4px;width:11px;height:11px;border-radius:50%;background:var(--t1);transform:translateX(-50%);transition:left .6s;}
+.fg-ends{display:flex;justify-content:space-between;margin-top:.375rem;}
+.fg-end{font-size:9px;color:var(--t3);font-family:var(--mono);}
 
-/* PRICES */
+/* MARKET PRICES */
 .prices-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
-.price-card{background:var(--s2);border-radius:9px;padding:.625rem .75rem;border:1px solid var(--b1);}
-.price-ticker{font-size:9px;color:var(--t2);font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
-.price-val{font-family:var(--mono);font-size:14px;font-weight:700;margin-top:3px;}
-.price-chg{font-size:10px;margin-top:2px;font-family:var(--mono);}
+.price-item{background:var(--s2);border-radius:5px;padding:.625rem .75rem;}
+.price-ticker{font-size:9px;font-family:var(--mono);color:var(--t3);letter-spacing:.05em;text-transform:uppercase;}
+.price-val{font-size:14px;font-family:var(--mono);font-weight:500;margin-top:3px;}
+.price-chg{font-size:10px;font-family:var(--mono);margin-top:2px;}
 
-/* INPUTS */
-.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
-.inp-field{display:flex;flex-direction:column;gap:3px;}
-.inp-label{font-size:9px;color:var(--t2);font-weight:600;letter-spacing:.04em;}
-.inp{background:var(--s3);border:1px solid var(--b2);border-radius:7px;padding:6px 9px;color:var(--t1);font-family:var(--mono);font-size:12px;outline:none;width:100%;transition:border-color .15s;}
-.inp:focus{border-color:var(--blue);}
-.recalc-btn{width:100%;padding:8px;background:var(--blue2);border:1px solid var(--blueb);border-radius:8px;color:var(--blue);font-family:var(--ui);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.02em;margin-top:.25rem;}
-.recalc-btn:hover{background:var(--blue);color:#fff;}
+/* MANUAL INPUTS */
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:.375rem;}
+.inp-wrap{display:flex;flex-direction:column;gap:3px;}
+.inp-label{font-size:9px;color:var(--t3);letter-spacing:.05em;text-transform:uppercase;font-family:var(--mono);}
+.inp{background:var(--s2);border:1px solid var(--b1);border-radius:4px;padding:6px 8px;color:var(--t1);font-family:var(--mono);font-size:11px;outline:none;width:100%;transition:border-color .15s;}
+.inp:focus{border-color:var(--b2);}
+.inp-full{grid-column:1/-1;}
+select.inp{cursor:pointer;}
+.recalc{width:100%;padding:8px;background:transparent;border:1px solid var(--b2);border-radius:4px;color:var(--t2);font-family:var(--ui);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;margin-top:.25rem;}
+.recalc:hover{background:var(--s2);color:var(--t1);}
 
-/* AI BOX */
-.ai-box{background:var(--s2);border:1px solid var(--b2);border-radius:12px;padding:1rem;}
-.ai-hd{display:flex;align-items:center;gap:8px;margin-bottom:.75rem;padding-bottom:.625rem;border-bottom:1px solid var(--b1);}
-.ai-ico{width:26px;height:26px;background:linear-gradient(135deg,#5b7cff,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0;}
-.ai-title{font-size:12px;font-weight:700;letter-spacing:-.01em;}
-.ai-sub{font-size:10px;color:var(--t2);margin-top:1px;}
-.ai-text{font-size:12px;line-height:1.75;color:var(--t1);}
-.spin{display:inline-block;width:11px;height:11px;border:2px solid var(--b3);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;}
+/* AI */
+.ai-wrap{border-top:1px solid var(--b1);padding-top:1.25rem;}
+.ai-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;}
+.ai-title{font-size:11px;font-weight:500;letter-spacing:.05em;color:var(--t1);}
+.ai-powered{font-size:9px;color:var(--t3);font-family:var(--mono);}
+.ai-text{font-size:12px;line-height:1.75;color:var(--t2);font-weight:300;}
+.spin{display:inline-block;width:10px;height:10px;border:1.5px solid var(--b2);border-top-color:var(--t2);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* MISC */
-.up{color:var(--green);}
-.dn{color:var(--red);}
-.divider{height:1px;background:var(--b1);margin:.25rem 0;}
-
-.empty{text-align:center;padding:4rem 1rem;color:var(--t2);}
-.empty-ico{font-size:40px;margin-bottom:1rem;opacity:.4;}
-.empty h3{font-size:16px;font-weight:700;color:var(--t1);margin-bottom:.5rem;}
+/* DIVIDER */
+.divider{height:1px;background:var(--b1);}
 
 /* SCROLLBAR */
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--s3);}
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <a href="dashboard.html" class="brand">
-    <div class="brand-ico">◈</div>
-    <div class="brand-name">Crypto<span>Signal</span></div>
+    <div class="brand-mark">CS</div>
+    <div class="brand-name">Crypto<b>Signal</b></div>
   </a>
   <div class="top-right">
-    <div class="live-pill"><div class="dot"></div>LIVE</div>
-    <div id="clock"></div>
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <div class="clock-txt" id="clock"></div>
+    <a href="dashboard.html" class="back-link">← Dashboard</a>
   </div>
 </div>
 
-<div class="search-section">
-  <div class="search-wrap">
-    <span class="search-ico">⌕</span>
-    <input class="search-inp" id="search-inp" type="text" placeholder="Buscar ativo... ex: Solana, ARB, PEPE" onkeydown="if(event.key==='Enter')runAnalysis()">
+<div class="search-bar">
+  <div class="search-field">
+    <input id="search-inp" type="text" placeholder="Bitcoin, Ethereum, Solana..." onkeydown="if(event.key==='Enter')runAnalysis()">
   </div>
-  <button class="search-btn" onclick="runAnalysis()">Analisar →</button>
+  <button class="search-btn" onclick="runAnalysis()">Analisar</button>
   <div class="chips">
     <span class="chip" onclick="quickLoad('bitcoin')">BTC</span>
     <span class="chip" onclick="quickLoad('ethereum')">ETH</span>
@@ -214,52 +214,67 @@ body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh
 <div class="layout">
   <div class="main" id="main">
     <div class="empty">
-      <div class="empty-ico">◎</div>
-      <h3>10 critérios. 1 sinal.</h3>
-      <div style="font-size:13px;line-height:1.7;color:var(--t2)">Busque qualquer ativo para ver análise completa<br>combinando sinais de mercado + tokenomics.</div>
+      <div class="empty-title">Motor de Sinais</div>
+      <div class="empty-sub">Busque qualquer criptoativo para ver análise completa<br>com 10 critérios de mercado e tokenomics.</div>
     </div>
   </div>
 
-  <div class="right">
-    <div class="section-lbl">Fear & Greed</div>
-    <div class="card">
-      <div class="fg-big" id="fg-val" style="color:var(--amber)">—</div>
+  <div class="sidebar">
+    <div>
+      <div class="sb-label">Fear & Greed</div>
+      <div class="fg-num" id="fg-val" style="color:var(--t1)">—</div>
       <div class="fg-cls" id="fg-cls">carregando...</div>
-      <div class="fg-track"><div class="fg-thumb" id="fg-thumb" style="left:50%"></div></div>
-      <div class="fg-ticks"><span>Pânico</span><span>Neutro</span><span>Euforia</span></div>
+      <div class="fg-bar"><div class="fg-pin" id="fg-thumb" style="left:50%"></div></div>
+      <div class="fg-ends"><span class="fg-end">PÂNICO</span><span class="fg-end">EUFORIA</span></div>
     </div>
 
-    <div class="section-lbl">mercado ao vivo</div>
-    <div class="prices-grid">
-      <div class="price-card"><div class="price-ticker">BTC/USD</div><div class="price-val" id="p-btc">—</div><div class="price-chg" id="c-btc">—</div></div>
-      <div class="price-card"><div class="price-ticker">ETH/USD</div><div class="price-val" id="p-eth">—</div><div class="price-chg" id="c-eth">—</div></div>
-      <div class="price-card"><div class="price-ticker">Dominância</div><div class="price-val" id="p-dom">—</div><div class="price-chg" style="font-size:9px;color:var(--t2)">BTC</div></div>
-      <div class="price-card"><div class="price-ticker">MCap Total</div><div class="price-val" id="p-mcap">—</div><div class="price-chg" id="c-mcap">—</div></div>
+    <div>
+      <div class="sb-label">Mercado</div>
+      <div class="prices-grid">
+        <div class="price-item"><div class="price-ticker">BTC</div><div class="price-val" id="p-btc">—</div><div class="price-chg" id="c-btc">—</div></div>
+        <div class="price-item"><div class="price-ticker">ETH</div><div class="price-val" id="p-eth">—</div><div class="price-chg" id="c-eth">—</div></div>
+        <div class="price-item"><div class="price-ticker">DOM. BTC</div><div class="price-val" id="p-dom">—</div></div>
+        <div class="price-item"><div class="price-ticker">MCAP</div><div class="price-val" id="p-mcap">—</div><div class="price-chg" id="c-mcap">—</div></div>
+      </div>
     </div>
 
     <div class="divider"></div>
-    <div class="section-lbl">ajuste manual</div>
-    <div style="display:flex;flex-direction:column;gap:.5rem;">
-      <div class="inp-row">
-        <div class="inp-field"><div class="inp-label" id="lbl-rsi">RSI (14) <span style="color:var(--green);font-size:9px" id="rsi-auto"></span></div><input class="inp" id="i-rsi" type="number" value="52" min="0" max="100"></div>
-        <div class="inp-field"><div class="inp-label">Funding Rate %</div><input class="inp" id="i-fund" type="number" value="0.02" step="0.01"></div>
+
+    <div>
+      <div class="sb-label">Ajuste manual</div>
+      <div class="input-grid">
+        <div class="inp-wrap"><div class="inp-label" id="lbl-rsi">RSI <span style="color:var(--accent);font-size:8px" id="rsi-auto"></span></div><input class="inp" id="i-rsi" type="number" value="52" min="0" max="100"></div>
+        <div class="inp-wrap"><div class="inp-label">Funding %</div><input class="inp" id="i-fund" type="number" value="0.02" step="0.01"></div>
+        <div class="inp-wrap"><div class="inp-label">Supply Lucro % <span style="color:var(--accent);font-size:8px" id="supply-auto"></span></div><input class="inp" id="i-supply" type="number" value="75" min="0" max="100"></div>
+        <div class="inp-wrap"><div class="inp-label">Custo Min. $</div><input class="inp" id="i-mining" type="number" value="82000"></div>
+        <div class="inp-wrap inp-full"><div class="inp-label">LTH</div>
+          <select class="inp" id="i-lth">
+            <option value="accumulating">Acumulando</option>
+            <option value="neutral" selected>Neutro</option>
+            <option value="distributing">Distribuindo</option>
+          </select>
+        </div>
+        <div class="inp-wrap"><div class="inp-label">Insiders %</div><input class="inp" id="i-insiders" type="number" value="35" min="0" max="100"></div>
+        <div class="inp-wrap"><div class="inp-label">Supply ×</div><input class="inp" id="i-dilution" type="number" value="1.8" step="0.1"></div>
+        <div class="inp-wrap"><div class="inp-label">Inflação %</div><input class="inp" id="i-inflation" type="number" value="3.0" step="0.5"></div>
+        <div class="inp-wrap"><div class="inp-label">Utilidades</div><input class="inp" id="i-utility" type="number" value="2" min="0" max="5"></div>
       </div>
-      <div class="inp-row">
-        <div class="inp-field"><div class="inp-label">Supply in Profit % <span style="color:var(--green);font-size:9px" id="supply-auto"></span></div><input class="inp" id="i-supply" type="number" value="75" min="0" max="100"></div>
-        <div class="inp-field"><div class="inp-label">Custo Mineração $</div><input class="inp" id="i-mining" type="number" value="82000"></div>
+      <button class="recalc" onclick="recalc()">Recalcular</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="ai-wrap">
+      <div class="ai-header">
+        <div class="ai-title">Consultor</div>
+        <div class="ai-powered">powered by Claude</div>
       </div>
-      <div class="inp-field">
-        <div class="inp-label">LTH Comportamento</div>
-        <select class="inp" id="i-lth">
-          <option value="accumulating">Acumulando (preço caindo)</option>
-          <option value="neutral" selected>Neutro</option>
-          <option value="distributing">Distribuindo</option>
-        </select>
-      </div>
-      <div class="inp-row">
-        <div class="inp-field"><div class="inp-label">Insiders % supply</div><input class="inp" id="i-insiders" type="number" value="35" min="0" max="100"></div>
-        <div class="inp-field"><div class="inp-label">Supply futuro (×)</div><input class="inp" id="i-dilution" type="number" value="1.8" step="0.1"></div>
-      </div>
+      <div class="ai-text" id="ai-text" style="color:var(--t3);">Busque um ativo para receber análise.</div>
+    </div>
+  </div>
+</div>
+
+
       <div class="inp-row">
         <div class="inp-field"><div class="inp-label">Inflação anual %</div><input class="inp" id="i-inflation" type="number" value="3.0" step="0.5"></div>
         <div class="inp-field"><div class="inp-label">Utilidades reais</div><input class="inp" id="i-utility" type="number" value="2" min="0" max="5"></div>
@@ -697,39 +712,76 @@ function toggleCrit(k) {
 // ── AI ──
 async function runAI(sigs, verdict, name, ticker, price, ch24) {
   const el = document.getElementById('ai-text');
-  el.innerHTML = '<span class="spin"></span> Analisando...';
+  el.innerHTML = '<span class="spin"></span>';
 
   const sigSummary = Object.entries(sigs).map(([k,v])=>`${k}:${v.s}(${v.v})`).join(' · ');
-  const prompt = `Você é um consultor financeiro que explica crypto para pessoas comuns, sem usar jargão técnico.
+  const priceStr = price?'$'+price.toLocaleString('en-US',{maximumFractionDigits:2}):'N/A';
+
+  const prompt = `Você é um consultor que explica criptoativos para pessoas comuns, sem usar nenhum jargão técnico.
 
 Analise ${name} (${ticker}) com base nesses dados:
-- Veredito geral: ${verdict.v.toUpperCase()} (${verdict.buyPct}% compra · ${verdict.sellPct}% venda)
-- Preço atual: ${price?'$'+price.toLocaleString('en-US',{maximumFractionDigits:2}):'N/A'} (variação 24h: ${ch24?.toFixed(2)||'—'}%)
-- Critérios: ${sigSummary}
+- Sinal: ${verdict.v.toUpperCase()} (${verdict.buyPct}% compra · ${verdict.sellPct}% venda)
+- Preço: ${priceStr} (24h: ${ch24?.toFixed(2)||'—'}%)
+- Indicadores: ${sigSummary}
 
-Responda em português simples, como se estivesse explicando para um amigo que nunca investiu. Use no máximo 4 parágrafos curtos. Estrutura:
-1) O que está acontecendo agora com ${ticker} em linguagem bem simples
-2) Por que o sinal é ${verdict.v.toUpperCase()} — explique o motivo principal sem termos técnicos
-3) Qual é o maior risco no momento — em linguagem do dia a dia
-4) O que a pessoa deveria fazer agora — uma recomendação clara e direta
+FORMATO OBRIGATÓRIO — retorne exatamente neste formato, sem asteriscos, sem markdown, sem hashtags:
 
-NÃO use: markdown, asteriscos, hashtags, termos como RSI, MACD, funding rate, LTH, supply, tokenomics. Substitua por linguagem comum. Seja direto e humano.`;
+TÍTULO: [título curto e direto sobre o momento do ${ticker}]
+SUBTÍTULO: [uma linha resumindo o sinal]
+
+O QUE ESTÁ ACONTECENDO
+[1 parágrafo em linguagem simples explicando o momento atual do ativo]
+
+POR QUE O SINAL É ${verdict.v.toUpperCase()}
+[1 parágrafo explicando o motivo principal, sem jargão]
+
+MAIOR RISCO AGORA
+[1 parágrafo sobre o principal perigo em linguagem do dia a dia]
+
+O QUE FAZER
+[1 parágrafo com recomendação clara e direta]
+
+Não use: RSI, MACD, funding, LTH, supply, tokenomics, markdown, asteriscos, hashtags.`;
 
   try {
-    // Em produção: chame /api/claude em vez da Anthropic diretamente
     const r = await fetch('/api/claude', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        system: 'Você é um analista profissional de criptoativos. Responda sempre em português, de forma direta e sem rodeios.',
+        system: 'Você é um consultor financeiro que explica criptoativos em português simples para iniciantes. Responda SEMPRE no formato exato solicitado, sem markdown, sem asteriscos, sem hashtags.',
         messages: [{role:'user', content: prompt}]
       })
     });
     const d = await r.json();
     const txt = d.content?.map(b=>b.text||'').join('') || 'Sem resposta.';
-    el.innerHTML = txt.replace(/\n/g,'<br>');
+    
+    // Parse structured response into HTML
+    const lines = txt.split('\n').filter(l => l.trim());
+    let html = '';
+    let titulo = '', subtitulo = '';
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.startsWith('TÍTULO:')) {
+        titulo = line.replace('TÍTULO:', '').trim();
+      } else if (line.startsWith('SUBTÍTULO:')) {
+        subtitulo = line.replace('SUBTÍTULO:', '').trim();
+      } else if (line === 'O QUE ESTÁ ACONTECENDO' || line === 'POR QUE O SINAL É COMPRA' || line === 'POR QUE O SINAL É VENDA' || line === 'POR QUE O SINAL É AGUARDAR' || line.startsWith('POR QUE O SINAL') || line === 'MAIOR RISCO AGORA' || line === 'O QUE FAZER') {
+        html += `<div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin:1rem 0 .375rem;">${line}</div>`;
+      } else if (line.length > 20) {
+        html += `<p style="font-size:12px;color:var(--t2);line-height:1.75;font-weight:300;margin:0 0 .5rem;">${line}</p>`;
+      }
+    }
+    
+    const finalHtml = `
+      ${titulo ? `<div style="font-size:14px;font-weight:500;color:var(--t1);margin-bottom:.25rem;letter-spacing:-.01em;">${titulo}</div>` : ''}
+      ${subtitulo ? `<div style="font-size:11px;color:var(--t2);margin-bottom:1rem;font-weight:300;">${subtitulo}</div>` : ''}
+      ${html}
+    `;
+    
+    el.innerHTML = finalHtml;
   } catch(e) {
-    el.innerHTML = '<span style="color:var(--red)">Erro ao conectar com a IA. Verifique se /api/claude está configurado no Vercel.</span>';
+    el.innerHTML = '<span style="color:var(--t3);font-size:12px;">Erro ao conectar com o consultor. Tente novamente.</span>';
   }
 }
 
