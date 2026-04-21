@@ -553,18 +553,38 @@ function computeSignals(coinData, tk) {
 }
 
 function computeVerdict(sigs) {
-  let buyW=0, sellW=0;
+  let buyW=0, sellW=0, buyCount=0, sellCount=0, totalCount=0;
   Object.keys(W).forEach(k => {
-    if (sigs[k].s==='buy')  buyW  += W[k];
-    if (sigs[k].s==='sell') sellW += W[k];
+    totalCount++;
+    if (sigs[k].s==='buy')  { buyW  += W[k]; buyCount++;  }
+    if (sigs[k].s==='sell') { sellW += W[k]; sellCount++; }
   });
   const buyPct  = Math.round(buyW/TOTAL_W*100);
   const sellPct = Math.round(sellW/TOTAL_W*100);
   const holdPct = Math.max(0, 100-buyPct-sellPct);
-  let v = 'hold';
-  if (buyW > sellW && buyW/TOTAL_W > 0.25)  v='buy';
-  else if (sellW > buyW && sellW/TOTAL_W > 0.25) v='sell';
-  return {v, buyPct, sellPct, holdPct};
+
+  // Veredito conservador: AGUARDAR é o padrão
+  // COMPRA exige: maioria dos critérios ativamente bullish (>50% do peso)
+  //               E mais critérios de compra do que neutros+venda
+  // VENDA exige: sinais ativos de alerta (>35% do peso em venda)
+  //              OU mais critérios de venda do que compra com peso relevante
+  let v = 'hold'; // padrão sempre AGUARDAR
+
+  const buyRatio  = buyW / TOTAL_W;   // % do peso total em compra
+  const sellRatio = sellW / TOTAL_W;  // % do peso total em venda
+  const neutralCount = totalCount - buyCount - sellCount;
+
+  if (sellRatio >= 0.40) {
+    // EVITAR: 40%+ do peso em sinais de alerta
+    v = 'sell';
+  } else if (buyRatio >= 0.65 && buyCount >= 6 && buyCount > (neutralCount + sellCount)) {
+    // COMPRA: exige 65%+ do peso ativo em compra, pelo menos 6 critérios favoráveis,
+    // e mais compras do que todos os outros juntos — alta convicção real
+    v = 'buy';
+  }
+  // Qualquer outra situação = AGUARDAR (padrão conservador)
+
+  return {v, buyPct, sellPct, holdPct, buyCount, sellCount, neutralCount};
 }
 
 // ── RENDER ──
@@ -593,34 +613,77 @@ function render(coinData, tk) {
   const color   = colors[name.charCodeAt(0)%colors.length];
 
   const vCfg = {
-    buy:  {cls:'buy',  tag:'Sinal de Compra — 10 critérios', word:'COMPRA',   desc:'A maioria dos critérios aponta para uma boa oportunidade de entrada. Considere comprar em partes.'},
-    sell: {cls:'sell', tag:'Sinal de Venda — 10 critérios',  word:'VENDA',    desc:'Vários indicadores estão acendendo alertas. Não é um bom momento para comprar.'},
-    hold: {cls:'hold', tag:'Aguardar — sinais mistos',        word:'AGUARDAR', desc:'Os sinais estão divididos. Sem uma direção clara, o melhor é esperar antes de agir.'},
+    buy:  {cls:'buy',  tag:'Momento favorável — confluência de sinais', word:'COMPRA',   desc:'A maioria dos critérios aponta na mesma direção. Isso não é garantia de alta, mas o contexto é favorável para quem já pesquisou o ativo.'},
+    sell: {cls:'sell', tag:'Momento desfavorável — múltiplos alertas',  word:'EVITAR',   desc:'Vários critérios indicam risco elevado agora. Não é recomendável comprar neste momento.'},
+    hold: {cls:'hold', tag:'Sinais inconclusivos — aguarde',             word:'AGUARDAR', desc:'Os sinais estão divididos ou neutros. Sem confluência clara, o mais seguro é esperar um momento mais definido antes de agir.'},
   };
   const vc = vCfg[verdict.v];
 
   // Definição dos critérios
   const CRIT_DEF = [
-    {k:'fg',            n:'01', name:'Sentimento do Mercado',   w:W.fg,            group:'market',
-     explain: (sig,v) => sig==='buy' ? `O mercado está com <strong>muito medo agora (${v}/100)</strong>. Historicamente, quando todo mundo está com medo é quando surgem as melhores oportunidades de compra — os preços caem por pânico, não por fundamentos ruins.` : sig==='sell' ? `O mercado está em <strong>euforia (${v}/100)</strong>. Quando todo mundo está animado e achando que o preço só sobe, costuma ser sinal de que uma correção está próxima.` : `O sentimento do mercado está <strong>neutro (${v}/100)</strong>. Sem excesso de medo ou euforia — não é um sinal decisivo em nenhuma direção.` },
-    {k:'rsi',           n:'02', name:'Força do Preço (RSI)',    w:W.rsi,           group:'market',
-     explain: (sig,v) => sig==='buy' ? `O preço do ativo está <strong>barato em termos técnicos (RSI ${v})</strong>. Isso indica que venderam demais e pode haver uma recuperação. Pense como uma mola pressionada — tende a voltar.` : sig==='sell' ? `O preço subiu rápido demais e está <strong>esticado (RSI ${v})</strong>. Compradores podem estar esgotados, aumentando o risco de queda.` : `O preço está em um ritmo <strong>equilibrado (RSI ${v})</strong>, nem muito esticado nem muito deprimido.` },
-    {k:'mining',        n:'03', name:'Preço vs Valor Histórico', w:W.mining,        group:'market',
-     explain: (sig,v) => sig==='buy' ? `O ativo está <strong>muito abaixo do seu valor histórico (${v})</strong>. Para o Bitcoin, está abaixo do custo de produção. Para outras moedas, está muito longe do pico — o que historicamente representa oportunidade.` : `O ativo está <strong>próximo do valor histórico normal (${v})</strong>. Não há desconto relevante que justifique compra por esse critério.` },
-    {k:'funding',       n:'04', name:'Alavancagem no Mercado',  w:W.funding,       group:'market',
-     explain: (sig,v) => sig==='sell' ? `Muita gente está <strong>apostando na alta usando dinheiro emprestado (${v})</strong>. Isso é perigoso — se o preço cair um pouco, essas apostas são fechadas automaticamente, causando quedas maiores em cascata.` : sig==='buy' ? `As apostas alavancadas estão <strong>favorecendo a alta (${v})</strong>. Quem apostou na queda está perdendo, o que costuma pressionar o preço para cima.` : `O nível de apostas alavancadas está <strong>equilibrado (${v})</strong>. Sem pressão extrema em nenhum sentido.` },
-    {k:'lth',           n:'05', name:'Investidores de Longo Prazo', w:W.lth,        group:'market',
-     explain: (sig,v) => sig==='buy' ? `Os investidores que nunca vendem estão <strong>comprando mais agora</strong>. Eles são os mais experientes do mercado — quando acumulam durante quedas, é um sinal muito forte de confiança no ativo.` : sig==='sell' ? `Os investidores de longo prazo estão <strong>começando a vender</strong>. Quando eles desfazem posições, costuma indicar que acreditam que o preço chegou em um ponto alto.` : `Os investidores de longo prazo estão <strong>parados, sem comprar nem vender</strong>. Sinal neutro.` },
-    {k:'supply_profit', n:'06', name:'Quem está no Lucro',      w:W.supply_profit, group:'market',
-     explain: (sig,v) => sig==='sell' ? `<strong>${v}% de todas as moedas em circulação estão no lucro</strong>. Quando quase todo mundo está ganhando, há muita gente querendo realizar o lucro — o que cria pressão de venda. Historicamente é sinal de topo.` : sig==='buy' ? `Apenas <strong>${v}% das moedas estão no lucro</strong>. A maioria das pessoas está no prejuízo, o que significa que já venderam quem ia vender — o pior pode ter passado.` : `Cerca de <strong>${v}% das moedas estão no lucro</strong>. Nível moderado, sem extremo em nenhuma direção.` },
-    {k:'insiders',      n:'07', name:'Concentração nas Mãos de Poucos', w:W.insiders, group:'tokenomics',
-     explain: (sig,v) => sig==='sell' ? `<strong>${v}% de todas as moedas estão com a equipe e investidores iniciais</strong>. Isso é preocupante — quando essas pessoas decidirem vender, vão derrubar o preço. O investidor comum costuma ser o último a saber.` : sig==='buy' ? `Apenas <strong>${v}% das moedas estão concentradas com insiders</strong>. A distribuição está saudável — o preço não depende da decisão de poucas pessoas.` : `<strong>${v}% das moedas com insiders</strong> — concentração moderada. Fique de olho nos desbloqueios futuros.` },
-    {k:'dilution',      n:'08', name:'Novas Moedas Sendo Emitidas', w:W.dilution,   group:'tokenomics',
-     explain: (sig,v) => sig==='sell' ? `O total de moedas vai <strong>multiplicar ${v}× nos próximos anos</strong>. Isso dilui quem já tem — imagine comprar uma pizza e depois descobrir que vão fatiar em 3× mais pedaços. Cada pedaço vale menos.` : sig==='buy' ? `A emissão de novas moedas é <strong>mínima (${v}×)</strong>. O supply está praticamente fixo, o que significa que qualquer aumento de demanda pressiona o preço para cima.` : `O supply vai crescer <strong>${v}×</strong> — diluição moderada. Não é ideal, mas não é crítico.` },
-    {k:'inflation',     n:'09', name:'Taxa de Emissão Anual',   w:W.inflation,     group:'tokenomics',
-     explain: (sig,v) => sig==='buy' ? `Esta moeda é <strong>deflacionária (${v}%/ano)</strong> — o total em circulação está diminuindo ou crescendo muito pouco. Menos moedas com a mesma demanda = tende a valorizar.` : sig==='sell' ? `São emitidas <strong>${v}% novas moedas todo ano</strong>. Quem já tem vai sendo diluído constantemente — como imprimir dinheiro. Pressiona o preço para baixo no longo prazo.` : `A taxa de emissão anual é <strong>${v}%</strong> — dentro de um nível razoável.` },
-    {k:'utility',       n:'10', name:'Para que serve este ativo?', w:W.utility,     group:'tokenomics',
-     explain: (sig,v) => sig==='buy' ? `Este ativo tem <strong>${v} usos reais consolidados</strong> — pagamento de taxas, rendimento, governança e outros. Quanto mais útil, mais demanda orgânica e menos dependente de hype.` : sig==='sell' ? `Este ativo <strong>não tem uso prático real</strong>. O preço depende 100% de especulação e marketing. Quando o hype acabar, a demanda some junto.` : `Este ativo tem <strong>${v} usos reais</strong> — utilidade limitada mas existente. A demanda ainda depende muito de especulação.` },
+    {k:'fg', n:'01', name:'Sentimento do Mercado', w:W.fg, group:'market',
+     explain: (sig,v) => {
+       const n=parseInt(v); const cls=n<=25?'Medo Extremo':n<=45?'Medo':n<=55?'Neutro':n<=75?'Ganância':'Ganância Extrema';
+       if(sig==='buy') return `O índice Fear &amp; Greed mede o humor dos investidores em criptoativos numa escala de 0 (pânico total) a 100 (euforia máxima). Hoje está em <strong>${v} — ${cls}</strong>. Quando todo mundo está com medo e vendendo por impulso, os preços caem além do que os fundamentos justificam — criando oportunidade para quem está racional. Historicamente, os maiores ganhos do Bitcoin vieram para quem comprou em momentos de pânico: em março de 2020 o índice chegou a 8, e o preço triplicou nos 12 meses seguintes. Isso não é garantia de repetição, mas indica que o mercado está emocionalmente sobrecarregado.`;
+       if(sig==='sell') return `O índice está em <strong>${v} — ${cls}</strong>. Quando esse número passa de 75, o mercado está "quente demais": preços sobem mais pela empolgação coletiva do que por fundamentos reais. Em novembro de 2021, com o índice acima de 80, o Bitcoin atingiu seu pico histórico — e caiu 75% nos 12 meses seguintes. Euforia generalizada historicamente precede correções.`;
+       return `O índice Fear &amp; Greed está em <strong>${v} — ${cls}</strong>. Nem pânico nem euforia. Para referência: abaixo de 25 historicamente sinaliza oportunidade, acima de 75 sinaliza excesso. Com ${v}, estamos numa zona intermediária sem sinal claro.`;
+     }},
+    {k:'rsi', n:'02', name:'Velocidade do Preço', w:W.rsi, group:'market',
+     explain: (sig,v) => {
+       if(sig==='buy') return `O RSI (Índice de Força Relativa) mede o ritmo das variações de preço nos últimos 14 dias, numa escala de 0 a 100. Em <strong>${v}</strong>, o ativo está tecnicamente sobrevendido — caiu rápido demais em pouco tempo. É como uma mola pressionada: quanto mais fundo, maior a tendência de recuperação. Historicamente, o Bitcoin com RSI abaixo de 30 precedeu recuperações expressivas: em julho de 2021 (RSI 28), o preço subiu mais de 60% nas semanas seguintes. Não é garantia, mas o risco-retorno tende a ser favorável nessas zonas.`;
+       if(sig==='sell') return `O RSI está em <strong>${v}</strong> — zona de sobrecompra. O preço subiu rápido demais em poucos dias e pode estar "esticado". Compradores podem estar se esgotando, aumentando o risco de correção. Em novembro de 2021, o RSI do Bitcoin ficou acima de 75 por semanas antes da maior queda do ciclo. Isso não significa queda certa, mas o momento favorece cautela.`;
+       return `O RSI está em <strong>${v}</strong>, numa faixa neutra (30–70). O preço está se movendo em ritmo normal — sem sinais de esgotamento de compradores ou vendedores. Para referência: RSI abaixo de 30 historicamente indica oportunidade, acima de 70 indica risco de correção. Com ${v}, não há sinal em nenhuma direção.`;
+     }},
+    {k:'mining', n:'03', name:'Preço vs Custo de Produção', w:W.mining, group:'market',
+     explain: (sig,v) => {
+       if(sig==='buy') return `Minerar Bitcoin tem um custo real: energia elétrica, hardware e operação. Esse custo gira em torno de <strong>$82.000 por Bitcoin atualmente</strong>. Quando o preço de mercado fica abaixo desse valor, as mineradoras param de vender suas reservas (pois vender dá prejuízo), reduzindo a pressão vendedora. Historicamente, o Bitcoin negociou abaixo do custo de produção por períodos curtos em 2018 e 2022 — ambos foram fundos de ciclo. Para altcoins, o critério usa a distância do preço máximo histórico como proxy: o ativo está em <strong>${v}</strong>, uma zona de desconto relevante.`;
+       return `O ativo está em <strong>${v}</strong> em relação ao custo de produção ou histórico de preços. Não há desconto extremo que configure zona de suporte histórico forte. Critério neutro.`;
+     }},
+    {k:'funding', n:'04', name:'Apostas Alavancadas', w:W.funding, group:'market',
+     explain: (sig,v) => {
+       if(sig==='sell') return `A taxa de financiamento está em <strong>${v}</strong> — um nível elevado. Isso indica que muitas pessoas estão apostando na alta usando dinheiro emprestado (contratos futuros). O problema: quando essa taxa fica alta demais, qualquer queda pequena força o fechamento automático dessas posições, gerando mais quedas em cascata — o chamado "liquidation cascade". Em maio de 2021, com funding elevado por semanas, o Bitcoin caiu 50% em dias devido a liquidações em massa. Nível de risco elevado.`;
+       if(sig==='buy') return `A taxa de financiamento está em <strong>${v}</strong> — levemente negativa. Isso indica que há mais apostas na queda do que na alta, e essas apostas estão pagando para se manter abertas. Quando o preço não cai como esperado por quem apostou contra, essas posições são forçadas a fechar — e esse fechamento gera alta. É o chamado "short squeeze", que gerou altas rápidas em vários momentos do mercado cripto.`;
+       return `A taxa de financiamento está em <strong>${v}</strong> — próxima de zero, indicando equilíbrio. Sem pressão excessiva de apostas alavancadas em nenhuma direção. Critério neutro.`;
+     }},
+    {k:'lth', n:'05', name:'Comportamento dos Veteranos', w:W.lth, group:'market',
+     explain: (sig,v) => {
+       if(sig==='buy') return `Investidores de longo prazo (LTH) são carteiras que não movimentam suas moedas há mais de 155 dias consecutivos. Esses são os veteranos — já passaram por múltiplos ciclos de alta e baixa e têm maior tolerância à volatilidade. Quando estão <strong>acumulando durante quedas</strong>, é um dos sinais mais fortes que existem: quem tem experiência e convicção está aproveitando o desconto. Em 2018–2019, os LTH acumularam durante toda a longa baixa e realizaram lucros no topo de 2021. Seguir esse comportamento é uma estratégia usada por gestoras institucionais.`;
+       if(sig==='sell') return `Os veteranos do mercado estão <strong>distribuindo</strong> — vendendo posições que mantiveram por meses ou anos. Quando esse grupo vende, geralmente é porque acreditam que o preço chegou perto de um topo de ciclo. Em 2021, os LTH começaram a distribuir entre outubro e novembro — exatamente no período do pico histórico antes da queda de 75%.`;
+       return `Os investidores veteranos estão em modo <strong>neutro</strong> — nem acumulando ativamente nem vendendo. Sem um sinal claro desse grupo, esse critério não contribui para o veredito.`;
+     }},
+    {k:'supply_profit', n:'06', name:'Porcentagem no Lucro', w:W.supply_profit, group:'market',
+     explain: (sig,v) => {
+       const num=parseFloat(v);
+       if(sig==='sell') return `Atualmente <strong>${v} de todas as moedas em circulação estão no lucro</strong> — a grande maioria de quem comprou está ganhando. Isso parece positivo, mas historicamente é um alerta: quando quase todo mundo está no lucro, há enorme pressão para "realizar" (vender e garantir o ganho). Em 2021, quando esse número ultrapassou 95%, o mercado atingiu o topo nas semanas seguintes. Muita gente no lucro = muita venda potencial acumulada.`;
+       if(sig==='buy') return `Apenas <strong>${v} das moedas estão no lucro</strong> — a maioria comprou a preços mais altos e está no prejuízo. Isso indica que quem ia vender com prejuízo já vendeu. A pressão vendedora diminui quando não há mais "mãos fracas" para sair. Em março de 2020 e dezembro de 2022, esse número ficou abaixo de 50% — ambos foram pontos de entrada históricos.`;
+       return `Cerca de <strong>${v} das moedas estão no lucro</strong> — nível intermediário. Para referência: acima de 90% historicamente indica zona de topo, abaixo de 50% indica zona de fundo. Com ${v}, estamos num território neutro sem sinal extremo.`;
+     }},
+    {k:'insiders', n:'07', name:'Distribuição entre Fundadores e Público', w:W.insiders, group:'tokenomics',
+     explain: (sig,v) => {
+       if(sig==='sell') return `<strong>${v} de todas as moedas estão nas mãos da equipe fundadora, investidores de risco (VCs) e parceiros estratégicos</strong>. Esses grupos compraram a preços muito mais baixos na fase inicial. Quando decidirem vender, o volume pode ser enorme — e o investidor comum geralmente descobre tarde. Projetos com mais de 50% nas mãos de insiders têm histórico de quedas abruptas após os períodos de vesting (quando as restrições de venda expiram). Antes de investir, sempre verifique no tokenunlocks.app as datas de desbloqueio.`;
+       if(sig==='buy') return `Apenas <strong>${v} das moedas estão com insiders</strong> — uma distribuição saudável. O preço não depende das decisões de um grupo pequeno. Quanto mais descentralizada a distribuição desde o início, menor o risco de uma venda coordenada que derruba o valor.`;
+       return `<strong>${v} das moedas estão com insiders</strong> — concentração moderada. Não é crítico, mas vale monitorar os cronogramas de desbloqueio. O site tokenunlocks.app mostra de forma gratuita quando e quanto cada grupo pode começar a vender.`;
+     }},
+    {k:'dilution', n:'08', name:'Quanto o Supply vai Crescer', w:W.dilution, group:'tokenomics',
+     explain: (sig,v) => {
+       if(sig==='sell') return `O total de moedas em circulação vai <strong>multiplicar ${v} nos próximos anos</strong>. Para entender o impacto: imagine que você comprou 1% de uma empresa. Se essa empresa emite 3× mais ações sem crescer proporcionalmente, sua fatia cai para 0,33%. O mesmo princípio vale aqui. Para que o preço se mantenha com essa diluição, a demanda precisaria crescer na mesma proporção — algo que raramente acontece. Projetos com alta diluição futura tendem a perder valor relativo mesmo em mercados de alta.`;
+       if(sig==='buy') return `A emissão de novas moedas é <strong>mínima — o supply está praticamente fixo (${v})</strong>. Com oferta estável, qualquer aumento de demanda se traduz diretamente em valorização de preço. É o mesmo princípio que explica por que o Bitcoin (supply máximo de 21 milhões, imutável) tem características de reserva de valor ao longo do tempo.`;
+       return `O supply vai crescer <strong>${v}</strong> no longo prazo — diluição moderada. O impacto no preço depende de quanto a adoção crescer em paralelo. Critério neutro.`;
+     }},
+    {k:'inflation', n:'09', name:'Emissão Anual de Novas Moedas', w:W.inflation, group:'tokenomics',
+     explain: (sig,v) => {
+       if(sig==='buy') return `Este ativo tem taxa de emissão de <strong>${v} ao ano</strong> — deflacionária ou próxima de zero. O Bitcoin, após cada halving (evento que reduz a emissão à metade a cada 4 anos), tem emissão cada vez menor. Após o halving de 2024, a emissão anual de BTC ficou abaixo de 1%. Menos moedas disponíveis com a mesma ou maior demanda cria pressão natural de valorização ao longo do tempo — o princípio básico de escassez.`;
+       if(sig==='sell') return `São criadas <strong>${v} novas moedas todo ano</strong>. Pense assim: se você tem 1% do total hoje, no próximo ano tem menos de 1% — o restante foi "emitido" e distribuído para mineradores, equipe ou stakers. Alta inflação de token dilui os holders constantemente. É como uma empresa que imprime dinheiro todo ano: quem já tem fica com uma fatia menor do bolo.`;
+       return `A emissão anual é de <strong>${v}</strong> — um nível controlado, nem deflacionário como o Bitcoin pós-halving, nem inflacionário ao ponto de diluir excessivamente os holders. Critério neutro.`;
+     }},
+    {k:'utility', n:'10', name:'Utilidade Real do Ativo', w:W.utility, group:'tokenomics',
+     explain: (sig,v,nm,tk) => {
+       const isBTC = (typeof ticker !== 'undefined' && ticker==='BTC') || (typeof name !== 'undefined' && name==='Bitcoin');
+       const btcDetail = isBTC ? ' No caso do Bitcoin especificamente: (1) pagamento de taxas de transação na rede — cada transferência paga uma taxa em BTC; (2) reserva de valor global, usado como proteção contra inflação em países como Argentina e Turquia; (3) colateral em protocolos financeiros descentralizados. Esses usos geram demanda orgânica constante.' : '';
+       if(sig==='buy') return `Este ativo tem <strong>${v} casos de uso reais e consolidados</strong>.${btcDetail} Utilidade real cria demanda orgânica — pessoas precisam do token para usar a rede, não apenas para especular. Quanto mais usos reais, mais resiliente tende a ser o preço em períodos de baixa, porque parte da demanda existe independentemente do mercado.`;
+       if(sig==='sell') return `Este ativo <strong>não tem casos de uso práticos comprovados</strong> além da especulação. Toda a demanda vem de expectativas futuras e marketing. Quando o hype diminui ou o mercado entra em baixa, ativos sem utilidade real tendem a cair mais e demorar mais para se recuperar do que ativos com demanda orgânica.`;
+       return `Este ativo tem <strong>${v} casos de uso identificados</strong>.${btcDetail} Uma utilidade moderada — há demanda real, mas ainda parcialmente dependente de especulação e expectativas. À medida que o ecossistema amadurece, mais casos de uso tendem a surgir.`;
+     }},
   ];
 
   const renderCrit = c => {
@@ -717,38 +780,45 @@ async function runAI(sigs, verdict, name, ticker, price, ch24) {
   const sigSummary = Object.entries(sigs).map(([k,v])=>`${k}:${v.s}(${v.v})`).join(' · ');
   const priceStr = price?'$'+price.toLocaleString('en-US',{maximumFractionDigits:2}):'N/A';
 
-  const prompt = `Você é um consultor que explica criptoativos para pessoas comuns, sem usar nenhum jargão técnico.
+  const sinalLabel = verdict.v==='buy'?'COMPRA':verdict.v==='sell'?'EVITAR':'AGUARDAR';
+  const prompt = `Você é um educador financeiro que explica criptoativos para iniciantes de forma honesta e responsável. Seu papel é informar, nunca vender ou promover.
 
 Analise ${name} (${ticker}) com base nesses dados:
-- Sinal: ${verdict.v.toUpperCase()} (${verdict.buyPct}% compra · ${verdict.sellPct}% venda)
-- Preço: ${priceStr} (24h: ${ch24?.toFixed(2)||'—'}%)
+- Sinal do sistema: ${sinalLabel} (${verdict.buyPct}% critérios favoráveis · ${verdict.sellPct}% desfavoráveis · ${verdict.holdPct}% neutros)
+- Preço: ${priceStr} (variação 24h: ${ch24?.toFixed(2)||'—'}%)
 - Indicadores: ${sigSummary}
 
-FORMATO OBRIGATÓRIO — retorne exatamente neste formato, sem asteriscos, sem markdown, sem hashtags:
+REGRAS OBRIGATÓRIAS:
+- Se o sinal for AGUARDAR, nunca sugira compra
+- Se a maioria dos critérios estiver neutra, seja explícito que não há sinal claro
+- Nunca prometa valorização ou retorno
+- Seja honesto sobre incertezas
 
-TÍTULO: [título curto e direto sobre o momento do ${ticker}]
-SUBTÍTULO: [uma linha resumindo o sinal]
+FORMATO — sem asteriscos, sem markdown, sem hashtags, sem numeração:
+
+TÍTULO: [frase curta e honesta sobre o momento do ${ticker}]
+SUBTÍTULO: [uma linha neutra descrevendo a situação atual]
 
 O QUE ESTÁ ACONTECENDO
-[1 parágrafo em linguagem simples explicando o momento atual do ativo]
+[1 parágrafo simples, sem exageros, sobre o momento do ativo]
 
-POR QUE O SINAL É ${verdict.v.toUpperCase()}
-[1 parágrafo explicando o motivo principal, sem jargão]
+POR QUE O SISTEMA INDICA ${sinalLabel}
+[1 parágrafo explicando o raciocínio com honestidade — se o sinal for fraco, diga isso]
 
-MAIOR RISCO AGORA
-[1 parágrafo sobre o principal perigo em linguagem do dia a dia]
+PRINCIPAL RISCO
+[1 parágrafo honesto sobre o que pode dar errado]
 
-O QUE FAZER
-[1 parágrafo com recomendação clara e direta]
+O QUE CONSIDERAR
+[1 parágrafo prudente sobre o que avaliar antes de qualquer decisão — nunca "faça isso"]
 
-Não use: RSI, MACD, funding, LTH, supply, tokenomics, markdown, asteriscos, hashtags.`;
+Não use: RSI, MACD, funding, LTH, supply, tokenomics. Linguagem simples do dia a dia.`;
 
   try {
     const r = await fetch('/api/claude', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        system: 'Você é um consultor financeiro que explica criptoativos em português simples para iniciantes. Responda SEMPRE no formato exato solicitado, sem markdown, sem asteriscos, sem hashtags.',
+        system: 'Você é um educador financeiro responsável. Responda SEMPRE no formato exato solicitado. Sem markdown, asteriscos, hashtags ou numeração. Seja honesto sobre riscos e incertezas. Nunca prometa retorno.',
         messages: [{role:'user', content: prompt}]
       })
     });
@@ -766,7 +836,7 @@ Não use: RSI, MACD, funding, LTH, supply, tokenomics, markdown, asteriscos, has
         titulo = line.replace('TÍTULO:', '').trim();
       } else if (line.startsWith('SUBTÍTULO:')) {
         subtitulo = line.replace('SUBTÍTULO:', '').trim();
-      } else if (line === 'O QUE ESTÁ ACONTECENDO' || line === 'POR QUE O SINAL É COMPRA' || line === 'POR QUE O SINAL É VENDA' || line === 'POR QUE O SINAL É AGUARDAR' || line.startsWith('POR QUE O SINAL') || line === 'MAIOR RISCO AGORA' || line === 'O QUE FAZER') {
+      } else if (line === 'O QUE ESTÁ ACONTECENDO' || line === 'POR QUE O SINAL É COMPRA' || line === 'POR QUE O SINAL É VENDA' || line === 'POR QUE O SINAL É AGUARDAR' || line.startsWith('POR QUE O SINAL') || line.startsWith('POR QUE O SISTEMA') || line === 'MAIOR RISCO AGORA' || line === 'O QUE CONSIDERAR') {
         html += `<div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin:1rem 0 .375rem;">${line}</div>`;
       } else if (line.length > 20) {
         html += `<p style="font-size:12px;color:var(--t2);line-height:1.75;font-weight:300;margin:0 0 .5rem;">${line}</p>`;
