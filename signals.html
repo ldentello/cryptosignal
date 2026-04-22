@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CryptoSignal — Sinais</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -25,7 +27,7 @@
   --red:#f16767;
   --red2:rgba(241,103,103,0.06);
   --redb:rgba(241,103,103,0.16);
-  --ui:'Figtree',system-ui,-apple-system,sans-serif;
+  --ui:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,monospace;
 }
 html{font-size:15px;}
@@ -111,23 +113,23 @@ nav{height:54px;border-bottom:1px solid var(--b1);display:flex;align-items:cente
 
 /* CRITERIA */
 .criteria-list{display:flex;flex-direction:column;}
-.crit-item{border-bottom:1px solid var(--b1);}
-.crit-item:first-child{border-top:1px solid var(--b1);}
+.crit{border-bottom:1px solid var(--b1);}
+.crit:first-child{border-top:1px solid var(--b1);}
 .crit-trigger{display:flex;align-items:center;gap:1.25rem;padding:.9rem 0;cursor:pointer;transition:opacity .15s;}
 .crit-trigger:hover{opacity:.65;}
 .crit-index{font-size:9px;font-family:var(--mono);color:var(--t3);width:16px;flex-shrink:0;letter-spacing:.04em;}
 .crit-label{flex:1;font-size:13px;font-weight:300;color:var(--t2);letter-spacing:-.01em;}
-.crit-item.open .crit-label{color:var(--t1);font-weight:400;}
+.crit.open .crit-lbl{color:var(--t1);font-weight:400;}
 .crit-reading{font-size:11px;font-family:var(--mono);color:var(--t3);flex-shrink:0;}
 .crit-pill{font-size:8px;font-family:var(--mono);font-weight:500;padding:3px 9px;border-radius:2px;flex-shrink:0;letter-spacing:.08em;text-transform:uppercase;}
 .pill-buy{color:var(--green);border:1px solid var(--greenb);}
 .pill-sell{color:var(--red);border:1px solid var(--redb);}
 .pill-neutral{color:var(--t3);border:1px solid var(--b1);}
 .crit-chevron{font-size:8px;color:var(--t3);flex-shrink:0;transition:transform .22s;}
-.crit-item.open .crit-chevron{transform:rotate(180deg);}
+.crit.open .crit-arr{transform:rotate(180deg);}
 
-.crit-expand{display:none;padding:0 0 1.375rem 2rem;}
-.crit-expand.open{display:block;}
+.crit-detail{display:none;padding:0 0 1.375rem 2rem;}
+.crit-detail.open{display:block;}
 .crit-explain-text{font-size:12.5px;color:var(--t2);line-height:1.8;font-weight:300;letter-spacing:.005em;}
 .crit-explain-text strong{color:var(--t1);font-weight:500;}
 .crit-expand-meta{display:flex;gap:2rem;margin-top:.875rem;padding-top:.875rem;border-top:1px solid var(--b1);}
@@ -214,30 +216,30 @@ select.inp-field{cursor:pointer;-webkit-appearance:none;}
   </div>
 </div>
 
-<div class="body-grid">
-  <div class="col-main" id="main">
+<div class="layout">
+  <div class="main" id="main">
     <div class="empty-state">
       <h2>Motor de Sinais</h2>
       <p>Busque qualquer criptoativo para análise completa<br>com 10 critérios de mercado e tokenomics.</p>
     </div>
   </div>
 
-  <div class="col-side">
+  <div class="side">
     <div>
       <div class="side-lbl">Fear & Greed</div>
-      <div class="fg-number" id="fg-val">—</div>
-      <div class="fg-label" id="fg-cls">carregando...</div>
-      <div class="fg-track"><div class="fg-knob" id="fg-thumb" style="left:50%"></div></div>
-      <div class="fg-range"><span>PÂNICO</span><span>EUFORIA</span></div>
+      <div class="fg-big" id="fg-val">—</div>
+      <div class="fg-sub" id="fg-cls">carregando...</div>
+      <div class="fg-bar"><div class="fg-pin" id="fg-thumb" style="left:50%"></div></div>
+      <div class="fg-ends"><span>PÂNICO</span><span>EUFORIA</span></div>
     </div>
 
     <div>
       <div class="side-lbl">Mercado</div>
       <div class="price-grid">
-        <div class="price-cell"><div class="price-cell-ticker">BTC</div><div class="price-cell-val" id="p-btc">—</div><div class="price-cell-chg" id="c-btc">—</div></div>
-        <div class="price-cell"><div class="price-cell-ticker">ETH</div><div class="price-cell-val" id="p-eth">—</div><div class="price-cell-chg" id="c-eth">—</div></div>
-        <div class="price-cell"><div class="price-cell-ticker">DOM. BTC</div><div class="price-cell-val" id="p-dom">—</div></div>
-        <div class="price-cell"><div class="price-cell-ticker">MCAP</div><div class="price-cell-val" id="p-mcap">—</div><div class="price-cell-chg" id="c-mcap">—</div></div>
+        <div class="price-cell"><div class="pc-ticker">BTC</div><div class="pc-val" id="p-btc">—</div><div class="pc-chg" id="c-btc">—</div></div>
+        <div class="price-cell"><div class="pc-ticker">ETH</div><div class="pc-val" id="p-eth">—</div><div class="pc-chg" id="c-eth">—</div></div>
+        <div class="price-cell"><div class="pc-ticker">DOM. BTC</div><div class="pc-val" id="p-dom">—</div></div>
+        <div class="price-cell"><div class="pc-ticker">MCAP</div><div class="pc-val" id="p-mcap">—</div><div class="pc-chg" id="c-mcap">—</div></div>
       </div>
     </div>
 
@@ -603,91 +605,139 @@ function render(coinData, tk) {
   // Definição dos critérios
   const CRIT_DEF = [
     {k:'fg', n:'01', name:'Sentimento do Mercado', w:W.fg, group:'market',
-     explain: (sig,v) => {
-       const n=parseInt(v); const cls=n<=25?'Medo Extremo':n<=45?'Medo':n<=55?'Neutro':n<=75?'Ganância':'Ganância Extrema';
-       if(sig==='buy') return `O índice Fear &amp; Greed mede o humor dos investidores em criptoativos numa escala de 0 (pânico total) a 100 (euforia máxima). Hoje está em <strong>${v} — ${cls}</strong>. Quando todo mundo está com medo e vendendo por impulso, os preços caem além do que os fundamentos justificam — criando oportunidade para quem está racional. Historicamente, os maiores ganhos do Bitcoin vieram para quem comprou em momentos de pânico: em março de 2020 o índice chegou a 8, e o preço triplicou nos 12 meses seguintes. Isso não é garantia de repetição, mas indica que o mercado está emocionalmente sobrecarregado.`;
-       if(sig==='sell') return `O índice está em <strong>${v} — ${cls}</strong>. Quando esse número passa de 75, o mercado está "quente demais": preços sobem mais pela empolgação coletiva do que por fundamentos reais. Em novembro de 2021, com o índice acima de 80, o Bitcoin atingiu seu pico histórico — e caiu 75% nos 12 meses seguintes. Euforia generalizada historicamente precede correções.`;
-       return `O índice Fear &amp; Greed está em <strong>${v} — ${cls}</strong>. Nem pânico nem euforia. Para referência: abaixo de 25 historicamente sinaliza oportunidade, acima de 75 sinaliza excesso. Com ${v}, estamos numa zona intermediária sem sinal claro.`;
+     explain:(sig,v)=>{
+       const n=parseInt(v);
+       const hist=`<div class="hist-pills"><div class="hpill"><span class="hpill-date">Mar/2020</span><span class="hpill-val">8</span><span class="hpill-desc">→ BTC triplicou em 12 meses</span></div><div class="hpill"><span class="hpill-date">Dez/2022</span><span class="hpill-val">6</span><span class="hpill-desc">→ início da alta de 2023</span></div><div class="hpill"><span class="hpill-date">Nov/2021</span><span class="hpill-val">84</span><span class="hpill-desc">→ topo antes de cair 75%</span></div></div>`;
+       const now = sig==='buy'
+         ? `<div class="now-box positive"><strong>Hoje está em ${v} — Medo Extremo.</strong> Historicamente, pânico abaixo de 25 gerou as melhores janelas de entrada. Quem comprou em março/2020 (índice 8) viu o Bitcoin triplicar em 12 meses.</div>`
+         : sig==='sell'
+         ? `<div class="now-box negative"><strong>Hoje está em ${v} — Euforia.</strong> Historicamente, acima de 75 o mercado está quente demais. Em nov/2021 chegou a 84 dias antes do topo histórico e queda de 75%.</div>`
+         : `<div class="now-box neutral"><strong>Hoje está em ${v}.</strong> Zona de cautela — tem medo no ar, mas sem o pânico extremo que historicamente gerou as melhores entradas. O sinal de compra começa abaixo de 25.</div>`;
+       return `<p>O índice Fear & Greed mede o humor coletivo de quem investe em cripto numa escala de <strong>0 (pânico total) a 100 (euforia máxima)</strong>. É o termômetro emocional do mercado — e emoção move preço tanto quanto fundamento.</p><p>A lógica é simples: <strong>quando todo mundo está com medo, os preços caem além do razoável</strong>, criando oportunidade para quem está racional. O inverso também é verdade: euforia generalizada precede correções.</p>${hist}${now}`;
      }},
     {k:'rsi', n:'02', name:'Velocidade do Preço', w:W.rsi, group:'market',
-     explain: (sig,v) => {
-       if(sig==='buy') return `O RSI (Índice de Força Relativa) mede o ritmo das variações de preço nos últimos 14 dias, numa escala de 0 a 100. Em <strong>${v}</strong>, o ativo está tecnicamente sobrevendido — caiu rápido demais em pouco tempo. É como uma mola pressionada: quanto mais fundo, maior a tendência de recuperação. Historicamente, o Bitcoin com RSI abaixo de 30 precedeu recuperações expressivas: em julho de 2021 (RSI 28), o preço subiu mais de 60% nas semanas seguintes. Não é garantia, mas o risco-retorno tende a ser favorável nessas zonas.`;
-       if(sig==='sell') return `O RSI está em <strong>${v}</strong> — zona de sobrecompra. O preço subiu rápido demais em poucos dias e pode estar "esticado". Compradores podem estar se esgotando, aumentando o risco de correção. Em novembro de 2021, o RSI do Bitcoin ficou acima de 75 por semanas antes da maior queda do ciclo. Isso não significa queda certa, mas o momento favorece cautela.`;
-       return `O RSI está em <strong>${v}</strong>, numa faixa neutra (30–70). O preço está se movendo em ritmo normal — sem sinais de esgotamento de compradores ou vendedores. Para referência: RSI abaixo de 30 historicamente indica oportunidade, acima de 70 indica risco de correção. Com ${v}, não há sinal em nenhuma direção.`;
+     explain:(sig,v)=>{
+       const n=parseInt(v);
+       const hist=`<div class="hist-pills"><div class="hpill"><span class="hpill-date">Jul/2021</span><span class="hpill-val">RSI 28</span><span class="hpill-desc">→ alta de 60% nas semanas seguintes</span></div><div class="hpill"><span class="hpill-date">Nov/2021</span><span class="hpill-val">RSI 76</span><span class="hpill-desc">→ início da queda de 75%</span></div></div>`;
+       const now = sig==='buy'
+         ? `<div class="now-box positive"><strong>RSI em ${v} — sobrevendido.</strong> O ativo caiu rápido demais. Como uma mola pressionada, tende a recuperar. Em jul/2021 com RSI 28, o Bitcoin subiu 60% nas semanas seguintes.</div>`
+         : sig==='sell'
+         ? `<div class="now-box negative"><strong>RSI em ${v} — sobrecomprado.</strong> O preço subiu rápido demais. Compradores podem estar se esgotando, aumentando o risco de correção.</div>`
+         : `<div class="now-box neutral"><strong>RSI em ${v} — zona neutra.</strong> O preço está se movendo em ritmo normal, sem sinais de esgotamento em nenhuma direção. O sinal de compra começa abaixo de 30.</div>`;
+       return `<p>O RSI (Índice de Força Relativa) mede o ritmo das variações de preço nos últimos 14 dias, numa escala de 0 a 100. Ele responde a uma pergunta simples: <strong>o ativo subiu ou caiu rápido demais?</strong></p><p>Acima de 70: sobrecomprado, risco de correção. Abaixo de 30: sobrevendido, potencial de recuperação.</p>${hist}${now}`;
      }},
     {k:'mining', n:'03', name:'Preço vs Custo de Produção', w:W.mining, group:'market',
-     explain: (sig,v) => {
-       if(sig==='buy') return `Minerar Bitcoin tem um custo real: energia elétrica, hardware e operação. Esse custo gira em torno de <strong>$82.000 por Bitcoin atualmente</strong>. Quando o preço de mercado fica abaixo desse valor, as mineradoras param de vender suas reservas (pois vender dá prejuízo), reduzindo a pressão vendedora. Historicamente, o Bitcoin negociou abaixo do custo de produção por períodos curtos em 2018 e 2022 — ambos foram fundos de ciclo. Para altcoins, o critério usa a distância do preço máximo histórico como proxy: o ativo está em <strong>${v}</strong>, uma zona de desconto relevante.`;
-       return `O ativo está em <strong>${v}</strong> em relação ao custo de produção ou histórico de preços. Não há desconto extremo que configure zona de suporte histórico forte. Critério neutro.`;
+     explain:(sig,v)=>{
+       const isBTC = (typeof ticker !== 'undefined' && ticker==='BTC');
+       const hist=`<div class="hist-pills"><div class="hpill"><span class="hpill-date">Nov/2018</span><span class="hpill-val">Abaixo do custo</span><span class="hpill-desc">→ fundo do ciclo — alta de 20x seguiu</span></div><div class="hpill"><span class="hpill-date">Nov/2022</span><span class="hpill-val">Abaixo do custo</span><span class="hpill-desc">→ fundo do bear market 2022</span></div></div>`;
+       const now = sig==='buy'
+         ? `<div class="now-box positive"><strong>O preço atual está abaixo do custo de produção estimado.</strong> Minerar dá prejuízo — as mineradoras param de vender, reduzindo pressão vendedora. Historicamente isso marcou fundos de ciclo em 2018 e 2022.</div>`
+         : `<div class="now-box neutral"><strong>Valor atual: ${v}.</strong> O ativo está dentro de uma faixa normal em relação ao custo de produção ou histórico. Sem desconto extremo que configure zona de suporte histórico forte.</div>`;
+       return `<p>Minerar Bitcoin tem um custo real — energia elétrica, hardware especializado e operação. A média global hoje gira em torno de <strong>$82.000 por Bitcoin</strong>.</p><p>Quando o preço cai abaixo desse valor, as mineradoras param de vender (pois vender dá prejuízo), <strong>reduzindo a pressão vendedora do mercado</strong>. Esse fenômeno historicamente marcou fundos de ciclo.</p>${hist}${now}`;
      }},
     {k:'funding', n:'04', name:'Apostas Alavancadas', w:W.funding, group:'market',
-     explain: (sig,v) => {
-       if(sig==='sell') return `A taxa de financiamento está em <strong>${v}</strong> — um nível elevado. Isso indica que muitas pessoas estão apostando na alta usando dinheiro emprestado (contratos futuros). O problema: quando essa taxa fica alta demais, qualquer queda pequena força o fechamento automático dessas posições, gerando mais quedas em cascata — o chamado "liquidation cascade". Em maio de 2021, com funding elevado por semanas, o Bitcoin caiu 50% em dias devido a liquidações em massa. Nível de risco elevado.`;
-       if(sig==='buy') return `A taxa de financiamento está em <strong>${v}</strong> — levemente negativa. Isso indica que há mais apostas na queda do que na alta, e essas apostas estão pagando para se manter abertas. Quando o preço não cai como esperado por quem apostou contra, essas posições são forçadas a fechar — e esse fechamento gera alta. É o chamado "short squeeze", que gerou altas rápidas em vários momentos do mercado cripto.`;
-       return `A taxa de financiamento está em <strong>${v}</strong> — próxima de zero, indicando equilíbrio. Sem pressão excessiva de apostas alavancadas em nenhuma direção. Critério neutro.`;
+     explain:(sig,v)=>{
+       const hist=`<div class="hist-pills"><div class="hpill"><span class="hpill-date">Mai/2021</span><span class="hpill-val">+0.10%</span><span class="hpill-desc">→ queda de 50% em 72h</span></div><div class="hpill"><span class="hpill-date">Nov/2022</span><span class="hpill-val">−0.05%</span><span class="hpill-desc">→ alta de 40% em 2 semanas</span></div></div>`;
+       const now = sig==='sell'
+         ? `<div class="now-box negative"><strong>Taxa em ${v} — alerta.</strong> Há dinheiro emprestado demais apostando na alta. Qualquer queda pequena pode causar liquidações em cascata. Em mai/2021 com +0.10%, o Bitcoin caiu 50% em 72 horas.</div>`
+         : sig==='buy'
+         ? `<div class="now-box positive"><strong>Taxa negativa em ${v}.</strong> Excesso de apostas na queda — quando o preço não cai como esperado, essas posições fecham e geram alta rápida. É o chamado "short squeeze".</div>`
+         : `<div class="now-box neutral"><strong>Taxa em ${v} — equilibrada.</strong> Sem excesso de apostas alavancadas em nenhuma direção. O risco de uma queda em cascata está baixo agora.</div>`;
+       return `<p>Além de comprar o ativo diretamente, traders usam <strong>contratos futuros</strong> para apostar no preço sem ter o ativo. A taxa de funding é cobrada a cada 8 horas entre quem aposta na alta e na queda — funciona como termômetro de excesso.</p><p>Quando muito positiva: dinheiro emprestado demais apostando na alta. Qualquer queda força o fechamento automático dessas posições — <strong>quedas em cascata</strong>. Quando muito negativa: o efeito inverso pode gerar altas rápidas.</p>${hist}${now}`;
      }},
     {k:'lth', n:'05', name:'Comportamento dos Veteranos', w:W.lth, group:'market',
-     explain: (sig,v) => {
-       if(sig==='buy') return `Investidores de longo prazo (LTH) são carteiras que não movimentam suas moedas há mais de 155 dias consecutivos. Esses são os veteranos — já passaram por múltiplos ciclos de alta e baixa e têm maior tolerância à volatilidade. Quando estão <strong>acumulando durante quedas</strong>, é um dos sinais mais fortes que existem: quem tem experiência e convicção está aproveitando o desconto. Em 2018–2019, os LTH acumularam durante toda a longa baixa e realizaram lucros no topo de 2021. Seguir esse comportamento é uma estratégia usada por gestoras institucionais.`;
-       if(sig==='sell') return `Os veteranos do mercado estão <strong>distribuindo</strong> — vendendo posições que mantiveram por meses ou anos. Quando esse grupo vende, geralmente é porque acreditam que o preço chegou perto de um topo de ciclo. Em 2021, os LTH começaram a distribuir entre outubro e novembro — exatamente no período do pico histórico antes da queda de 75%.`;
-       return `Os investidores veteranos estão em modo <strong>neutro</strong> — nem acumulando ativamente nem vendendo. Sem um sinal claro desse grupo, esse critério não contribui para o veredito.`;
+     explain:(sig,v)=>{
+       const hist=`<div class="hist-pills"><div class="hpill"><span class="hpill-date">2018–2019</span><span class="hpill-val">Acumulando</span><span class="hpill-desc">→ realizaram no topo de 2021</span></div><div class="hpill"><span class="hpill-date">Out/2021</span><span class="hpill-val">Distribuindo</span><span class="hpill-desc">→ pico histórico semanas depois</span></div></div>`;
+       const now = sig==='buy'
+         ? `<div class="now-box positive"><strong>Veteranos acumulando.</strong> Os mais experientes do mercado estão comprando durante a queda. É um dos sinais mais fortes que existem — quem viveu múltiplos ciclos está apostando na recuperação.</div>`
+         : sig==='sell'
+         ? `<div class="now-box negative"><strong>Veteranos distribuindo.</strong> Estão vendendo posições que mantiveram por meses. Quando esse grupo vende, geralmente é porque acreditam que o preço chegou num ponto alto do ciclo.</div>`
+         : `<div class="now-box neutral"><strong>Veteranos neutros — ${v}.</strong> Nem acumulando nem vendendo de forma relevante. Sem sinal claro desse grupo.</div>`;
+       return `<p>Investidores de longo prazo (LTH) são carteiras que <strong>não movimentaram suas moedas por mais de 155 dias consecutivos</strong>. São os veteranos — já passaram por múltiplos ciclos e têm maior tolerância à volatilidade. São considerados o "smart money" do mercado cripto.</p><p>Analisamos se esse grupo está <strong>acumulando</strong> (comprando mais durante quedas) ou <strong>distribuindo</strong> (vendendo após altas). Seguir esse comportamento é uma estratégia usada por gestoras institucionais.</p>${hist}${now}`;
      }},
     {k:'supply_profit', n:'06', name:'Porcentagem no Lucro', w:W.supply_profit, group:'market',
-     explain: (sig,v) => {
+     explain:(sig,v)=>{
        const num=parseFloat(v);
-       if(sig==='sell') return `Atualmente <strong>${v} de todas as moedas em circulação estão no lucro</strong> — a grande maioria de quem comprou está ganhando. Isso parece positivo, mas historicamente é um alerta: quando quase todo mundo está no lucro, há enorme pressão para "realizar" (vender e garantir o ganho). Em 2021, quando esse número ultrapassou 95%, o mercado atingiu o topo nas semanas seguintes. Muita gente no lucro = muita venda potencial acumulada.`;
-       if(sig==='buy') return `Apenas <strong>${v} das moedas estão no lucro</strong> — a maioria comprou a preços mais altos e está no prejuízo. Isso indica que quem ia vender com prejuízo já vendeu. A pressão vendedora diminui quando não há mais "mãos fracas" para sair. Em março de 2020 e dezembro de 2022, esse número ficou abaixo de 50% — ambos foram pontos de entrada históricos.`;
-       return `Cerca de <strong>${v} das moedas estão no lucro</strong> — nível intermediário. Para referência: acima de 90% historicamente indica zona de topo, abaixo de 50% indica zona de fundo. Com ${v}, estamos num território neutro sem sinal extremo.`;
+       const hist=`<div class="hist-pills"><div class="hpill"><span class="hpill-date">Nov/2021</span><span class="hpill-val">97%</span><span class="hpill-desc">→ topo histórico dias depois</span></div><div class="hpill"><span class="hpill-date">Mar/2020</span><span class="hpill-val">45%</span><span class="hpill-desc">→ fundo — alta de 10x seguiu</span></div><div class="hpill"><span class="hpill-date">Dez/2022</span><span class="hpill-val">42%</span><span class="hpill-desc">→ fundo do bear market</span></div></div>`;
+       const now = sig==='sell'
+         ? `<div class="now-box negative"><strong>${v} dos holders estão no lucro — zona de alerta.</strong> Historicamente acima de 90% indica topo iminente. Em nov/2021 chegou a 97% dias antes da maior queda do ciclo.</div>`
+         : sig==='buy'
+         ? `<div class="now-box positive"><strong>Apenas ${v} dos holders no lucro — zona de fundo.</strong> A maioria já vendeu no prejuízo, a pressão vendedora diminui. Em mar/2020 e dez/2022, estava em ~45% — ambos foram fundos históricos.</div>`
+         : `<div class="now-box neutral"><strong>Hoje, ${v} dos holders estão no lucro.</strong> É um range saudável e equilibrado — longe do perigo de topo (acima de 90%) e longe do fundo de mercado (abaixo de 50%). Sem sinal extremo.</div>`;
+       return `<p>Este indicador mostra <strong>quantas das moedas em circulação foram compradas a um preço menor do que o atual</strong> — ou seja, quantos holders estão no lucro hoje. É calculado carteira por carteira na blockchain.</p><p>Quando quase todo mundo está no lucro, há <strong>muita pressão de realização acumulada</strong> — pessoas querendo vender para garantir o ganho. É como um copo transbordando: em algum momento a venda acontece e derruba o preço.</p>${hist}${now}`;
      }},
-    {k:'insiders', n:'07', name:'Distribuição entre Fundadores e Público', w:W.insiders, group:'tokenomics',
-     explain: (sig,v) => {
-       if(sig==='sell') return `<strong>${v} de todas as moedas estão nas mãos da equipe fundadora, investidores de risco (VCs) e parceiros estratégicos</strong>. Esses grupos compraram a preços muito mais baixos na fase inicial. Quando decidirem vender, o volume pode ser enorme — e o investidor comum geralmente descobre tarde. Projetos com mais de 50% nas mãos de insiders têm histórico de quedas abruptas após os períodos de vesting (quando as restrições de venda expiram). Antes de investir, sempre verifique no tokenunlocks.app as datas de desbloqueio.`;
-       if(sig==='buy') return `Apenas <strong>${v} das moedas estão com insiders</strong> — uma distribuição saudável. O preço não depende das decisões de um grupo pequeno. Quanto mais descentralizada a distribuição desde o início, menor o risco de uma venda coordenada que derruba o valor.`;
-       return `<strong>${v} das moedas estão com insiders</strong> — concentração moderada. Não é crítico, mas vale monitorar os cronogramas de desbloqueio. O site tokenunlocks.app mostra de forma gratuita quando e quanto cada grupo pode começar a vender.`;
+    {k:'insiders', n:'07', name:'Concentração nas Mãos de Poucos', w:W.insiders, group:'tokenomics',
+     explain:(sig,v)=>{
+       const hist=`<div class="hist-pills"><div class="hpill"><span class="hpill-date">Regra geral</span><span class="hpill-val">&gt; 50%</span><span class="hpill-desc">com insiders = risco extremo</span></div><div class="hpill"><span class="hpill-date">Saudável</span><span class="hpill-val">&lt; 20%</span><span class="hpill-desc">distribuição descentralizada</span></div></div>`;
+       const now = sig==='sell'
+         ? `<div class="now-box negative"><strong>${v} com insiders — concentração perigosa.</strong> Quando decidirem vender, o volume pode derrubar o preço. O investidor comum geralmente descobre tarde demais. Verifique datas de desbloqueio em tokenunlocks.app.</div>`
+         : sig==='buy'
+         ? `<div class="now-box positive"><strong>Apenas ${v} com insiders — distribuição saudável.</strong> O preço não depende da decisão de poucas pessoas. Menor risco de venda coordenada.</div>`
+         : `<div class="now-box neutral"><strong>${v} com insiders — concentração moderada.</strong> Não é crítico, mas vale monitorar os cronogramas de desbloqueio. Use tokenunlocks.app para ver as datas.</div>`;
+       return `<p>Insiders são a equipe fundadora, investidores iniciais (VCs) e parceiros estratégicos. Eles compraram tokens a preços muito menores na fase inicial. <strong>Quando decidirem vender, o volume pode ser enorme</strong> — e o investidor comum geralmente é o último a saber.</p><p>Quanto mais descentralizada a distribuição desde o início, menor o risco de uma venda coordenada que derruba o preço.</p>${hist}${now}`;
      }},
     {k:'dilution', n:'08', name:'Quanto o Supply vai Crescer', w:W.dilution, group:'tokenomics',
-     explain: (sig,v) => {
-       if(sig==='sell') return `O total de moedas em circulação vai <strong>multiplicar ${v} nos próximos anos</strong>. Para entender o impacto: imagine que você comprou 1% de uma empresa. Se essa empresa emite 3× mais ações sem crescer proporcionalmente, sua fatia cai para 0,33%. O mesmo princípio vale aqui. Para que o preço se mantenha com essa diluição, a demanda precisaria crescer na mesma proporção — algo que raramente acontece. Projetos com alta diluição futura tendem a perder valor relativo mesmo em mercados de alta.`;
-       if(sig==='buy') return `A emissão de novas moedas é <strong>mínima — o supply está praticamente fixo (${v})</strong>. Com oferta estável, qualquer aumento de demanda se traduz diretamente em valorização de preço. É o mesmo princípio que explica por que o Bitcoin (supply máximo de 21 milhões, imutável) tem características de reserva de valor ao longo do tempo.`;
-       return `O supply vai crescer <strong>${v}</strong> no longo prazo — diluição moderada. O impacto no preço depende de quanto a adoção crescer em paralelo. Critério neutro.`;
+     explain:(sig,v)=>{
+       const hist=`<div class="hist-pills"><div class="hpill"><span class="hpill-date">Bitcoin</span><span class="hpill-val">1.06×</span><span class="hpill-desc">supply quase fixo — escassez crescente</span></div><div class="hpill"><span class="hpill-date">Altcoins jovens</span><span class="hpill-val">3–10×</span><span class="hpill-desc">diluição severa — pressão vendedora constante</span></div></div>`;
+       const now = sig==='sell'
+         ? `<div class="now-box negative"><strong>Supply vai multiplicar ${v} — diluição severa.</strong> Para o preço se manter, a demanda precisaria crescer na mesma proporção. Isso raramente acontece. Pressão vendedora estrutural.</div>`
+         : sig==='buy'
+         ? `<div class="now-box positive"><strong>Supply praticamente fixo (${v}).</strong> Com oferta estável, qualquer aumento de demanda se traduz diretamente em valorização. É o mesmo princípio que explica o Bitcoin.</div>`
+         : `<div class="now-box neutral"><strong>Supply vai crescer ${v} — diluição moderada.</strong> O impacto no preço depende de quanto a adoção crescer em paralelo. Não é crítico, mas não é ideal.</div>`;
+       return `<p>Este critério avalia o quanto o total de moedas em circulação vai crescer no futuro. Pense assim: <strong>se você tem 1% de um projeto hoje e o supply vai triplicar, sua fatia cai para 0.33%</strong> — sem fazer nada. Isso se chama diluição.</p><p>Para o preço se manter com nova emissão, a demanda precisa crescer na mesma proporção. O Bitcoin tem supply máximo fixo de 21 milhões — nunca será criado um satoshi a mais.</p>${hist}${now}`;
      }},
     {k:'inflation', n:'09', name:'Emissão Anual de Novas Moedas', w:W.inflation, group:'tokenomics',
-     explain: (sig,v) => {
-       if(sig==='buy') return `Este ativo tem taxa de emissão de <strong>${v} ao ano</strong> — deflacionária ou próxima de zero. O Bitcoin, após cada halving (evento que reduz a emissão à metade a cada 4 anos), tem emissão cada vez menor. Após o halving de 2024, a emissão anual de BTC ficou abaixo de 1%. Menos moedas disponíveis com a mesma ou maior demanda cria pressão natural de valorização ao longo do tempo — o princípio básico de escassez.`;
-       if(sig==='sell') return `São criadas <strong>${v} novas moedas todo ano</strong>. Pense assim: se você tem 1% do total hoje, no próximo ano tem menos de 1% — o restante foi "emitido" e distribuído para mineradores, equipe ou stakers. Alta inflação de token dilui os holders constantemente. É como uma empresa que imprime dinheiro todo ano: quem já tem fica com uma fatia menor do bolo.`;
-       return `A emissão anual é de <strong>${v}</strong> — um nível controlado, nem deflacionário como o Bitcoin pós-halving, nem inflacionário ao ponto de diluir excessivamente os holders. Critério neutro.`;
+     explain:(sig,v)=>{
+       const hist=`<div class="hist-pills"><div class="hpill"><span class="hpill-date">Bitcoin pós-halving</span><span class="hpill-val">~0.8%/ano</span><span class="hpill-desc">deflacionário — escassez crescente</span></div><div class="hpill"><span class="hpill-date">Altcoins com alto staking</span><span class="hpill-val">8–15%/ano</span><span class="hpill-desc">diluição constante dos holders</span></div></div>`;
+       const now = sig==='buy'
+         ? `<div class="now-box positive"><strong>Taxa de emissão de ${v} — deflacionário.</strong> O total em circulação está diminuindo ou estável. Menos moedas com a mesma demanda cria pressão natural de valorização ao longo do tempo.</div>`
+         : sig==='sell'
+         ? `<div class="now-box negative"><strong>Emissão de ${v} ao ano — alta inflação.</strong> Quem já tem vai sendo diluído constantemente. É como imprimir dinheiro todo ano — cada moeda que você tem vale um pouquinho menos.</div>`
+         : `<div class="now-box neutral"><strong>Emissão anual de ${v} — nível controlado.</strong> Não é deflacionário como o Bitcoin pós-halving, mas também não dilui excessivamente os holders.</div>`;
+       return `<p>Este critério mede quantas novas moedas são criadas por ano em relação ao total. <strong>Alta emissão = diluição dos holders</strong> — é como uma empresa que imprime ações constantemente sem crescer na mesma proporção.</p><p>O Bitcoin passa por um evento chamado <strong>halving</strong> a cada 4 anos, que reduz a emissão pela metade. Após o halving de 2024, a emissão anual de BTC ficou abaixo de 1%, tornando-o deflacionário na prática.</p>${hist}${now}`;
      }},
     {k:'utility', n:'10', name:'Utilidade Real do Ativo', w:W.utility, group:'tokenomics',
-     explain: (sig,v,nm,tk) => {
-       const isBTC = (typeof ticker !== 'undefined' && ticker==='BTC') || (typeof name !== 'undefined' && name==='Bitcoin');
-       const btcDetail = isBTC ? ' No caso do Bitcoin especificamente: (1) pagamento de taxas de transação na rede — cada transferência paga uma taxa em BTC; (2) reserva de valor global, usado como proteção contra inflação em países como Argentina e Turquia; (3) colateral em protocolos financeiros descentralizados. Esses usos geram demanda orgânica constante.' : '';
-       if(sig==='buy') return `Este ativo tem <strong>${v} casos de uso reais e consolidados</strong>.${btcDetail} Utilidade real cria demanda orgânica — pessoas precisam do token para usar a rede, não apenas para especular. Quanto mais usos reais, mais resiliente tende a ser o preço em períodos de baixa, porque parte da demanda existe independentemente do mercado.`;
-       if(sig==='sell') return `Este ativo <strong>não tem casos de uso práticos comprovados</strong> além da especulação. Toda a demanda vem de expectativas futuras e marketing. Quando o hype diminui ou o mercado entra em baixa, ativos sem utilidade real tendem a cair mais e demorar mais para se recuperar do que ativos com demanda orgânica.`;
-       return `Este ativo tem <strong>${v} casos de uso identificados</strong>.${btcDetail} Uma utilidade moderada — há demanda real, mas ainda parcialmente dependente de especulação e expectativas. À medida que o ecossistema amadurece, mais casos de uso tendem a surgir.`;
+     explain:(sig,v,nm,tk)=>{
+       const n=parseInt(v);
+       const isBTC = (typeof name !== 'undefined' && (name==='Bitcoin' || name==='bitcoin'));
+       const isETH = (typeof name !== 'undefined' && (name==='Ethereum' || name==='ethereum'));
+       const isSOL = (typeof name !== 'undefined' && (name==='Solana' || name==='solana'));
+       let narrative = '';
+       if(isBTC) narrative = `<p>O Bitcoin surgiu em 2008, criado por <strong>Satoshi Nakamoto</strong> como resposta à crise financeira global. A proposta era radical: <strong>um sistema de dinheiro digital sem bancos, sem governos, sem intermediários</strong>. Qualquer pessoa no mundo pode enviar e receber valor sem pedir permissão para ninguém.</p><p>Com o tempo, consolidou-se como o <strong>"ouro digital"</strong> — o principal ativo de reserva de valor do mercado cripto. Em países com inflação descontrolada como Argentina e Turquia, pessoas físicas usam BTC para proteger economias da desvalorização local. Supply máximo fixo de <strong>21 milhões</strong> — nunca será criado um Bitcoin a mais.</p>`;
+       else if(isETH) narrative = `<p>O Ethereum foi criado em 2015 por <strong>Vitalik Buterin</strong> com uma ideia simples e poderosa: <strong>uma blockchain programável</strong>. Enquanto o Bitcoin é "apenas" dinheiro digital, o Ethereum é uma plataforma onde desenvolvedores constroem aplicativos que rodam sem servidores centralizados.</p><p>É a base do DeFi (finanças descentralizadas), NFTs e a maioria dos projetos cripto. O token ETH é usado para <strong>pagar taxas de transação</strong> na rede e como garantia em protocolos financeiros. Após o "The Merge" em 2022, tornou-se deflacionário — mais ETH é queimado em taxas do que emitido.</p>`;
+       else if(isSOL) narrative = `<p>A Solana foi criada em 2020 por <strong>Anatoly Yakovenko</strong> com foco em resolver o maior problema do Ethereum: velocidade e custo. Enquanto o Ethereum processa ~15 transações por segundo, a Solana processa <strong>mais de 50.000</strong> — com taxas de frações de centavo.</p><p>Isso a tornou a plataforma favorita para <strong>DeFi de alta frequência, NFTs, jogos blockchain e aplicativos que precisam de velocidade</strong>. O token SOL é usado para pagar taxas, fazer staking e votar em decisões da rede. Passou por problemas de estabilidade no passado, mas consolidou-se como o principal concorrente do Ethereum.</p>`;
+       else narrative = `<p>A utilidade de um token define se há <strong>demanda orgânica real além da especulação</strong> — pessoas que precisam do token para usar a rede, não apenas para apostar na valorização.</p><p>Tokens com mais utilidades reais tendem a ser mais resilientes em períodos de baixa, porque parte da demanda existe independentemente do mercado.</p>`;
+       const now = sig==='buy'
+         ? `<div class="now-box positive"><strong>${v} usos reais consolidados — demanda orgânica forte.</strong> Quanto mais utilidades, mais resiliente o preço em períodos de baixa. A demanda não depende só de especulação.</div>`
+         : sig==='sell'
+         ? `<div class="now-box negative"><strong>Sem utilidade real consolidada.</strong> O preço depende 100% de especulação e marketing. Quando o hype acabar, a demanda pode desaparecer junto.</div>`
+         : `<div class="now-box neutral"><strong>${v} usos reais identificados.</strong> Utilidade moderada — há demanda real, mas ainda parcialmente dependente de especulação. Critério neutro.</div>`;
+       return narrative + now;
      }},
   ];
 
+
   const renderCrit = c => {
     const sig      = sigs[c.k];
-    const pillCls  = sig.s==='buy'?'pill-buy':sig.s==='sell'?'pill-sell':'pill-neutral';
-    const pillTxt  = sig.s==='buy'?'COMPRA':sig.s==='sell'?'EVITAR':'NEUTRO';
+    const badgeCls = sig.s==='buy'?'badge-buy':sig.s==='sell'?'badge-sell':'badge-neutral';
+    const badgeTxt = sig.s==='buy'?'COMPRA':sig.s==='sell'?'EVITAR':'NEUTRO';
     const isOpen   = openCrit===c.k;
     const explainHtml = c.explain(sig.s, sig.v);
-    const sigColor = sig.s==='buy'?'var(--green)':sig.s==='sell'?'var(--red)':'var(--t2)';
+    const sigColor = sig.s==='buy'?'var(--accent)':sig.s==='sell'?'var(--red)':'var(--t2)';
     return `
-    <div class="crit-item ${isOpen?'open':''}" id="crit-${c.k}">
-      <div class="crit-trigger" onclick="toggleCrit('${c.k}')">
-        <span class="crit-index">${c.n}</span>
-        <span class="crit-label">${c.name}</span>
-        <span class="crit-reading">${sig.v}</span>
-        <span class="crit-pill ${pillCls}">${pillTxt}</span>
-        <span class="crit-chevron">▾</span>
+    <div class="crit ${isOpen?'open':''}" id="crit-${c.k}">
+      <div class="crit-row" onclick="toggleCrit('${c.k}')">
+        <span class="crit-num">${c.n}</span>
+        <span class="crit-name">${c.name}</span>
+        <span class="crit-val">${sig.v}</span>
+        <span class="badge ${badgeCls}">${badgeTxt}</span>
+        <span class="crit-arrow">▾</span>
       </div>
-      <div class="crit-expand ${isOpen?'open':''}" id="body-${c.k}">
-        <div class="crit-explain-text">${explainHtml}</div>
-        <div class="crit-expand-meta">
-          <div class="expand-meta-item"><span class="expand-meta-lbl">Valor</span><span class="expand-meta-val" style="color:${sigColor}">${sig.v}</span></div>
-          <div class="expand-meta-item"><span class="expand-meta-lbl">Peso</span><span class="expand-meta-val">${Math.round(c.w/TOTAL_W*100)}%</span></div>
+      <div class="crit-detail ${isOpen?'open':''}" id="body-${c.k}">
+        <div class="crit-explain">${explainHtml}</div>
+        <div class="crit-meta">
+          <div class="crit-meta-item"><span class="crit-meta-label">Valor</span><span class="crit-meta-val" style="color:${sigColor}">${sig.v}</span></div>
+          <div class="crit-meta-item"><span class="crit-meta-label">Peso</span><span class="crit-meta-val">${Math.round(c.w/TOTAL_W*100)}% do total</span></div>
         </div>
       </div>
     </div>`;
@@ -718,21 +768,29 @@ function render(coinData, tk) {
       </div>
     </div>` : ''}
 
-    <div class="verdict-block v-${vc.cls}">
-      <div class="verdict-eyebrow">${vc.tag}</div>
-      <div class="verdict-word">${vc.word}</div>
-      <div class="verdict-desc">${vc.desc}</div>
-      <div class="verdict-scores">
-        <div class="score-row"><span class="score-lbl">COMPRA</span><div class="score-bar"><div class="score-fill" style="width:${verdict.buyPct}%;background:var(--green)"></div></div><span class="score-num up">${verdict.buyPct}%</span></div>
-        <div class="score-row"><span class="score-lbl">NEUTRO</span><div class="score-bar"><div class="score-fill" style="width:${verdict.holdPct}%;background:var(--t3)"></div></div><span class="score-num" style="color:var(--t2)">${verdict.holdPct}%</span></div>
-        <div class="score-row"><span class="score-lbl">EVITAR</span><div class="score-bar"><div class="score-fill" style="width:${verdict.sellPct}%;background:var(--red)"></div></div><span class="score-num dn">${verdict.sellPct}%</span></div>
+    <div class="verdict v-${vc.cls}">
+      <div class="v-eyebrow">${vc.tag}</div>
+      <div class="v-word">${vc.word}</div>
+      <div class="v-desc">${vc.desc}</div>
+      <div class="v-bars">
+        <div class="v-bar-row"><span class="v-bar-lbl" style="color:var(--green)">Compra</span><div class="v-bar-track"><div class="v-bar-fill" style="width:${verdict.buyPct}%;background:var(--green)"></div></div><span class="v-bar-num up">${verdict.buyPct}%</span></div>
+        <div class="v-bar-row"><span class="v-bar-lbl" style="color:var(--t2)">Neutro</span><div class="v-bar-track"><div class="v-bar-fill" style="width:${verdict.holdPct}%;background:var(--t3)"></div></div><span class="v-bar-num" style="color:var(--t2)">${verdict.holdPct}%</span></div>
+        <div class="v-bar-row"><span class="v-bar-lbl" style="color:var(--red)">Evitar</span><div class="v-bar-track"><div class="v-bar-fill" style="width:${verdict.sellPct}%;background:var(--red)"></div></div><span class="v-bar-num dn">${verdict.sellPct}%</span></div>
       </div>
     </div>
-    <div class="sec-divider"><span class="sec-label">Sinais de Mercado</span><div class="sec-line"></div><span class="sec-tag">01 — 06</span></div>
-    <div class="criteria-list">${marketCrits.map(renderCrit).join('')}</div>
+        <div class="vh-scores">
+          <div class="vs-row"><span class="vs-lbl" style="color:var(--green)">COMPRA</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.buyPct}%;background:var(--green)"></div></div><span class="vs-num up">${verdict.buyPct}%</span></div>
+          <div class="vs-row"><span class="vs-lbl" style="color:var(--amber)">NEUTRO</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.holdPct}%;background:var(--amber)"></div></div><span class="vs-num" style="color:var(--amber)">${verdict.holdPct}%</span></div>
+          <div class="vs-row"><span class="vs-lbl" style="color:var(--red)">VENDA</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.sellPct}%;background:var(--red)"></div></div><span class="vs-num dn">${verdict.sellPct}%</span></div>
+        </div>
+      </div>
+    </div>
 
-    <div class="sec-divider" style="margin-top:.75rem"><span class="sec-label">Tokenomics</span><div class="sec-line"></div><span class="sec-tag">07 — 10</span></div>
-    <div class="criteria-list">${tokenomicsCrits.map(renderCrit).join('')}</div>
+    <div class="sec"><span class="sec-lbl">Sinais de Mercado</span><div class="sec-line"></div><span class="sec-num">01 — 06</span></div>
+    <div class="crits">${marketCrits.map(renderCrit).join('')}</div>
+
+    <div class="sec" style="margin-top:.75rem"><span class="sec-lbl">Tokenomics</span><div class="sec-line"></div><span class="sec-num">07 — 10</span></div>
+    <div class="crits">${tokenomicsCrits.map(renderCrit).join('')}</div>
   `;
 
   runAI(sigs, verdict, name, ticker, price, ch24);
@@ -740,8 +798,8 @@ function render(coinData, tk) {
 
 function toggleCrit(k) {
   openCrit = openCrit===k ? null : k;
-  document.querySelectorAll('.crit-expand').forEach(b=>b.classList.remove('open'));
-  document.querySelectorAll('.crit-item').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.crit-detail').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.crit').forEach(b=>b.classList.remove('open'));
   if (openCrit) {
     const detail = document.getElementById('body-'+openCrit);
     const crit = document.getElementById('crit-'+openCrit);
@@ -815,15 +873,15 @@ Não use: RSI, MACD, funding, LTH, supply, tokenomics. Linguagem simples do dia 
       } else if (line.startsWith('SUBTÍTULO:')) {
         subtitulo = line.replace('SUBTÍTULO:', '').trim();
       } else if (line === 'O QUE ESTÁ ACONTECENDO' || line === 'POR QUE O SINAL É COMPRA' || line === 'POR QUE O SINAL É VENDA' || line === 'POR QUE O SINAL É AGUARDAR' || line.startsWith('POR QUE O SINAL') || line.startsWith('POR QUE O SISTEMA') || line === 'MAIOR RISCO AGORA' || line === 'O QUE CONSIDERAR') {
-        html += `<div class="consult-section">${line}</div>`;
+        html += `<div class="ai-section-label">${line}</div>`;
       } else if (line.length > 20) {
-        html += `<p class="consult-p">${line}</p>`;
+        html += `<p class="ai-para">${line}</p>`;
       }
     }
     
     const finalHtml = `
-      ${titulo ? `<div class="consult-h1">${titulo}</div>` : ''}
-      ${subtitulo ? `<div class="consult-h2">${subtitulo}</div>` : ''}
+      ${titulo ? `<div class="ai-title-text">${titulo}</div>` : ''}
+      ${subtitulo ? `<div class="ai-subtitle-text">${subtitulo}</div>` : ''}
       ${html}
     `;
     
