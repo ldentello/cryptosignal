@@ -718,21 +718,16 @@ function render(coinData, tk) {
       </div>
     </div>` : ''}
 
-    <div class="verdict-block v- ${vc.cls}">
-      <div class="vh-top">
-        <div class="vh-left">
-          <div class="vh-tag">${vc.tag}</div>
-          <div class="vh-word">${vc.word}</div>
-          <div class="vh-desc">${vc.desc}</div>
-        </div>
-        <div class="vh-scores">
-          <div class="vs-row"><span class="vs-lbl" style="color:var(--green)">COMPRA</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.buyPct}%;background:var(--green)"></div></div><span class="vs-num up">${verdict.buyPct}%</span></div>
-          <div class="vs-row"><span class="vs-lbl" style="color:var(--amber)">NEUTRO</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.holdPct}%;background:var(--amber)"></div></div><span class="vs-num" style="color:var(--amber)">${verdict.holdPct}%</span></div>
-          <div class="vs-row"><span class="vs-lbl" style="color:var(--red)">VENDA</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.sellPct}%;background:var(--red)"></div></div><span class="vs-num dn">${verdict.sellPct}%</span></div>
-        </div>
+    <div class="verdict-block v-${vc.cls}">
+      <div class="verdict-eyebrow">${vc.tag}</div>
+      <div class="verdict-word">${vc.word}</div>
+      <div class="verdict-desc">${vc.desc}</div>
+      <div class="verdict-scores">
+        <div class="score-row"><span class="score-lbl">COMPRA</span><div class="score-bar"><div class="score-fill" style="width:${verdict.buyPct}%;background:var(--green)"></div></div><span class="score-num up">${verdict.buyPct}%</span></div>
+        <div class="score-row"><span class="score-lbl">NEUTRO</span><div class="score-bar"><div class="score-fill" style="width:${verdict.holdPct}%;background:var(--t3)"></div></div><span class="score-num" style="color:var(--t2)">${verdict.holdPct}%</span></div>
+        <div class="score-row"><span class="score-lbl">EVITAR</span><div class="score-bar"><div class="score-fill" style="width:${verdict.sellPct}%;background:var(--red)"></div></div><span class="score-num dn">${verdict.sellPct}%</span></div>
       </div>
     </div>
-
     <div class="sec-divider"><span class="sec-label">Sinais de Mercado</span><div class="sec-line"></div><span class="sec-tag">01 — 06</span></div>
     <div class="criteria-list">${marketCrits.map(renderCrit).join('')}</div>
 
