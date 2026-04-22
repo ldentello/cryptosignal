@@ -586,28 +586,27 @@ function render(coinData, tk) {
   ];
 
   const renderCrit = c => {
-    const sig     = sigs[c.k];
-    const badgeCls = sig.s==='buy'?'cb-buy':sig.s==='sell'?'cb-sell':'cb-neutral';
-    const badgeTxt = sig.s==='buy'?'COMPRA':sig.s==='sell'?'VENDA':'NEUTRO';
-    const critCls  = sig.s==='buy'?'c-buy':sig.s==='sell'?'c-sell':'';
+    const sig      = sigs[c.k];
+    const pillCls  = sig.s==='buy'?'pill-buy':sig.s==='sell'?'pill-sell':'pill-neu';
+    const pillTxt  = sig.s==='buy'?'Compra':sig.s==='sell'?'Evitar':'Neutro';
     const isOpen   = openCrit===c.k;
+    const explainHtml = c.explain ? c.explain(sig.s, sig.v) : sig.note || '';
+    const sigColor = sig.s==='buy'?'var(--green)':sig.s==='sell'?'var(--red)':'var(--t2)';
     return `
-    <div class="crit ${critCls}" id="crit-${c.k}">
-      <div class="crit-head" onclick="toggleCrit('${c.k}')">
-        <span class="crit-n">${c.n}</span>
-        <span class="crit-ico">${c.ico}</span>
-        <div class="crit-info">
-          <div class="crit-name">${c.name} <span class="weight-badge">×${c.w}</span></div>
-          <div class="crit-sub">${c.sub}</div>
-        </div>
+    <div class="crit ${isOpen?'open':''}" id="crit-${c.k}">
+      <div class="crit-row" onclick="toggleCrit('${c.k}')">
+        <span class="crit-idx">${c.n}</span>
+        <span class="crit-lbl">${c.name}</span>
         <span class="crit-val">${sig.v}</span>
-        <span class="cbadge ${badgeCls}">${badgeTxt}</span>
+        <span class="pill ${pillCls}">${pillTxt}</span>
+        <span class="crit-arr">▾</span>
       </div>
-      <div class="crit-body ${isOpen?'open':''}" id="body-${c.k}">
-        <div class="detail-row"><span class="dr-label">Valor atual</span><span class="dr-val">${sig.v}</span></div>
-        <div class="detail-row"><span class="dr-label">Sinal gerado</span><span class="dr-val" style="color:${sig.s==='buy'?'var(--green)':sig.s==='sell'?'var(--red)':'var(--t2)'}">${badgeTxt}</span></div>
-        <div class="detail-row"><span class="dr-label">Peso no veredito</span><span class="dr-val">${c.w} de ${TOTAL_W} (${Math.round(c.w/TOTAL_W*100)}%)</span></div>
-        <div class="logic">${sig.note}<br><br>${c.logic}</div>
+      <div class="crit-detail ${isOpen?'open':''}" id="body-${c.k}">
+        <div class="crit-narrative">${explainHtml}</div>
+        <div class="crit-foot">
+          <div class="crit-fi"><div class="crit-fl">Valor</div><div class="crit-fv" style="color:${sigColor}">${sig.v}</div></div>
+          <div class="crit-fi"><div class="crit-fl">Peso</div><div class="crit-fv">${Math.round(c.w/TOTAL_W*100)}%</div></div>
+        </div>
       </div>
     </div>`;
   };
@@ -619,7 +618,7 @@ function render(coinData, tk) {
 
   document.getElementById('main').innerHTML = `
     ${coinData ? `
-    <div class="asset-card">
+    <div class="asset">
       <div class="asset-left">
         <div class="asset-avatar" style="background:${color}22;color:${color}">${ticker.slice(0,3)}</div>
         <div class="asset-name-block">
@@ -652,7 +651,8 @@ function render(coinData, tk) {
       </div>
     </div>
 
-    <div class="group-label">sinais de mercado <span class="group-tag">critérios 01–06 · peso ${marketW} de ${TOTAL_W}</span></div>
+    <div class="sec"><span class="sec-lbl">Sinais de Mercado</span><div class="sec-line"></div><span class="sec-num">01 — 06</span></div>
+    <div class="crits-placeholder" <span class="group-tag">critérios 01–06 · peso ${marketW} de ${TOTAL_W}</span></div>
     <div class="crit-list">${marketCrits.map(renderCrit).join('')}</div>
 
     <div class="group-label">tokenomics <span class="group-tag">critérios 07–10 · peso ${tokenW} de ${TOTAL_W}</span></div>
@@ -664,10 +664,13 @@ function render(coinData, tk) {
 
 function toggleCrit(k) {
   openCrit = openCrit===k ? null : k;
-  document.querySelectorAll('.crit-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.crit-detail').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.crit').forEach(b=>b.classList.remove('open'));
   if (openCrit) {
-    const el = document.getElementById('body-'+openCrit);
-    if (el) el.classList.add('open');
+    const detail = document.getElementById('body-'+openCrit);
+    const crit = document.getElementById('crit-'+openCrit);
+    if (detail) detail.classList.add('open');
+    if (crit) crit.classList.add('open');
   }
 }
 
