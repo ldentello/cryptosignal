@@ -3,161 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CryptoSignal — Sinais</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>CryptoSignal — Motor de Sinais</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#060810;
-  --s1:#0b0e18;
-  --s2:#10141f;
-  --s3:#161b28;
-  --b1:rgba(255,255,255,0.06);
-  --b2:rgba(255,255,255,0.1);
-  --b3:rgba(255,255,255,0.18);
-  --t1:#eef1fc;
-  --t2:#5a6480;
-  --t3:#2e3448;
-  --green:#3de68a;
-  --green2:rgba(61,230,138,0.06);
-  --greenb:rgba(61,230,138,0.16);
-  --red:#f16767;
-  --red2:rgba(241,103,103,0.06);
-  --redb:rgba(241,103,103,0.16);
-  --ui:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --bg:#05070f;--s1:#090c18;--s2:#0e1220;--s3:#141926;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.15);
+  --t1:#f0f3ff;--t2:#4a566e;--t3:#242d3e;
+  --green:#22d987;--green2:rgba(34,217,135,0.06);--greenb:rgba(34,217,135,0.16);
+  --red:#ef5858;--amber:#e8a030;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
 }
-html{font-size:15px;}
-body{background:var(--bg);font-family:var(--ui);color:var(--t1);min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+html{font-size:14px;}
+body{background:var(--bg);font-family:var(--sans);color:var(--t1);-webkit-font-smoothing:antialiased;}
 a{text-decoration:none;color:inherit;}
-
-/* NAV */
-nav{height:54px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:100;background:rgba(6,8,16,.88);backdrop-filter:blur(20px);}
-.nav-logo{display:flex;align-items:center;gap:9px;}
-.nav-logo-box{width:24px;height:24px;border-radius:4px;border:1px solid var(--b3);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:var(--mono);color:var(--t2);letter-spacing:.04em;}
-.nav-logo-name{font-size:13px;font-weight:500;letter-spacing:-.02em;}
-.nav-logo-name em{font-style:normal;color:var(--green);}
-.nav-right{display:flex;align-items:center;gap:1.75rem;}
-.nav-live{display:flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:var(--green);letter-spacing:.1em;}
-.nav-live-dot{width:4px;height:4px;border-radius:50%;background:var(--green);animation:p 2s infinite;}
-@keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
-.nav-clock{font-size:10px;font-family:var(--mono);color:var(--t3);}
-.nav-back{font-size:11px;color:var(--t2);letter-spacing:.01em;padding:4px 10px;border:1px solid var(--b1);border-radius:3px;transition:all .15s;}
-.nav-back:hover{border-color:var(--b2);color:var(--t1);}
-
-/* SEARCH ROW */
-.search-row{padding:.875rem 2rem;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
-.search-input-wrap{flex:1;max-width:340px;position:relative;}
-.search-input-wrap input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--b2);padding:.5rem 0;font-family:var(--ui);font-size:13px;font-weight:300;color:var(--t1);outline:none;transition:border-color .2s;caret-color:var(--green);}
-.search-input-wrap input:focus{border-color:var(--b3);}
-.search-input-wrap input::placeholder{color:var(--t3);}
-.search-go{background:var(--t1);color:var(--bg);border:0;border-radius:3px;padding:7px 18px;font-family:var(--ui);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.02em;transition:opacity .15s;}
-.search-go:hover{opacity:.85;}
-.quick-chips{display:flex;gap:.3rem;flex-wrap:wrap;}
-.qchip{font-size:10px;font-family:var(--mono);padding:4px 11px;border-radius:2px;border:1px solid var(--b1);color:var(--t3);cursor:pointer;transition:all .2s;letter-spacing:.05em;}
-.qchip:hover{border-color:var(--b2);color:var(--t1);}
-
-/* BODY GRID */
-.body-grid{display:grid;grid-template-columns:1fr 256px;min-height:calc(100vh - 109px);}
-.col-main{padding:1.75rem 2rem;display:flex;flex-direction:column;gap:1.75rem;border-right:1px solid var(--b1);}
-.col-side{padding:1.25rem 1.25rem 2rem;display:flex;flex-direction:column;gap:1.5rem;overflow-y:auto;}
-
-/* EMPTY STATE */
+.nav{height:52px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:100;background:rgba(5,7,15,.92);backdrop-filter:blur(16px);}
+.nav-brand{display:flex;align-items:center;gap:8px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.nav-name{font-size:13px;font-weight:700;letter-spacing:-.02em;}
+.nav-name em{font-style:normal;color:var(--green);}
+.nav-r{display:flex;align-items:center;gap:1.5rem;}
+.nav-live{font-size:9px;font-family:var(--mono);color:var(--green);letter-spacing:.1em;display:flex;align-items:center;gap:5px;}
+.live-p{width:4px;height:4px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.15}}
+.nav-time{font-size:10px;font-family:var(--mono);color:var(--t3);}
+.nav-back{font-size:11px;color:var(--t2);padding:4px 10px;border:1px solid var(--b1);border-radius:4px;font-weight:500;transition:all .15s;}
+.nav-back:hover{color:var(--t1);border-color:var(--b2);}
+.search{border-bottom:1px solid var(--b1);padding:.75rem 1.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
+.s-inp{flex:1;max-width:320px;background:transparent;border:0;border-bottom:1px solid var(--b2);padding:.4rem 0;font-family:var(--sans);font-size:13px;color:var(--t1);outline:none;transition:border-color .2s;caret-color:var(--green);}
+.s-inp:focus{border-color:var(--b3);}
+.s-inp::placeholder{color:var(--t3);}
+.s-btn{background:var(--t1);color:#05070f;border:0;border-radius:4px;padding:7px 16px;font-size:12px;font-weight:700;font-family:var(--sans);cursor:pointer;letter-spacing:.02em;transition:opacity .15s;}
+.s-btn:hover{opacity:.85;}
+.chips{display:flex;gap:.3rem;flex-wrap:wrap;}
+.chip{font-size:10px;font-family:var(--mono);padding:4px 11px;border:1px solid var(--b1);border-radius:3px;color:var(--t3);cursor:pointer;letter-spacing:.04em;transition:all .15s;}
+.chip:hover{border-color:var(--b2);color:var(--t2);}
+.layout{display:grid;grid-template-columns:1fr 256px;min-height:calc(100vh - 104px);}
+.main{padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;border-right:1px solid var(--b1);overflow-y:auto;}
+.side{padding:1.25rem;display:flex;flex-direction:column;gap:1.5rem;overflow-y:auto;}
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:360px;gap:.625rem;text-align:center;}
-.empty-state h2{font-size:17px;font-weight:400;color:var(--t1);letter-spacing:-.03em;}
+.empty-state h2{font-size:17px;font-weight:500;color:var(--t1);letter-spacing:-.02em;}
 .empty-state p{font-size:12px;color:var(--t2);font-weight:300;line-height:1.7;}
-
-/* ASSET ROW */
-.asset-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-bottom:1.5rem;border-bottom:1px solid var(--b1);}
-.asset-row-left{display:flex;align-items:center;gap:.875rem;}
-.asset-badge{width:34px;height:34px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;font-family:var(--mono);border:1px solid;}
-.asset-info{}
-.asset-info-name{font-size:16px;font-weight:500;letter-spacing:-.03em;}
-.asset-info-meta{font-size:10px;color:var(--t2);font-family:var(--mono);margin-top:2px;letter-spacing:.03em;}
-.asset-row-right{text-align:right;}
-.asset-price-big{font-size:26px;font-weight:300;font-family:var(--mono);letter-spacing:-.04em;}
-.asset-chg-row{display:flex;gap:.75rem;justify-content:flex-end;margin-top:4px;}
+.asset{display:flex;align-items:center;justify-content:space-between;padding-bottom:1.25rem;border-bottom:1px solid var(--b1);}
+.asset-l{display:flex;align-items:center;gap:.875rem;}
+.asset-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--mono);}
+.asset-name{font-size:16px;font-weight:700;letter-spacing:-.03em;}
+.asset-meta{font-size:10px;color:var(--t2);font-family:var(--mono);margin-top:3px;}
+.asset-r{text-align:right;}
+.asset-price{font-size:28px;font-weight:600;font-family:var(--mono);letter-spacing:-.04em;}
+.asset-chgs{display:flex;gap:.625rem;justify-content:flex-end;margin-top:4px;}
 .chg{font-size:10px;font-family:var(--mono);}
 .up{color:var(--green);}
 .dn{color:var(--red);}
-
-/* VERDICT */
-.verdict-block{padding:2rem 2rem 1.75rem;border-radius:4px;border:1px solid var(--b1);}
-.verdict-block.v-buy{border-color:var(--greenb);background:linear-gradient(140deg,rgba(61,230,138,.05),transparent 55%);}
-.verdict-block.v-sell{border-color:var(--redb);background:linear-gradient(140deg,rgba(241,103,103,.05),transparent 55%);}
-.verdict-block.v-hold{background:var(--s1);}
-.verdict-eyebrow{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.75rem;}
-.v-buy .verdict-eyebrow{color:var(--green);}
-.v-sell .verdict-eyebrow{color:var(--red);}
-.v-hold .verdict-eyebrow{color:var(--t2);}
-.verdict-word{font-size:68px;font-weight:300;letter-spacing:-.05em;line-height:.88;}
-.v-buy .verdict-word{color:var(--green);}
-.v-sell .verdict-word{color:var(--red);}
-.v-hold .verdict-word{color:var(--t1);}
-.verdict-desc{font-size:12px;color:var(--t2);line-height:1.75;font-weight:300;margin-top:1rem;max-width:480px;}
-.verdict-scores{display:flex;flex-direction:column;gap:7px;margin-top:1.5rem;max-width:220px;}
-.score-row{display:flex;align-items:center;gap:10px;}
-.score-lbl{font-size:9px;font-family:var(--mono);color:var(--t3);letter-spacing:.08em;width:48px;}
-.score-bar{flex:1;height:2px;background:var(--s3);border-radius:1px;overflow:hidden;}
-.score-fill{height:100%;border-radius:1px;transition:width .9s cubic-bezier(.4,0,.2,1);}
-.score-num{font-size:10px;font-family:var(--mono);width:30px;font-weight:500;}
-
-/* SECTION DIVIDER */
-.sec-divider{display:flex;align-items:center;gap:.875rem;}
-.sec-label{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);font-family:var(--mono);white-space:nowrap;}
+.activity{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b1);border:1px solid var(--b1);border-radius:6px;overflow:hidden;}
+.act-cell{background:var(--s1);padding:.75rem .875rem;}
+.act-lbl{font-size:8px;font-family:var(--mono);color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.act-val{font-size:14px;font-family:var(--mono);font-weight:500;color:var(--t1);}
+.act-sub{font-size:9px;font-family:var(--mono);margin-top:2px;}
+.act-sub.up{color:var(--green);}
+.act-sub.dn{color:var(--red);}
+.act-sub.neu{color:var(--t3);}
+.verdict{padding:1.75rem 2rem;border-radius:6px;border:1px solid var(--b1);background:var(--s1);}
+.verdict.v-buy{background:var(--green2);border-color:var(--greenb);}
+.verdict.v-sell{background:rgba(239,88,88,.05);border-color:rgba(239,88,88,.18);}
+.v-eyebrow{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t2);margin-bottom:.75rem;}
+.verdict.v-buy .v-eyebrow{color:var(--green);}
+.verdict.v-sell .v-eyebrow{color:var(--red);}
+.v-word{font-size:64px;font-weight:300;letter-spacing:-.05em;line-height:.88;color:var(--t1);}
+.verdict.v-buy .v-word{color:var(--green);}
+.verdict.v-sell .v-word{color:var(--red);}
+.v-desc{font-size:12px;color:var(--t2);line-height:1.75;margin-top:1rem;max-width:460px;}
+.v-bars{margin-top:1.25rem;display:flex;flex-direction:column;gap:7px;max-width:200px;}
+.v-bar-row{display:flex;align-items:center;gap:10px;}
+.v-bar-lbl{font-size:9px;font-family:var(--mono);color:var(--t3);width:46px;letter-spacing:.05em;}
+.v-bar-track{flex:1;height:2px;background:var(--s3);border-radius:1px;overflow:hidden;}
+.v-bar-fill{height:100%;border-radius:1px;transition:width .9s cubic-bezier(.4,0,.2,1);}
+.v-bar-num{font-size:10px;font-family:var(--mono);width:28px;font-weight:600;}
+.sec{display:flex;align-items:center;gap:.875rem;margin-bottom:.25rem;}
+.sec-lbl{font-size:9px;font-family:var(--mono);font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);white-space:nowrap;}
 .sec-line{flex:1;height:1px;background:var(--b1);}
-.sec-tag{font-size:9px;font-family:var(--mono);color:var(--t3);white-space:nowrap;}
-
-/* CRITERIA */
-.criteria-list{display:flex;flex-direction:column;}
+.sec-num{font-size:9px;font-family:var(--mono);color:var(--t3);}
+.crits{display:flex;flex-direction:column;}
 .crit{border-bottom:1px solid var(--b1);}
 .crit:first-child{border-top:1px solid var(--b1);}
-.crit-trigger{display:flex;align-items:center;gap:1.25rem;padding:.9rem 0;cursor:pointer;transition:opacity .15s;}
-.crit-trigger:hover{opacity:.65;}
-.crit-index{font-size:9px;font-family:var(--mono);color:var(--t3);width:16px;flex-shrink:0;letter-spacing:.04em;}
-.crit-label{flex:1;font-size:13px;font-weight:300;color:var(--t2);letter-spacing:-.01em;}
-.crit.open .crit-lbl{color:var(--t1);font-weight:400;}
-.crit-reading{font-size:11px;font-family:var(--mono);color:var(--t3);flex-shrink:0;}
-.crit-pill{font-size:8px;font-family:var(--mono);font-weight:500;padding:3px 9px;border-radius:2px;flex-shrink:0;letter-spacing:.08em;text-transform:uppercase;}
+.crit-row{display:flex;align-items:center;gap:1.25rem;padding:.875rem 0;cursor:pointer;user-select:none;transition:opacity .15s;}
+.crit-row:hover{opacity:.7;}
+.crit-idx{font-size:9px;font-family:var(--mono);color:var(--t3);width:16px;flex-shrink:0;}
+.crit-lbl{font-size:13px;font-weight:500;color:var(--t1);flex:1;letter-spacing:-.01em;}
+.crit-val{font-size:11px;font-family:var(--mono);color:var(--t2);flex-shrink:0;}
+.pill{font-size:8px;font-family:var(--mono);padding:3px 9px;border-radius:3px;flex-shrink:0;letter-spacing:.07em;font-weight:600;}
 .pill-buy{color:var(--green);border:1px solid var(--greenb);}
-.pill-sell{color:var(--red);border:1px solid var(--redb);}
-.pill-neutral{color:var(--t3);border:1px solid var(--b1);}
-.crit-chevron{font-size:8px;color:var(--t3);flex-shrink:0;transition:transform .22s;}
+.pill-neu{color:var(--t3);border:1px solid var(--b1);}
+.pill-sell{color:var(--red);border:1px solid rgba(239,88,88,.2);}
+.crit-arr{font-size:8px;color:var(--t3);flex-shrink:0;transition:transform .22s;font-family:var(--mono);}
 .crit.open .crit-arr{transform:rotate(180deg);}
-
-.crit-detail{display:none;padding:0 0 1.375rem 2rem;}
-.crit-detail.open{display:block;}
-.crit-explain-text{font-size:12.5px;color:var(--t2);line-height:1.8;font-weight:300;letter-spacing:.005em;}
-.crit-explain-text strong{color:var(--t1);font-weight:500;}
-.crit-expand-meta{display:flex;gap:2rem;margin-top:.875rem;padding-top:.875rem;border-top:1px solid var(--b1);}
-.expand-meta-item{display:flex;flex-direction:column;gap:3px;}
-.expand-meta-lbl{font-size:8px;font-family:var(--mono);color:var(--t3);letter-spacing:.1em;text-transform:uppercase;}
-.expand-meta-val{font-size:12px;font-family:var(--mono);font-weight:400;}
-
-/* SIDEBAR LABELS */
-.side-lbl{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-family:var(--mono);margin-bottom:.625rem;}
-
-/* F&G */
-.fg-number{font-size:48px;font-weight:300;font-family:var(--mono);letter-spacing:-.05em;line-height:1;}
-.fg-label{font-size:11px;color:var(--t2);margin-top:.25rem;font-weight:300;}
-.fg-track{width:100%;height:2px;border-radius:1px;background:linear-gradient(to right,var(--red),#f6ad55,var(--green));margin-top:.875rem;position:relative;}
-.fg-knob{position:absolute;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--t1);transform:translateX(-50%);transition:left .6s cubic-bezier(.4,0,.2,1);}
-.fg-range{display:flex;justify-content:space-between;margin-top:.375rem;}
-.fg-range span{font-size:8px;font-family:var(--mono);color:var(--t3);letter-spacing:.06em;}
-
-/* PRICES */
-.price-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--b1);border-radius:3px;overflow:hidden;}
+.crit.open .crit-lbl{color:var(--t1);}
+.crit-detail{display:none;padding:0 0 1.375rem 1.75rem;}
+.crit.open .crit-detail{display:block;}
+.crit-narrative p{font-size:13px;color:var(--t2);line-height:1.85;margin-bottom:.75rem;}
+.crit-narrative p:last-child{margin-bottom:0;}
+.crit-narrative strong{color:var(--t1);font-weight:600;}
+.hist-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin:.75rem 0;}
+.hpill{display:flex;align-items:center;gap:.5rem;background:var(--s2);border:1px solid var(--b1);border-radius:4px;padding:.375rem .625rem;}
+.hpill-date{font-size:9px;font-family:var(--mono);color:var(--t3);}
+.hpill-val{font-size:11px;font-family:var(--mono);font-weight:600;color:var(--t1);}
+.hpill-desc{font-size:10px;color:var(--t2);}
+.now-box{margin-top:.875rem;padding:.625rem .875rem;border-radius:4px;font-size:12.5px;line-height:1.7;}
+.now-box.neutral{background:rgba(255,255,255,.02);border-left:2px solid var(--b2);color:var(--t2);}
+.now-box.positive{background:rgba(34,217,135,.05);border-left:2px solid var(--greenb);color:rgba(34,217,135,.85);}
+.now-box.negative{background:rgba(239,88,88,.05);border-left:2px solid rgba(239,88,88,.25);color:rgba(239,88,88,.85);}
+.now-box strong{font-weight:700;}
+.crit-foot{display:flex;gap:1.75rem;margin-top:.875rem;padding-top:.875rem;border-top:1px solid var(--b1);}
+.crit-fi{display:flex;flex-direction:column;gap:3px;}
+.crit-fl{font-size:8px;font-family:var(--mono);color:var(--t3);letter-spacing:.1em;text-transform:uppercase;}
+.crit-fv{font-size:12px;font-family:var(--mono);font-weight:500;}
+.side-lbl{font-size:9px;font-family:var(--mono);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:.625rem;}
+.fg-big{font-size:44px;font-weight:500;font-family:var(--mono);letter-spacing:-.05em;color:var(--amber);}
+.fg-sub{font-size:11px;color:var(--t2);margin-top:.25rem;}
+.fg-bar{width:100%;height:2px;background:linear-gradient(to right,var(--red),var(--amber),var(--green));border-radius:1px;margin-top:.875rem;position:relative;}
+.fg-pin{position:absolute;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--t1);transform:translateX(-50%);transition:left .6s cubic-bezier(.4,0,.2,1);}
+.fg-ends{display:flex;justify-content:space-between;margin-top:.375rem;}
+.fg-end{font-size:8px;font-family:var(--mono);color:var(--t3);letter-spacing:.06em;}
+.price-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--b1);border-radius:4px;overflow:hidden;}
 .price-cell{padding:.625rem .75rem;border-right:1px solid var(--b1);border-bottom:1px solid var(--b1);}
 .price-cell:nth-child(2n){border-right:none;}
 .price-cell:nth-last-child(-n+2){border-bottom:none;}
-.price-cell-ticker{font-size:8px;font-family:var(--mono);color:var(--t3);letter-spacing:.08em;text-transform:uppercase;}
-.price-cell-val{font-size:14px;font-family:var(--mono);font-weight:400;color:var(--t1);margin-top:3px;}
-.price-cell-chg{font-size:9px;font-family:var(--mono);margin-top:2px;}
-
-/* INPUTS */
+.pc-ticker{font-size:8px;font-family:var(--mono);color:var(--t3);letter-spacing:.07em;text-transform:uppercase;}
+.pc-val{font-size:13px;font-family:var(--mono);color:var(--t1);margin-top:3px;font-weight:500;}
+.pc-chg{font-size:9px;font-family:var(--mono);margin-top:2px;}
+.hr{height:1px;background:var(--b1);}
+.consult-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem;}
+.consult-title{font-size:9px;font-family:var(--mono);font-weight:600;letter-spacing:.1em;color:var(--t2);text-transform:uppercase;}
+.consult-by{font-size:8px;font-family:var(--mono);color:var(--t3);}
+.consult-body{font-size:12px;color:var(--t2);line-height:1.8;}
+.consult-h{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:3px;letter-spacing:-.02em;}
+.consult-sub{font-size:10px;color:var(--t2);margin-bottom:.875rem;}
+.consult-sec{font-size:8px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin:.875rem 0 .3rem;}
+.consult-p{font-size:12px;color:var(--t2);line-height:1.8;margin-bottom:.25rem;}
 .inp-grid{display:grid;grid-template-columns:1fr 1fr;gap:.625rem;}
 .inp-group{display:flex;flex-direction:column;gap:3px;}
 .inp-group.full{grid-column:1/-1;}
@@ -167,120 +151,575 @@ nav{height:54px;border-bottom:1px solid var(--b1);display:flex;align-items:cente
 select.inp-field{cursor:pointer;-webkit-appearance:none;}
 .inp-recalc{width:100%;margin-top:.5rem;padding:7px;background:transparent;border:1px solid var(--b1);border-radius:2px;color:var(--t2);font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
 .inp-recalc:hover{border-color:var(--b2);color:var(--t1);}
-
-/* CONSULTANT */
-.consult-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem;padding-bottom:.625rem;border-bottom:1px solid var(--b1);}
-.consult-title{font-size:9px;font-family:var(--mono);font-weight:500;letter-spacing:.1em;color:var(--t2);text-transform:uppercase;}
-.consult-by{font-size:8px;font-family:var(--mono);color:var(--t3);}
-.consult-body{font-size:12px;color:var(--t2);font-weight:300;line-height:1.8;}
-.consult-h1{font-size:13px;font-weight:400;color:var(--t1);letter-spacing:-.02em;margin-bottom:2px;}
-.consult-h2{font-size:10px;color:var(--t2);font-weight:300;margin-bottom:1rem;}
-.consult-section{font-size:8px;font-family:var(--mono);font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin:1rem 0 .375rem;}
-.consult-p{font-size:12px;color:var(--t2);line-height:1.8;font-weight:300;margin-bottom:.375rem;}
-
-.spin{display:inline-block;width:9px;height:9px;border:1px solid var(--b2);border-top-color:var(--t3);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+.spin{display:inline-block;width:10px;height:10px;border:1.5px solid var(--b2);border-top-color:var(--t3);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.hr{height:1px;background:var(--b1);}
-::-webkit-scrollbar{width:2px;}
+::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-thumb{background:var(--s3);}
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="dashboard.html" class="nav-logo">
-    <div class="nav-logo-box">CS</div>
-    <span class="nav-logo-name">Crypto<em>Signal</em></span>
+<div class="topbar">
+  <a href="dashboard.html" class="brand">
+    <div class="brand-ico">◈</div>
+    <div class="brand-name">Crypto<span>Signal</span></div>
   </a>
-  <div class="nav-right">
-    <div class="nav-live"><div class="nav-live-dot"></div>LIVE</div>
-    <div class="nav-clock" id="clock"></div>
-    <a href="dashboard.html" class="nav-back">← Dashboard</a>
+  <div class="top-right">
+    <div class="live-pill"><div class="dot"></div>LIVE</div>
+    <div id="clock"></div>
   </div>
-</nav>
+</div>
 
-<div class="search-row">
-  <div class="search-input-wrap">
-    <input id="search-inp" type="text" placeholder="Bitcoin, Ethereum, Solana..." onkeydown="if(event.key==='Enter')runAnalysis()">
+<div class="search-section">
+  <div class="search-wrap">
+    <span class="search-ico">⌕</span>
+    <input class="search-inp" id="search-inp" type="text" placeholder="Buscar ativo... ex: Solana, ARB, PEPE" onkeydown="if(event.key==='Enter')runAnalysis()">
   </div>
-  <button class="search-go" onclick="runAnalysis()">Analisar</button>
-  <div class="quick-chips">
-    <span class="qchip" onclick="quickLoad('bitcoin')">BTC</span>
-    <span class="qchip" onclick="quickLoad('ethereum')">ETH</span>
-    <span class="qchip" onclick="quickLoad('solana')">SOL</span>
-    <span class="qchip" onclick="quickLoad('arbitrum')">ARB</span>
-    <span class="qchip" onclick="quickLoad('sui')">SUI</span>
-    <span class="qchip" onclick="quickLoad('aptos')">APT</span>
-    <span class="qchip" onclick="quickLoad('pepe')">PEPE</span>
-    <span class="qchip" onclick="quickLoad('chainlink')">LINK</span>
+  <button class="search-btn" onclick="runAnalysis()">Analisar →</button>
+  <div class="chips">
+    <span class="chip" onclick="quickLoad('bitcoin')">BTC</span>
+    <span class="chip" onclick="quickLoad('ethereum')">ETH</span>
+    <span class="chip" onclick="quickLoad('solana')">SOL</span>
+    <span class="chip" onclick="quickLoad('arbitrum')">ARB</span>
+    <span class="chip" onclick="quickLoad('sui')">SUI</span>
+    <span class="chip" onclick="quickLoad('aptos')">APT</span>
+    <span class="chip" onclick="quickLoad('pepe')">PEPE</span>
+    <span class="chip" onclick="quickLoad('chainlink')">LINK</span>
   </div>
 </div>
 
 <div class="layout">
   <div class="main" id="main">
-    <div class="empty-state">
-      <h2>Motor de Sinais</h2>
-      <p>Busque qualquer criptoativo para análise completa<br>com 10 critérios de mercado e tokenomics.</p>
+    <div class="empty">
+      <div class="empty-ico">◎</div>
+      <h3>10 critérios. 1 sinal.</h3>
+      <div style="font-size:13px;line-height:1.7;color:var(--t2)">Busque qualquer ativo para ver análise completa<br>combinando sinais de mercado + tokenomics.</div>
     </div>
   </div>
 
-  <div class="side">
-    <div>
-      <div class="side-lbl">Fear & Greed</div>
-      <div class="fg-big" id="fg-val">—</div>
-      <div class="fg-sub" id="fg-cls">carregando...</div>
-      <div class="fg-bar"><div class="fg-pin" id="fg-thumb" style="left:50%"></div></div>
-      <div class="fg-ends"><span>PÂNICO</span><span>EUFORIA</span></div>
+  <div class="right">
+    <div class="section-lbl">Fear & Greed</div>
+    <div class="card">
+      <div class="fg-big" id="fg-val" style="color:var(--amber)">—</div>
+      <div class="fg-cls" id="fg-cls">carregando...</div>
+      <div class="fg-track"><div class="fg-thumb" id="fg-thumb" style="left:50%"></div></div>
+      <div class="fg-ticks"><span>Pânico</span><span>Neutro</span><span>Euforia</span></div>
     </div>
 
-    <div>
-      <div class="side-lbl">Mercado</div>
-      <div class="price-grid">
-        <div class="price-cell"><div class="pc-ticker">BTC</div><div class="pc-val" id="p-btc">—</div><div class="pc-chg" id="c-btc">—</div></div>
-        <div class="price-cell"><div class="pc-ticker">ETH</div><div class="pc-val" id="p-eth">—</div><div class="pc-chg" id="c-eth">—</div></div>
-        <div class="price-cell"><div class="pc-ticker">DOM. BTC</div><div class="pc-val" id="p-dom">—</div></div>
-        <div class="price-cell"><div class="pc-ticker">MCAP</div><div class="pc-val" id="p-mcap">—</div><div class="pc-chg" id="c-mcap">—</div></div>
+    <div class="section-lbl">mercado ao vivo</div>
+    <div class="prices-grid">
+      <div class="price-card"><div class="price-ticker">BTC/USD</div><div class="price-val" id="p-btc">—</div><div class="price-chg" id="c-btc">—</div></div>
+      <div class="price-card"><div class="price-ticker">ETH/USD</div><div class="price-val" id="p-eth">—</div><div class="price-chg" id="c-eth">—</div></div>
+      <div class="price-card"><div class="price-ticker">Dominância</div><div class="price-val" id="p-dom">—</div><div class="price-chg" style="font-size:9px;color:var(--t2)">BTC</div></div>
+      <div class="price-card"><div class="price-ticker">MCap Total</div><div class="price-val" id="p-mcap">—</div><div class="price-chg" id="c-mcap">—</div></div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-lbl">ajuste manual</div>
+    <div style="display:flex;flex-direction:column;gap:.5rem;">
+      <div class="inp-row">
+        <div class="inp-field"><div class="inp-label" id="lbl-rsi">RSI (14) <span style="color:var(--green);font-size:9px" id="rsi-auto"></span></div><input class="inp" id="i-rsi" type="number" value="52" min="0" max="100"></div>
+        <div class="inp-field"><div class="inp-label">Funding Rate %</div><input class="inp" id="i-fund" type="number" value="0.02" step="0.01"></div>
       </div>
+      <div class="inp-row">
+        <div class="inp-field"><div class="inp-label">Supply in Profit % <span style="color:var(--green);font-size:9px" id="supply-auto"></span></div><input class="inp" id="i-supply" type="number" value="75" min="0" max="100"></div>
+        <div class="inp-field"><div class="inp-label">Custo Mineração $</div><input class="inp" id="i-mining" type="number" value="82000"></div>
+      </div>
+      <div class="inp-field">
+        <div class="inp-label">LTH Comportamento</div>
+        <select class="inp" id="i-lth">
+          <option value="accumulating">Acumulando (preço caindo)</option>
+          <option value="neutral" selected>Neutro</option>
+          <option value="distributing">Distribuindo</option>
+        </select>
+      </div>
+      <div class="inp-row">
+        <div class="inp-field"><div class="inp-label">Insiders % supply</div><input class="inp" id="i-insiders" type="number" value="35" min="0" max="100"></div>
+        <div class="inp-field"><div class="inp-label">Supply futuro (×)</div><input class="inp" id="i-dilution" type="number" value="1.8" step="0.1"></div>
+      </div>
+      <div class="inp-row">
+        <div class="inp-field"><div class="inp-label">Inflação anual %</div><input class="inp" id="i-inflation" type="number" value="3.0" step="0.5"></div>
+        <div class="inp-field"><div class="inp-label">Utilidades reais</div><input class="inp" id="i-utility" type="number" value="2" min="0" max="5"></div>
+      </div>
+      <button class="recalc-btn" onclick="recalc()">↻ Recalcular sinais</button>
     </div>
 
-    <div class="hr"></div>
-
-    <div>
-      <div class="side-lbl">Ajuste manual</div>
-      <div class="inp-grid">
-        <div class="inp-group"><div class="inp-lbl" id="lbl-rsi">RSI <span style="color:var(--green);font-size:7px" id="rsi-auto"></span></div><input class="inp-field" id="i-rsi" type="number" value="52" min="0" max="100"></div>
-        <div class="inp-group"><div class="inp-lbl">Funding %</div><input class="inp-field" id="i-fund" type="number" value="0.02" step="0.01"></div>
-        <div class="inp-group"><div class="inp-lbl">Lucro % <span style="color:var(--green);font-size:7px" id="supply-auto"></span></div><input class="inp-field" id="i-supply" type="number" value="75" min="0" max="100"></div>
-        <div class="inp-group"><div class="inp-lbl">Custo Min $</div><input class="inp-field" id="i-mining" type="number" value="82000"></div>
-        <div class="inp-group full"><div class="inp-lbl">LTH</div>
-          <select class="inp-field" id="i-lth">
-            <option value="accumulating">Acumulando</option>
-            <option value="neutral" selected>Neutro</option>
-            <option value="distributing">Distribuindo</option>
-          </select>
+    <div class="divider"></div>
+    <div class="ai-box">
+      <div class="ai-hd">
+        <div class="ai-ico">◈</div>
+        <div>
+          <div class="ai-title">Consultor IA</div>
+          <div class="ai-sub">Análise em linguagem simples</div>
         </div>
-        <div class="inp-group"><div class="inp-lbl">Insiders %</div><input class="inp-field" id="i-insiders" type="number" value="35"></div>
-        <div class="inp-group"><div class="inp-lbl">Supply ×</div><input class="inp-field" id="i-dilution" type="number" value="1.8" step="0.1"></div>
-        <div class="inp-group"><div class="inp-lbl">Inflação %</div><input class="inp-field" id="i-inflation" type="number" value="3.0" step="0.5"></div>
-        <div class="inp-group"><div class="inp-lbl">Utilidades</div><input class="inp-field" id="i-utility" type="number" value="2" min="0" max="5"></div>
       </div>
-      <button class="inp-recalc" onclick="recalc()">Recalcular</button>
-    </div>
-
-    <div class="hr"></div>
-
-    <div>
-      <div class="consult-header">
-        <span class="consult-title">Consultor</span>
-        <span class="consult-by">Claude AI</span>
-      </div>
-      <div class="consult-body" id="ai-text" style="color:var(--t3)">Busque um ativo para receber análise.</div>
+      <div class="ai-text" id="ai-text" style="color:var(--t2);font-size:11px;">Busque um ativo para receber análise.</div>
     </div>
   </div>
 </div>
 
 
 <script>
+// ── TOKENOMICS PRESETS ──
+const TOKENOMICS = {
+  bitcoin:   {insiders:0,   dilution:1.06, inflation:-0.2, utility:2},
+  ethereum:  {insiders:7,   dilution:1.01, inflation:-0.2, utility:5},
+  solana:    {insiders:38,  dilution:1.35, inflation:5.5,  utility:4},
+  arbitrum:  {insiders:44,  dilution:2.5,  inflation:2.0,  utility:2},
+  sui:       {insiders:34,  dilution:4.3,  inflation:5.0,  utility:3},
+  aptos:     {insiders:35,  dilution:1.9,  inflation:7.0,  utility:2},
+  optimism:  {insiders:36,  dilution:3.9,  inflation:2.5,  utility:2},
+  pepe:      {insiders:10,  dilution:1.0,  inflation:0,    utility:0},
+  chainlink: {insiders:35,  dilution:1.4,  inflation:2.0,  utility:4},
+};
+
+// ── PESOS DOS CRITÉRIOS ──
+const W = {
+  fg:2.0, rsi:1.5, mining:1.5, funding:1.0, lth:2.0, supply_profit:1.5,
+  insiders:2.0, dilution:2.0, inflation:1.5, utility:1.5
+};
+const TOTAL_W = Object.values(W).reduce((s,v)=>s+v,0);
+
+// ── RSI AUTO-CALC ──
+function calcRSI14(prices) {
+  const period = 14;
+  if (prices.length < period + 1) return null;
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const diff = prices[i] - prices[i-1];
+    if (diff > 0) gains += diff; else losses -= diff;
+  }
+  let avgGain = gains / period;
+  let avgLoss = losses / period;
+  for (let i = period + 1; i < prices.length; i++) {
+    const diff = prices[i] - prices[i-1];
+    avgGain = (avgGain * (period-1) + (diff > 0 ? diff : 0)) / period;
+    avgLoss = (avgLoss * (period-1) + (diff < 0 ? -diff : 0)) / period;
+  }
+  if (avgLoss === 0) return 100;
+  return Math.round(100 - (100 / (1 + avgGain / avgLoss)));
+}
+
+let fg=null, btcPrice=null;
+let openCrit=null;
+let currentAsset=null;
+
+// ── LIVE DATA ──
+async function fetchLive() {
+  try {
+    const r = await fetch('https://api.alternative.me/fng/?limit=1');
+    const d = await r.json();
+    fg = parseInt(d.data[0].value);
+    const cls = d.data[0].value_classification;
+    const col = fg<=25?'var(--red)':fg>=75?'var(--green)':'var(--amber)';
+    document.getElementById('fg-val').textContent = fg;
+    document.getElementById('fg-val').style.color = col;
+    document.getElementById('fg-cls').textContent = cls;
+    document.getElementById('fg-thumb').style.left = fg+'%';
+  } catch(e) {}
+
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true');
+    const d = await r.json();
+    btcPrice = d.bitcoin?.usd;
+    if (btcPrice) {
+      document.getElementById('p-btc').textContent = '$'+btcPrice.toLocaleString('en-US',{maximumFractionDigits:0});
+      const c = d.bitcoin.usd_24h_change;
+      document.getElementById('c-btc').textContent = (c>=0?'▲':'▼')+Math.abs(c).toFixed(2)+'%';
+      document.getElementById('c-btc').style.color = c>=0?'var(--green)':'var(--red)';
+    }
+    const ethPrice = d.ethereum?.usd;
+    if (ethPrice) {
+      document.getElementById('p-eth').textContent = '$'+ethPrice.toLocaleString('en-US',{maximumFractionDigits:0});
+      const c = d.ethereum.usd_24h_change;
+      document.getElementById('c-eth').textContent = (c>=0?'▲':'▼')+Math.abs(c).toFixed(2)+'%';
+      document.getElementById('c-eth').style.color = c>=0?'var(--green)':'var(--red)';
+    }
+  } catch(e) {}
+
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/global');
+    const d = await r.json();
+    document.getElementById('p-dom').textContent = d.data.market_cap_percentage.btc.toFixed(1)+'%';
+    const mc = d.data.total_market_cap.usd;
+    document.getElementById('p-mcap').textContent = '$'+(mc/1e12).toFixed(2)+'T';
+    const mcc = d.data.market_cap_change_percentage_24h_usd;
+    document.getElementById('c-mcap').textContent = (mcc>=0?'▲':'▼')+Math.abs(mcc).toFixed(2)+'%';
+    document.getElementById('c-mcap').style.color = mcc>=0?'var(--green)':'var(--red)';
+  } catch(e) {}
+}
+
+// ── QUICK LOAD ──
+async function quickLoad(id) {
+  document.getElementById('search-inp').value = id;
+  const tk = TOKENOMICS[id];
+  if (tk) {
+    document.getElementById('i-insiders').value = tk.insiders;
+    document.getElementById('i-dilution').value = tk.dilution;
+    document.getElementById('i-inflation').value = tk.inflation;
+    document.getElementById('i-utility').value = tk.utility;
+  }
+  await runAnalysis(id);
+}
+
+async function runAnalysis(directId) {
+  const query = (directId || document.getElementById('search-inp').value.trim()).toLowerCase();
+  if (!query) return;
+
+  document.getElementById('main').innerHTML = '<div class="empty"><span class="spin"></span><div style="margin-top:.75rem;font-size:13px;">Buscando dados de '+query+'...</div></div>';
+  document.getElementById('ai-text').innerHTML = '<span class="spin"></span>';
+
+  let coinData = null;
+  try {
+    let coinId = query;
+    const knownIds = Object.keys(TOKENOMICS);
+    if (!knownIds.includes(query)) {
+      const sr = await fetch(`https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(query)}`);
+      const sd = await sr.json();
+      if (sd.coins && sd.coins.length > 0) coinId = sd.coins[0].id;
+    }
+    const r = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false`);
+    if (r.ok) coinData = await r.json();
+
+    // Auto-calcular RSI (14 períodos diários) via histórico gratuito da CoinGecko
+    try {
+      const hist = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=30&interval=daily`);
+      if (hist.ok) {
+        const hd = await hist.json();
+        const closes = hd.prices.map(p => p[1]);
+        const rsiCalc = calcRSI14(closes);
+        if (rsiCalc !== null) {
+          document.getElementById('i-rsi').value = rsiCalc;
+          document.getElementById('i-rsi').title = 'Calculado automaticamente';
+          const rsiAutoEl = document.getElementById('rsi-auto'); if (rsiAutoEl) rsiAutoEl.textContent = '● auto';
+        }
+      }
+    } catch(e2) {}
+
+    // Estimar Supply in Profit pela variação de 30 dias (proxy gratuito)
+    const ch30auto = coinData?.market_data?.price_change_percentage_30d || 0;
+    let supplyEst = 75;
+    if      (ch30auto > 50)  supplyEst = 92;
+    else if (ch30auto > 20)  supplyEst = 83;
+    else if (ch30auto > 0)   supplyEst = 75;
+    else if (ch30auto > -20) supplyEst = 62;
+    else if (ch30auto > -40) supplyEst = 50;
+    else                     supplyEst = 38;
+    document.getElementById('i-supply').value = supplyEst;
+    document.getElementById('i-supply').title = 'Estimado com base na variação de 30 dias';
+    const supplyAutoEl = document.getElementById('supply-auto'); if (supplyAutoEl) supplyAutoEl.textContent = '● estimado';
+
+  } catch(e) {}
+
+  const tk = TOKENOMICS[query] || {
+    insiders: parseFloat(document.getElementById('i-insiders').value)||35,
+    dilution:  parseFloat(document.getElementById('i-dilution').value)||2,
+    inflation: parseFloat(document.getElementById('i-inflation').value)||3,
+    utility:   parseInt(document.getElementById('i-utility').value)||2,
+  };
+
+  document.getElementById('i-insiders').value = tk.insiders;
+  document.getElementById('i-dilution').value  = tk.dilution;
+  document.getElementById('i-inflation').value = tk.inflation;
+  document.getElementById('i-utility').value   = tk.utility;
+
+  currentAsset = {coinData, tk, query};
+  render(coinData, tk);
+}
+
+function recalc() {
+  if (!currentAsset) return;
+  currentAsset.tk = {
+    insiders:  parseFloat(document.getElementById('i-insiders').value)||35,
+    dilution:  parseFloat(document.getElementById('i-dilution').value)||2,
+    inflation: parseFloat(document.getElementById('i-inflation').value)||3,
+    utility:   parseInt(document.getElementById('i-utility').value)||2,
+  };
+  render(currentAsset.coinData, currentAsset.tk);
+}
+
+function getManual() {
+  return {
+    rsi:     parseFloat(document.getElementById('i-rsi').value)||52,
+    funding: parseFloat(document.getElementById('i-fund').value)||0.02,
+    supply:  parseFloat(document.getElementById('i-supply').value)||75,
+    mining:  parseFloat(document.getElementById('i-mining').value)||82000,
+    lth:     document.getElementById('i-lth').value||'neutral',
+  };
+}
+
+// ── COMPUTE SIGNALS ──
+function computeSignals(coinData, tk) {
+  const m = getManual();
+  const price  = coinData?.market_data?.current_price?.usd || btcPrice || 50000;
+  const ch24   = coinData?.market_data?.price_change_percentage_24h || 0;
+  const ch30   = coinData?.market_data?.price_change_percentage_30d || 0;
+  const isBTC  = coinData?.symbol?.toUpperCase() === 'BTC';
+  const ath    = coinData?.market_data?.ath?.usd || price*3;
+
+  // 1. Fear & Greed
+  let s_fg = 'neutral';
+  if (fg !== null) { if (fg<=25) s_fg='buy'; else if (fg>=75) s_fg='sell'; }
+
+  // 2. RSI
+  let s_rsi = 'neutral';
+  if (m.rsi < 30) s_rsi='buy'; else if (m.rsi > 70) s_rsi='sell';
+
+  // 3. Mining / ATH distance
+  let s_mining = 'neutral';
+  if (isBTC && price < m.mining) s_mining='buy';
+  else if (!isBTC && ((price-ath)/ath*100) < -70) s_mining='buy';
+
+  // 4. Funding rate
+  let s_funding = 'neutral';
+  if (m.funding > 0.05) s_funding='sell'; else if (m.funding < -0.01) s_funding='buy';
+
+  // 5. LTH
+  let s_lth = 'neutral';
+  if (m.lth==='accumulating') s_lth='buy'; else if (m.lth==='distributing') s_lth='sell';
+
+  // 6. Supply in profit
+  let s_supply = 'neutral';
+  if (m.supply >= 90) s_supply='sell'; else if (m.supply <= 50) s_supply='buy';
+
+  // 7. Insiders
+  let s_insiders = 'neutral';
+  if (tk.insiders > 50) s_insiders='sell'; else if (tk.insiders < 20) s_insiders='buy';
+
+  // 8. Dilution
+  let s_dilution = 'neutral';
+  if (tk.dilution > 3) s_dilution='sell'; else if (tk.dilution < 1.2) s_dilution='buy';
+
+  // 9. Inflation
+  let s_inflation = 'neutral';
+  if (tk.inflation > 7) s_inflation='sell'; else if (tk.inflation <= 0) s_inflation='buy';
+
+  // 10. Utility
+  let s_utility = 'neutral';
+  if (tk.utility >= 3) s_utility='buy'; else if (tk.utility === 0) s_utility='sell';
+
+  const athDist = ((price-ath)/ath*100).toFixed(1);
+
+  return {
+    fg:           { s:s_fg,       v:fg!==null?String(fg):'—',           note:`${fg??'—'} — ${fg<=25?'Medo Extremo':fg<=45?'Medo':fg<=55?'Neutro':fg<=75?'Ganância':'Ganância Extrema'}` },
+    rsi:          { s:s_rsi,      v:String(m.rsi),                        note:`RSI ${m.rsi} — ${m.rsi<30?'Sobrevendido':m.rsi>70?'Sobrecomprado':'Neutro (30–70)'}` },
+    mining:       { s:s_mining,   v:isBTC?'$'+m.mining.toLocaleString():athDist+'% ATH', note:isBTC?`Custo: $${m.mining.toLocaleString()} · Preço: $${price.toLocaleString('en-US',{maximumFractionDigits:0})}`:`Distância do ATH: ${athDist}%` },
+    funding:      { s:s_funding,  v:(m.funding>0?'+':'')+m.funding.toFixed(3)+'%', note:`Funding ${m.funding>0.05?'extremamente positivo = venda':m.funding<-0.01?'negativo = compra':'neutro'}` },
+    lth:          { s:s_lth,      v:m.lth==='accumulating'?'Acumulando':m.lth==='distributing'?'Distribuindo':'Neutro', note:'LTH = wallets sem mover há +155 dias' },
+    supply_profit:{ s:s_supply,   v:m.supply+'%',                         note:`${m.supply}% do supply em lucro — ${m.supply>=90?'zona de topo':m.supply<=50?'zona de fundo':'moderado'}` },
+    insiders:     { s:s_insiders, v:tk.insiders+'%',                      note:`${tk.insiders}% com equipe+VCs — ${tk.insiders>50?'concentração perigosa':tk.insiders<20?'saudável':'moderado'}` },
+    dilution:     { s:s_dilution, v:tk.dilution+'×',                      note:`Supply vai ${tk.dilution}× — ${tk.dilution>3?'diluição severa':tk.dilution<1.2?'supply estável':'diluição moderada'}` },
+    inflation:    { s:s_inflation,v:(tk.inflation>0?'+':'')+tk.inflation+'%/ano', note:`${tk.inflation<=0?'Deflacionário':tk.inflation>7?'Alta inflação = pressão vendedora':'Inflação moderada'}` },
+    utility:      { s:s_utility,  v:tk.utility+'/5',                      note:`${tk.utility} utilidade(s) real(is) — ${tk.utility>=3?'demanda orgânica sólida':tk.utility===0?'100% especulativo':'utilidade limitada'}` },
+  };
+}
+
+function computeVerdict(sigs) {
+  let buyW=0, sellW=0;
+  Object.keys(W).forEach(k => {
+    if (sigs[k].s==='buy')  buyW  += W[k];
+    if (sigs[k].s==='sell') sellW += W[k];
+  });
+  const buyPct  = Math.round(buyW/TOTAL_W*100);
+  const sellPct = Math.round(sellW/TOTAL_W*100);
+  const holdPct = Math.max(0, 100-buyPct-sellPct);
+  let v = 'hold';
+  if (buyW > sellW && buyW/TOTAL_W > 0.25)  v='buy';
+  else if (sellW > buyW && sellW/TOTAL_W > 0.25) v='sell';
+  return {v, buyPct, sellPct, holdPct};
+}
+
+// ── RENDER ──
+function render(coinData, tk) {
+  const sigs    = computeSignals(coinData, tk);
+  const verdict = computeVerdict(sigs);
+  const price   = coinData?.market_data?.current_price?.usd;
+  const ch24    = coinData?.market_data?.price_change_percentage_24h;
+  const ch7     = coinData?.market_data?.price_change_percentage_7d;
+  const ch30    = coinData?.market_data?.price_change_percentage_30d;
+  const ath     = coinData?.market_data?.ath?.usd;
+  const name    = coinData?.name  || document.getElementById('search-inp').value || 'Ativo';
+  const ticker  = coinData?.symbol?.toUpperCase() || '—';
+  const rank    = coinData?.market_cap_rank;
+  const mcap    = coinData?.market_data?.market_cap?.usd;
+
+  const fmtPrice = v => {
+    if (!v && v!==0) return '—';
+    if (Math.abs(v)>=1000) return '$'+v.toLocaleString('en-US',{maximumFractionDigits:0});
+    if (Math.abs(v)>=1)    return '$'+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return '$'+v.toFixed(6);
+  };
+
+  const athDist = price&&ath ? ((price-ath)/ath*100).toFixed(1) : null;
+  const colors  = ['#f59e0b','#818cf8','#00d97e','#4f6ef7','#f97316','#ff4d6d','#06b6d4','#a855f7'];
+  const color   = colors[name.charCodeAt(0)%colors.length];
+
+  const vCfg = {
+    buy:  {cls:'buy',  tag:'Sinal de Compra — 10 critérios', word:'COMPRA',   desc:'A maioria dos critérios aponta para uma boa oportunidade de entrada. Considere comprar em partes.'},
+    sell: {cls:'sell', tag:'Sinal de Venda — 10 critérios',  word:'VENDA',    desc:'Vários indicadores estão acendendo alertas. Não é um bom momento para comprar.'},
+    hold: {cls:'hold', tag:'Aguardar — sinais mistos',        word:'AGUARDAR', desc:'Os sinais estão divididos. Sem uma direção clara, o melhor é esperar antes de agir.'},
+  };
+  const vc = vCfg[verdict.v];
+
+  // Definição dos critérios
+  const CRIT_DEF = [
+    {k:'fg',            n:'01',ico:'😨',name:'Fear & Greed Index',    sub:'Pânico=compra · Euforia=venda',             w:W.fg,            group:'market',
+     logic:'Quando o mercado entra em pânico extremo (≤25), há vendedores irracionais — oportunidade de compra. Ganância extrema (≥75) sinaliza topo iminente.'},
+    {k:'rsi',           n:'02',ico:'📉',name:'RSI (14)',               sub:'<30 sobrevendido · >70 sobrecomprado',       w:W.rsi,           group:'market',
+     logic:'RSI abaixo de 30 indica ativo sobrevendido — potencial reversão de alta. Acima de 70 indica sobrecomprado — potencial correção iminente.'},
+    {k:'mining',        n:'03',ico:'⛏', name:'Custo de Mineração',    sub:'BTC abaixo do custo = suporte histórico',   w:W.mining,        group:'market',
+     logic:'Para BTC: abaixo do custo de produção (~$82k), mineradores capitulam. Para altcoins: distância do ATH como proxy de fundo histórico.'},
+    {k:'funding',       n:'04',ico:'📈',name:'Funding Rates',          sub:'Funding >0.05% = longs excessivos = venda', w:W.funding,       group:'market',
+     logic:'Funding rate muito positivo indica excesso de alavancagem comprada. Esse desequilíbrio costuma preceder liquidações em cascata.'},
+    {k:'lth',           n:'05',ico:'🐋',name:'Long Term Holders',      sub:'Acumulando com queda = sinal mais bullish', w:W.lth,           group:'market',
+     logic:'LTH são os "smart money" — wallets sem mover moedas há +155 dias. Quando acumulam durante quedas, é sinal de alta convicção bullish.'},
+    {k:'supply_profit', n:'06',ico:'💰',name:'Supply in Profit',       sub:'~100% em lucro = demanda esgotada = venda', w:W.supply_profit, group:'market',
+     logic:'Quando quase 100% do supply está em lucro, não há compradores novos. Qualquer realização colapsa a demanda marginal.'},
+    {k:'insiders',      n:'07',ico:'👥',name:'Concentração Insiders',  sub:'>50% com equipe+VCs = risco extremo',       w:W.insiders,      group:'tokenomics',
+     logic:'Mais de 50% do supply com insiders = risco de coordenação de vendas massivas. Você se torna exit liquidity.'},
+    {k:'dilution',      n:'08',ico:'📦',name:'Desbloqueio / Diluição', sub:'Supply multiplica = pressão vendedora',     w:W.dilution,      group:'tokenomics',
+     logic:'Se o supply vai triplicar nos próximos 12 meses, a demanda precisa triplicar só para manter o preço. Isso raramente acontece.'},
+    {k:'inflation',     n:'09',ico:'🔄',name:'Inflação vs Deflação',   sub:'Alta emissão = holders diluídos',           w:W.inflation,     group:'tokenomics',
+     logic:'Token que emite muitos tokens por ano dilui os holders constantemente. Deflacionários ou com burn têm escassez crescente.'},
+    {k:'utility',       n:'10',ico:'⚙', name:'Utilidade do Token',    sub:'Sem uso real = depende só de hype',         w:W.utility,       group:'tokenomics',
+     logic:'Token sem utilidade real (fees, staking, governança, DeFi) tem demanda 100% especulativa. Hype acaba — utilidade real cria demanda constante.'},
+  ];
+
+  const renderCrit = c => {
+    const sig     = sigs[c.k];
+    const badgeCls = sig.s==='buy'?'cb-buy':sig.s==='sell'?'cb-sell':'cb-neutral';
+    const badgeTxt = sig.s==='buy'?'COMPRA':sig.s==='sell'?'VENDA':'NEUTRO';
+    const critCls  = sig.s==='buy'?'c-buy':sig.s==='sell'?'c-sell':'';
+    const isOpen   = openCrit===c.k;
+    return `
+    <div class="crit ${critCls}" id="crit-${c.k}">
+      <div class="crit-head" onclick="toggleCrit('${c.k}')">
+        <span class="crit-n">${c.n}</span>
+        <span class="crit-ico">${c.ico}</span>
+        <div class="crit-info">
+          <div class="crit-name">${c.name} <span class="weight-badge">×${c.w}</span></div>
+          <div class="crit-sub">${c.sub}</div>
+        </div>
+        <span class="crit-val">${sig.v}</span>
+        <span class="cbadge ${badgeCls}">${badgeTxt}</span>
+      </div>
+      <div class="crit-body ${isOpen?'open':''}" id="body-${c.k}">
+        <div class="detail-row"><span class="dr-label">Valor atual</span><span class="dr-val">${sig.v}</span></div>
+        <div class="detail-row"><span class="dr-label">Sinal gerado</span><span class="dr-val" style="color:${sig.s==='buy'?'var(--green)':sig.s==='sell'?'var(--red)':'var(--t2)'}">${badgeTxt}</span></div>
+        <div class="detail-row"><span class="dr-label">Peso no veredito</span><span class="dr-val">${c.w} de ${TOTAL_W} (${Math.round(c.w/TOTAL_W*100)}%)</span></div>
+        <div class="logic">${sig.note}<br><br>${c.logic}</div>
+      </div>
+    </div>`;
+  };
+
+  const marketCrits   = CRIT_DEF.filter(c=>c.group==='market');
+  const tokenomicsCrits = CRIT_DEF.filter(c=>c.group==='tokenomics');
+  const marketW       = marketCrits.reduce((s,c)=>s+c.w,0);
+  const tokenW        = tokenomicsCrits.reduce((s,c)=>s+c.w,0);
+
+  document.getElementById('main').innerHTML = `
+    ${coinData ? `
+    <div class="asset-card">
+      <div class="asset-left">
+        <div class="asset-avatar" style="background:${color}22;color:${color}">${ticker.slice(0,3)}</div>
+        <div class="asset-name-block">
+          <div class="asset-name">${name} ${rank?`<span style="font-size:11px;color:var(--t2);font-weight:400">#${rank}</span>`:''}</div>
+          <div class="asset-meta">${ticker}/USD ${mcap?'· MCap $'+(mcap/1e9).toFixed(1)+'B':''}</div>
+        </div>
+      </div>
+      <div class="asset-right">
+        <div class="asset-price">${fmtPrice(price)}</div>
+        <div class="asset-changes">
+          <span class="${ch24>=0?'up':'dn'}">${ch24!=null?(ch24>=0?'▲':'▼')+Math.abs(ch24).toFixed(2)+'% 24h':''}</span>
+          ${ch7!=null?`<span style="color:var(--t2)"> · </span><span class="${ch7>=0?'up':'dn'}">${ch7>=0?'+':''}${ch7.toFixed(1)}% 7d</span>`:''}
+          ${athDist?`<span style="color:var(--t2)"> · </span><span style="color:var(--t2);font-size:10px">${athDist}% ATH</span>`:''}
+        </div>
+      </div>
+    </div>` : ''}
+
+    <div class="verdict-hero ${vc.cls}">
+      <div class="vh-top">
+        <div class="vh-left">
+          <div class="vh-tag">${vc.tag}</div>
+          <div class="vh-word">${vc.word}</div>
+          <div class="vh-desc">${vc.desc}</div>
+        </div>
+        <div class="vh-scores">
+          <div class="vs-row"><span class="vs-lbl" style="color:var(--green)">COMPRA</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.buyPct}%;background:var(--green)"></div></div><span class="vs-num up">${verdict.buyPct}%</span></div>
+          <div class="vs-row"><span class="vs-lbl" style="color:var(--amber)">NEUTRO</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.holdPct}%;background:var(--amber)"></div></div><span class="vs-num" style="color:var(--amber)">${verdict.holdPct}%</span></div>
+          <div class="vs-row"><span class="vs-lbl" style="color:var(--red)">VENDA</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.sellPct}%;background:var(--red)"></div></div><span class="vs-num dn">${verdict.sellPct}%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-label">sinais de mercado <span class="group-tag">critérios 01–06 · peso ${marketW} de ${TOTAL_W}</span></div>
+    <div class="crit-list">${marketCrits.map(renderCrit).join('')}</div>
+
+    <div class="group-label">tokenomics <span class="group-tag">critérios 07–10 · peso ${tokenW} de ${TOTAL_W}</span></div>
+    <div class="crit-list">${tokenomicsCrits.map(renderCrit).join('')}</div>
+  `;
+
+  runAI(sigs, verdict, name, ticker, price, ch24);
+}
+
+function toggleCrit(k) {
+  openCrit = openCrit===k ? null : k;
+  document.querySelectorAll('.crit-body').forEach(b=>b.classList.remove('open'));
+  if (openCrit) {
+    const el = document.getElementById('body-'+openCrit);
+    if (el) el.classList.add('open');
+  }
+}
+
+// ── AI ──
+async function runAI(sigs, verdict, name, ticker, price, ch24) {
+  const el = document.getElementById('ai-text');
+  el.innerHTML = '<span class="spin"></span> Analisando...';
+
+  const sigSummary = Object.entries(sigs).map(([k,v])=>`${k}:${v.s}(${v.v})`).join(' · ');
+  const prompt = `Você é um consultor financeiro que explica crypto para pessoas comuns, sem usar jargão técnico.
+
+Analise ${name} (${ticker}) com base nesses dados:
+- Veredito geral: ${verdict.v.toUpperCase()} (${verdict.buyPct}% compra · ${verdict.sellPct}% venda)
+- Preço atual: ${price?'$'+price.toLocaleString('en-US',{maximumFractionDigits:2}):'N/A'} (variação 24h: ${ch24?.toFixed(2)||'—'}%)
+- Critérios: ${sigSummary}
+
+Responda em português simples, como se estivesse explicando para um amigo que nunca investiu. Use no máximo 4 parágrafos curtos. Estrutura:
+1) O que está acontecendo agora com ${ticker} em linguagem bem simples
+2) Por que o sinal é ${verdict.v.toUpperCase()} — explique o motivo principal sem termos técnicos
+3) Qual é o maior risco no momento — em linguagem do dia a dia
+4) O que a pessoa deveria fazer agora — uma recomendação clara e direta
+
+NÃO use: markdown, asteriscos, hashtags, termos como RSI, MACD, funding rate, LTH, supply, tokenomics. Substitua por linguagem comum. Seja direto e humano.`;
+
+  try {
+    // Em produção: chame /api/claude em vez da Anthropic diretamente
+    const r = await fetch('/api/claude', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        system: 'Você é um analista profissional de criptoativos. Responda sempre em português, de forma direta e sem rodeios.',
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    const d = await r.json();
+    const txt = d.content?.map(b=>b.text||'').join('') || 'Sem resposta.';
+    el.innerHTML = txt.replace(/\n/g,'<br>');
+  } catch(e) {
+    el.innerHTML = '<span style="color:var(--red)">Erro ao conectar com a IA. Verifique se /api/claude está configurado no Vercel.</span>';
+  }
+}
+
+// ── CLOCK + INIT ──
+setInterval(() => {
+  const el = document.getElementById('clock');
+  if (el) el.textContent = new Date().toLocaleTimeString('pt-BR');
+}, 1000);
+
+fetchLive();
+setInterval(fetchLive, 60000);
+</script>
+
 // ── TOKENOMICS PRESETS ──
 const TOKENOMICS = {
   bitcoin:   {insiders:0,   dilution:1.06, inflation:-0.2, utility:2},
@@ -405,7 +844,7 @@ async function runAnalysis(directId) {
   const query = (directId || document.getElementById('search-inp').value.trim()).toLowerCase();
   if (!query) return;
 
-  document.getElementById('main').innerHTML = '<div class="empty-state"><h2><span class="spin"></span> Buscando...</h2></div>';
+  document.getElementById('main').innerHTML = '<div class="empty-state"><h2><span class="spin"></span>&nbsp;Buscando...</h2></div>';
   document.getElementById('ai-text').innerHTML = '<span class="spin"></span>';
 
   let coinData = null;
@@ -617,6 +1056,7 @@ function render(coinData, tk) {
   const ch7     = coinData?.market_data?.price_change_percentage_7d;
   const ch30    = coinData?.market_data?.price_change_percentage_30d;
   const ath     = coinData?.market_data?.ath?.usd;
+  const vol24   = coinData?.market_data?.total_volume?.usd;
   const name    = coinData?.name  || document.getElementById('search-inp').value || 'Ativo';
   const ticker  = coinData?.symbol?.toUpperCase() || '—';
   const rank    = coinData?.market_cap_rank;
@@ -806,6 +1246,21 @@ function render(coinData, tk) {
       </div>
     </div>` : ''}
 
+    ${coinData ? (() => {
+      const fmtVol = v => { if(!v) return '—'; if(v>=1e9) return '$'+(v/1e9).toFixed(1)+'B'; return '$'+(v/1e6).toFixed(0)+'M'; };
+      const athDist2 = price&&ath ? ((price-ath)/ath*100).toFixed(1) : null;
+      const volMcap = vol24&&mcap ? (vol24/mcap*100).toFixed(1) : null;
+      const ch30Label = ch30!=null ? (ch30>=0?'tendência de alta':'tendência de queda') : '—';
+      const athLabel = athDist2 ? (parseFloat(athDist2)<-60?'desconto histórico':parseFloat(athDist2)<-30?'desconto relevante':'próximo do ATH') : '—';
+      const volLabel = volMcap ? (parseFloat(volMcap)>30?'alta liquidez':parseFloat(volMcap)>10?'liquidez normal':'baixa liquidez') : '—';
+      return `<div class="activity">
+        <div class="act-cell"><div class="act-lbl">Volume 24h</div><div class="act-val">${fmtVol(vol24)}</div></div>
+        <div class="act-cell"><div class="act-lbl">Variação 30d</div><div class="act-val" style="color:${ch30>=0?'var(--green)':'var(--red)'}">${ch30!=null?(ch30>=0?'+':'')+ch30.toFixed(1)+'%':'—'}</div><div class="act-sub neu">${ch30Label}</div></div>
+        <div class="act-cell"><div class="act-lbl">Dist. do ATH</div><div class="act-val">${athDist2?athDist2+'%':'—'}</div><div class="act-sub ${parseFloat(athDist2)<-50?'up':'neu'}">${athLabel}</div></div>
+        <div class="act-cell"><div class="act-lbl">Vol / MCap</div><div class="act-val">${volMcap?volMcap+'%':'—'}</div><div class="act-sub neu">${volLabel}</div></div>
+      </div>`;
+    })() : ''}
+
     <div class="verdict v-${vc.cls}">
       <div class="v-eyebrow">${vc.tag}</div>
       <div class="v-word">${vc.word}</div>
@@ -836,7 +1291,7 @@ function render(coinData, tk) {
 
 function toggleCrit(k) {
   openCrit = openCrit===k ? null : k;
-  document.querySelectorAll('.crit-detail').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.crit.open').forEach(b=>b.classList.remove('open'));
   document.querySelectorAll('.crit').forEach(b=>b.classList.remove('open'));
   if (openCrit) {
     const detail = document.getElementById('body-'+openCrit);
@@ -879,64 +1334,5 @@ O QUE ESTÁ ACONTECENDO
 POR QUE O SISTEMA INDICA ${sinalLabel}
 [1 parágrafo explicando o raciocínio com honestidade — se o sinal for fraco, diga isso]
 
-PRINCIPAL RISCO
-[1 parágrafo honesto sobre o que pode dar errado]
-
-O QUE CONSIDERAR
-[1 parágrafo prudente sobre o que avaliar antes de qualquer decisão — nunca "faça isso"]
-
-Não use: RSI, MACD, funding, LTH, supply, tokenomics. Linguagem simples do dia a dia.`;
-
-  try {
-    const r = await fetch('/api/claude', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        system: 'Você é um educador financeiro responsável. Responda SEMPRE no formato exato solicitado. Sem markdown, asteriscos, hashtags ou numeração. Seja honesto sobre riscos e incertezas. Nunca prometa retorno.',
-        messages: [{role:'user', content: prompt}]
-      })
-    });
-    const d = await r.json();
-    const txt = d.content?.map(b=>b.text||'').join('') || 'Sem resposta.';
-    
-    // Parse structured response into HTML
-    const lines = txt.split('\n').filter(l => l.trim());
-    let html = '';
-    let titulo = '', subtitulo = '';
-    
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (line.startsWith('TÍTULO:')) {
-        titulo = line.replace('TÍTULO:', '').trim();
-      } else if (line.startsWith('SUBTÍTULO:')) {
-        subtitulo = line.replace('SUBTÍTULO:', '').trim();
-      } else if (line === 'O QUE ESTÁ ACONTECENDO' || line === 'POR QUE O SINAL É COMPRA' || line === 'POR QUE O SINAL É VENDA' || line === 'POR QUE O SINAL É AGUARDAR' || line.startsWith('POR QUE O SINAL') || line.startsWith('POR QUE O SISTEMA') || line === 'MAIOR RISCO AGORA' || line === 'O QUE CONSIDERAR') {
-        html += `<div class="ai-section-label">${line}</div>`;
-      } else if (line.length > 20) {
-        html += `<p class="ai-para">${line}</p>`;
-      }
-    }
-    
-    const finalHtml = `
-      ${titulo ? `<div class="ai-title-text">${titulo}</div>` : ''}
-      ${subtitulo ? `<div class="ai-subtitle-text">${subtitulo}</div>` : ''}
-      ${html}
-    `;
-    
-    el.innerHTML = finalHtml;
-  } catch(e) {
-    el.innerHTML = '<span style="color:var(--t3);font-size:12px;">Erro ao conectar com o consultor. Tente novamente.</span>';
-  }
-}
-
-// ── CLOCK + INIT ──
-setInterval(() => {
-  const el = document.getElementById('clock');
-  if (el) el.textContent = new Date().toLocaleTimeString('pt-BR');
-}, 1000);
-
-fetchLive();
-setInterval(fetchLive, 60000);
-</script>
 </body>
 </html>
