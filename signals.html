@@ -394,6 +394,7 @@ async function runAnalysis(directId) {
     if (coingeckoCache[coinId]) {
       coinData = coingeckoCache[coinId];
     } else {
+      await new Promise(res => setTimeout(res, 500));
       const knownIds = Object.keys(TOKENOMICS);
       if (!knownIds.includes(coinId)) {
         const sr = await fetchWithRetry(`https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(query)}`);
@@ -760,7 +761,7 @@ function render(coinData, tk) {
     ${coinData ? `
     <div class="asset">
       <div class="asset-l">
-        <div class="asset-icon" style="background:${color}22;color:${color}">${ticker.slice(0,3)}</div>
+        <div class="asset-icon" style="background:${color}12;color:${color};border:1px solid ${color}25">${ticker.slice(0,3)}</div>
         <div>
           <div class="asset-name">${name} ${rank?`<span style="font-size:11px;color:var(--t2);font-weight:400">#${rank}</span>`:''}</div>
           <div class="asset-meta">${ticker}/USD ${mcap?'· MCap $'+(mcap/1e9).toFixed(1)+'B':''}</div>
