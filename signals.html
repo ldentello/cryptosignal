@@ -798,13 +798,7 @@ function render(coinData, tk) {
         <div class="v-bar-row"><span class="v-bar-lbl" style="color:var(--red)">Evitar</span><div class="v-bar-track"><div class="v-bar-fill" style="width:${verdict.sellPct}%;background:var(--red)"></div></div><span class="v-bar-num dn">${verdict.sellPct}%</span></div>
       </div>
     </div>
-        <div class="vh-scores">
-          <div class="vs-row"><span class="vs-lbl" style="color:var(--green)">COMPRA</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.buyPct}%;background:var(--green)"></div></div><span class="vs-num up">${verdict.buyPct}%</span></div>
-          <div class="vs-row"><span class="vs-lbl" style="color:var(--amber)">NEUTRO</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.holdPct}%;background:var(--amber)"></div></div><span class="vs-num" style="color:var(--amber)">${verdict.holdPct}%</span></div>
-          <div class="vs-row"><span class="vs-lbl" style="color:var(--red)">VENDA</span><div class="vs-bar"><div class="vs-fill" style="width:${verdict.sellPct}%;background:var(--red)"></div></div><span class="vs-num dn">${verdict.sellPct}%</span></div>
-        </div>
-      </div>
-    </div>
+
 
     <div class="sec"><span class="sec-lbl">Sinais de Mercado</span><div class="sec-line"></div><span class="sec-num">01 — 06</span></div>
     <div class="crits">${marketCrits.map(renderCrit).join('')}</div>
