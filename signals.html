@@ -833,27 +833,18 @@ async function runAI(sigs, verdict, name, ticker, price, ch24) {
   const el = document.getElementById('ai-text');
   el.innerHTML = '<span class="spin"></span>';
 
-  const sigSummary = Object.entries(sigs).map(([k,v])=>`${k}:${v.s}(${v.v})`).join(' · ');
-  const priceStr = price?'$'+price.toLocaleString('en-US',{maximumFractionDigits:2}):'N/A';
-
+  const sigSummary = Object.entries(sigs).map(([k,v])=>k+':'+v.s+'('+v.v+')').join(' | ');
+  const priceStr = price ? '$'+price.toLocaleString('en-US',{maximumFractionDigits:2}) : 'N/A';
   const sinalLabel = verdict.v==='buy'?'COMPRA':verdict.v==='sell'?'EVITAR':'AGUARDAR';
-  const prompt = `Você é um educador financeiro que explica criptoativos para iniciantes de forma honesta e responsável. Seu papel é informar, nunca vender ou promover.
 
-Analise ${name} (${ticker}) com base nesses dados:
-- Sinal do sistema: ${sinalLabel} (${verdict.buyPct}% critérios favoráveis · ${verdict.sellPct}% desfavoráveis · ${verdict.holdPct}% neutros)
-- Preço: ${priceStr} (variação 24h: ${ch24?.toFixed(2)||'—'}%)
-- Indicadores: ${sigSummary}
-
-  const priceStr = price?'$'+price.toLocaleString('en-US',{maximumFractionDigits:2}):'N/A';
-  const sinalLabel = verdict.v==='buy'?'COMPRA':verdict.v==='sell'?'EVITAR':'AGUARDAR';
-  const prompt = `Você é um educador financeiro que explica criptoativos para iniciantes. Analise ${name} (${ticker}). Sinal: ${sinalLabel} (${verdict.buyPct}% favoráveis). Preço: ${priceStr}. Em português simples, sem jargão técnico, escreva: 1) O que está acontecendo com ${ticker} agora 2) Por que o sinal é ${sinalLabel} 3) O que considerar. Máximo 3 parágrafos curtos. Sem asteriscos ou markdown.`;
+  const prompt = 'Analise ' + name + ' (' + ticker + '). Sinal: ' + sinalLabel + ' (' + verdict.buyPct + '% favoraveis). Preco: ' + priceStr + '. Em portugues simples, sem jargao tecnico, escreva 3 paragrafos curtos: 1) O que esta acontecendo agora 2) Por que o sinal e ' + sinalLabel + ' 3) O que considerar. Sem asteriscos ou markdown.';
 
   try {
     const r = await fetch('/api/claude', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        system: 'Você é um analista de criptoativos. Responda sempre em português, de forma direta e sem rodeios.',
+        system: 'Voce e um analista de criptoativos. Responda sempre em portugues, de forma direta.',
         messages: [{role:'user', content: prompt}]
       })
     });
@@ -864,6 +855,7 @@ Analise ${name} (${ticker}) com base nesses dados:
     el.innerHTML = '<span style="color:var(--red)">Erro ao conectar com a IA.</span>';
   }
 }
+
 
 // ── CLOCK + INIT ──
 setInterval(() => {
