@@ -306,7 +306,6 @@ async function fetchLive() {
   } catch(e) {}
 
   try {
-    await new Promise(res => setTimeout(res, 800));
     const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true');
     if (r.ok) {
       const d = await r.json();
@@ -394,7 +393,6 @@ async function runAnalysis(directId) {
     if (coingeckoCache[coinId]) {
       coinData = coingeckoCache[coinId];
     } else {
-      await new Promise(res => setTimeout(res, 500));
       const knownIds = Object.keys(TOKENOMICS);
       if (!knownIds.includes(coinId)) {
         const sr = await fetchWithRetry(`https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(query)}`);
