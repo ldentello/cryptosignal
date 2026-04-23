@@ -844,22 +844,35 @@ Analise ${name} (${ticker}) com base nesses dados:
 - Preço: ${priceStr} (variação 24h: ${ch24?.toFixed(2)||'—'}%)
 - Indicadores: ${sigSummary}
 
-REGRAS OBRIGATÓRIAS:
-- Se o sinal for AGUARDAR, nunca sugira compra
-- Se a maioria dos critérios estiver neutra, seja explícito que não há sinal claro
-- Nunca prometa valorização ou retorno
-- Seja honesto sobre incertezas
+  const priceStr = price?'$'+price.toLocaleString('en-US',{maximumFractionDigits:2}):'N/A';
+  const sinalLabel = verdict.v==='buy'?'COMPRA':verdict.v==='sell'?'EVITAR':'AGUARDAR';
+  const prompt = `Você é um educador financeiro que explica criptoativos para iniciantes. Analise ${name} (${ticker}). Sinal: ${sinalLabel} (${verdict.buyPct}% favoráveis). Preço: ${priceStr}. Em português simples, sem jargão técnico, escreva: 1) O que está acontecendo com ${ticker} agora 2) Por que o sinal é ${sinalLabel} 3) O que considerar. Máximo 3 parágrafos curtos. Sem asteriscos ou markdown.`;
 
-FORMATO — sem asteriscos, sem markdown, sem hashtags, sem numeração:
+  try {
+    const r = await fetch('/api/claude', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        system: 'Você é um analista de criptoativos. Responda sempre em português, de forma direta e sem rodeios.',
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    const d = await r.json();
+    const txt = d.content?.map(b=>b.text||'').join('') || 'Sem resposta.';
+    el.innerHTML = txt.replace(/\n/g,'<br>');
+  } catch(e) {
+    el.innerHTML = '<span style="color:var(--red)">Erro ao conectar com a IA.</span>';
+  }
+}
 
-TÍTULO: [frase curta e honesta sobre o momento do ${ticker}]
-SUBTÍTULO: [uma linha neutra descrevendo a situação atual]
+// ── CLOCK + INIT ──
+setInterval(() => {
+  const el = document.getElementById('clock');
+  if (el) el.textContent = new Date().toLocaleTimeString('pt-BR');
+}, 1000);
 
-O QUE ESTÁ ACONTECENDO
-[1 parágrafo simples, sem exageros, sobre o momento do ativo]
-
-POR QUE O SISTEMA INDICA ${sinalLabel}
-[1 parágrafo explicando o raciocínio com honestidade — se o sinal for fraco, diga isso]
-
+fetchLive();
+setInterval(fetchLive, 60000);
+</script>
 </body>
 </html>
